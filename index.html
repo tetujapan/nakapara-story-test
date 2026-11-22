@@ -2501,6 +2501,8 @@ img{-webkit-user-drag:none}
 .so-card.back .bk{position:absolute;inset:3px;border:1.5px solid rgba(255,210,63,.75);border-radius:6px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,rgba(255,210,63,.22),transparent 70%)}
 .so-card.back .bk img{width:58%;height:82%;object-fit:contain;object-position:50% 100%}
 .so-card.sel{outline:3px solid #ffd23f;box-shadow:0 0 0 3px rgba(255,210,63,.45),0 8px 16px rgba(0,0,0,.55)}
+.so-card.shk{animation:soShk .32s ease;z-index:60!important}
+@keyframes soShk{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px) rotate(-1.2deg)}45%{transform:translateX(4px) rotate(1.2deg)}70%{transform:translateX(-3px)}85%{transform:translateX(2px)}}
 .so-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;flex-wrap:wrap}
 .so-bar #soStats{font-size:12.5px;font-weight:800;color:var(--ink2)}
 .so-bar-btns{display:flex;gap:8px}
@@ -3244,7 +3246,7 @@ img{-webkit-user-drag:none}
           <button type="button" class="btn ghost so-mini" id="soNew">新しいゲーム</button>
         </span>
       </div>
-      <p class="note" style="margin-top:10px">遊び方：カードをタップで選んで、移動先をタップ（ドラッグ不要）。山札タップで1枚めくり、空になったらタップで裏返して再利用。場札は赤（♥♦）と黒（♠♣）を交互に、Kから小さい順に重ねます。空いた列にはKだけ置けます。組札は同じマークでA→K。カードをダブルタップすると、置ける組札へ自動で送ります。全部揃えばクリアで300コイン＋タイムボーナス！</p>
+      <p class="note" style="margin-top:10px">遊び方：カードを1回タップするだけで、置ける場所へ自動で移動します（組札を優先、次に場札。ドラッグも移動先タップも不要）。動けないカードはタップすると軽く揺れます。山札タップで1枚めくり、空になったらタップで裏返して再利用。場札は赤（♥♦）と黒（♠♣）を交互に、Kから小さい順に重ねます。空いた列にはKだけ置けます。組札は同じマークでA→K。全部揃えばクリアで300コイン＋タイムボーナス！</p>
     </section>
   </div>
 </div>
@@ -6114,8 +6116,8 @@ function drawChara(g,im,x,y,w,h,opt){
    ratio (cap 2) and all code-drawn objects are pre-rendered ONCE
    onto 4x supersampled sprite canvases — the same effective dot
    density as the character sprites — and blitted with drawImage. */
-function mgDPR(g,cv){
-  var d=Math.min(2,window.devicePixelRatio||1);
+function mgDPR(g,cv,cap){
+  var d=Math.min(cap||2,window.devicePixelRatio||1);
   if(!cv._lw){cv._lw=cv.width;cv._lh=cv.height;}
   var tw=Math.round(cv._lw*d),th=Math.round(cv._lh*d);
   if(cv.width!==tw||cv.height!==th){cv.width=tw;cv.height=th;}
@@ -9129,32 +9131,65 @@ function skDrop(){
   SK.cur=SK.next;SK.next=skRandTier();SK.cool=26;
   skHud();
 }
+/* restitution : grows with impact speed, shrinks with ball size —
+   gentle touches never bounce, big balls thud instead of hopping */
+function skRest(v,r){
+  if(v<110)return 0;
+  return Math.min(0.30,(v-110)/2600)*(34/(34+r));
+}
 function skStep(){
-  var dt=1/60,i,j,b;
+  var i,j,b;
   if(SK.cool>0)SK.cool--;
   if(SK.chainT>0){SK.chainT--;if(SK.chainT<=0)SK.chain=0;}
-  for(i=0;i<SK.balls.length;i++){b=SK.balls[i];b.age++;b.vy+=1500*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;}
-  for(var it=0;it<3;it++){
-    for(i=0;i<SK.balls.length;i++){b=SK.balls[i];var r=SK_TIERS[b.tier].r;
-      if(b.x<SK_WALL+r){b.x=SK_WALL+r;if(b.vx<0)b.vx*=-0.25;}
-      if(b.x>SK_W-SK_WALL-r){b.x=SK_W-SK_WALL-r;if(b.vx>0)b.vx*=-0.25;}
-      if(b.y>SK_FLOOR-r){b.y=SK_FLOOR-r;if(b.vy>0)b.vy=Math.abs(b.vy)>60?-b.vy*0.18:0;b.vx*=0.94;}
+  for(i=0;i<SK.balls.length;i++)SK.balls[i].age++;
+  /* physics : 3 substeps of impulse solving. Gravity accelerates
+     every fall; contacts resolve with mass (area) weighting,
+     speed-scaled restitution, tangential friction (grip, rolling,
+     natural pile collapse) and a settle pass so slow supported
+     balls come to rest instead of jittering or freezing mid-air. */
+  var SUB=3,sdt=(1/60)/SUB,GRAV=2300,st,it;
+  for(st=0;st<SUB;st++){
+    for(i=0;i<SK.balls.length;i++){b=SK.balls[i];
+      b.vy+=GRAV*sdt;
+      var sp2=b.vx*b.vx+b.vy*b.vy;
+      if(sp2>2250000){var sc=1500/Math.sqrt(sp2);b.vx*=sc;b.vy*=sc;}
+      b.x+=b.vx*sdt;b.y+=b.vy*sdt;b._sup=false;
     }
-    for(i=0;i<SK.balls.length;i++)for(j=i+1;j<SK.balls.length;j++){
-      var a=SK.balls[i],c=SK.balls[j];
-      var ra=SK_TIERS[a.tier].r,rc=SK_TIERS[c.tier].r;
-      var dx=c.x-a.x,dy=c.y-a.y,md=ra+rc,d2=dx*dx+dy*dy;
-      if(d2>=md*md||d2===0)continue;
-      var d=Math.sqrt(d2),nx=dx/d,ny=dy/d,ov=(md-d)/2;
-      var ma=ra*ra,mc=rc*rc,tm=ma+mc;
-      a.x-=nx*ov*2*(mc/tm);a.y-=ny*ov*2*(mc/tm);
-      c.x+=nx*ov*2*(ma/tm);c.y+=ny*ov*2*(ma/tm);
-      var rvx=c.vx-a.vx,rvy=c.vy-a.vy,vn=rvx*nx+rvy*ny;
-      if(vn<0){var push=-vn*1.04;
-        a.vx-=nx*push*(mc/tm);a.vy-=ny*push*(mc/tm);
-        c.vx+=nx*push*(ma/tm);c.vy+=ny*push*(ma/tm);
-        a.vx*=0.995;c.vx*=0.995;
+    for(it=0;it<2;it++){
+      for(i=0;i<SK.balls.length;i++){b=SK.balls[i];var r=SK_TIERS[b.tier].r;
+        if(b.x<SK_WALL+r){b.x=SK_WALL+r;if(b.vx<0){b.vx=-b.vx*skRest(-b.vx,r);b.vy*=0.94;}}
+        if(b.x>SK_W-SK_WALL-r){b.x=SK_W-SK_WALL-r;if(b.vx>0){b.vx=-b.vx*skRest(b.vx,r);b.vy*=0.94;}}
+        if(b.y>SK_FLOOR-r){b.y=SK_FLOOR-r;b._sup=true;
+          if(b.vy>0)b.vy=-b.vy*skRest(b.vy,r);
+          b.vx*=Math.max(0,1-2.4*sdt);
+        }
       }
+      for(i=0;i<SK.balls.length;i++)for(j=i+1;j<SK.balls.length;j++){
+        var a=SK.balls[i],c=SK.balls[j];
+        var ra=SK_TIERS[a.tier].r,rc=SK_TIERS[c.tier].r;
+        var dx=c.x-a.x,dy=c.y-a.y,md=ra+rc,d2=dx*dx+dy*dy;
+        if(d2>=md*md||d2===0)continue;
+        var d=Math.sqrt(d2),nx=dx/d,ny=dy/d;
+        var ma=ra*ra,mc=rc*rc,ima=1/ma,imc=1/mc,itm=ima+imc;
+        var corr=Math.max(0,(md-d)-0.35)*0.85;
+        a.x-=nx*corr*(ima/itm);a.y-=ny*corr*(ima/itm);
+        c.x+=nx*corr*(imc/itm);c.y+=ny*corr*(imc/itm);
+        var rvx=c.vx-a.vx,rvy=c.vy-a.vy,vn=rvx*nx+rvy*ny;
+        if(vn<0){
+          var jn=-(1+skRest(-vn,Math.min(ra,rc)))*vn/itm;
+          a.vx-=nx*jn*ima;a.vy-=ny*jn*ima;
+          c.vx+=nx*jn*imc;c.vy+=ny*jn*imc;
+          var tx=-ny,ty=nx,vt=(c.vx-a.vx)*tx+(c.vy-a.vy)*ty;
+          var jt=-vt/itm,mf=0.38*jn;
+          if(jt>mf)jt=mf;else if(jt<-mf)jt=-mf;
+          a.vx-=tx*jt*ima;a.vy-=ty*jt*ima;
+          c.vx+=tx*jt*imc;c.vy+=ty*jt*imc;
+        }
+        if(ny>0.55)a._sup=true;else if(ny<-0.55)c._sup=true;
+      }
+    }
+    for(i=0;i<SK.balls.length;i++){b=SK.balls[i];
+      if(b._sup&&b.vx*b.vx+b.vy*b.vy<3025){b.vx*=0.78;b.vy*=0.78;}
     }
   }
   /* merges : one pass per step, each ball merges at most once */
@@ -9223,7 +9258,7 @@ function skDrawBall(g,b){
   g.restore();
 }
 function skDraw(){
-  var cv=$("skCanvas");if(!cv)return;var g=cv.getContext("2d");
+  var cv=$("skCanvas");if(!cv)return;var g=cv.getContext("2d");mgDPR(g,cv,3);g.imageSmoothingEnabled=true;g.imageSmoothingQuality="high";
   var bg=g.createLinearGradient(0,0,0,SK_H);bg.addColorStop(0,"#2a1454");bg.addColorStop(1,"#170a30");
   g.fillStyle=bg;g.fillRect(0,0,SK_W,SK_H);
   g.fillStyle="rgba(255,255,255,.05)";g.fillRect(SK_WALL,SK_LINE-52,SK_W-SK_WALL*2,SK_FLOOR-(SK_LINE-52));
@@ -9316,7 +9351,8 @@ window.__on("skBack",function(){window.__skStop();mgShow("hub");});
 })();
 
 /* ================= SOLITAIRE : Klondike =================
-   Tap-to-select, tap-to-move (no drag). Suits are the standard 4
+   One tap auto-moves a card to its best legal destination (no
+   select step, no drag). Suits are the standard 4
    marks with a talent photo each; red ♥♦ / black ♠♣, tableau
    builds down alternating red and black, foundations climb
    A→K per mark. */
@@ -9327,7 +9363,7 @@ var SO_SUITS=[
  {mk:"♣",col:"#1a1a1a",grp:1,img:"assets/char_misa.webp"}
 ];
 var SO_RANKS=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-var SO={stock:[],waste:[],found:[[],[],[],[]],tab:[[],[],[],[],[],[],[]],sel:null,moves:0,sec:0,started:false,won:false,dealt:false,_tick:0,_flyT:0,_flyRaf:0,_tapKey:"",_tapT:0,_m:null};
+var SO={stock:[],waste:[],found:[[],[],[],[]],tab:[[],[],[],[],[],[],[]],sel:null,moves:0,sec:0,started:false,won:false,dealt:false,_tick:0,_flyT:0,_flyRaf:0,_tapKey:"",_tapT:0,_m:null,_shk:null,_shkT:0};
 function soTime(){var m=Math.floor(SO.sec/60),s=SO.sec%60;return m+":"+(s<10?"0":"")+s;}
 function soFoundN(){var n=0;for(var i=0;i<4;i++)n+=SO.found[i].length;return n;}
 function soStats(){var el=$("soStats");if(el)el.textContent="手数 "+SO.moves+" ・ "+soTime()+" ・ 組札 "+soFoundN()+"/52";}
@@ -9346,9 +9382,9 @@ function soCardHTML(c,o){
   if(o.col!=null)at+=' data-col="'+o.col+'"';
   if(o.idx!=null)at+=' data-idx="'+o.idx+'"';
   if(o.pile!=null)at+=' data-pile="'+o.pile+'"';
-  if(o.back)return '<div class="so-card back"'+at+' '+st+'><div class="bk"><img src="assets/sd_paradise.webp" alt="カードの裏面"></div></div>';
+  if(o.back)return '<div class="so-card back'+(o.shk?" shk":"")+'"'+at+' '+st+'><div class="bk"><img src="assets/sd_paradise.webp" alt="カードの裏面"></div></div>';
   var su=SO_SUITS[c.s];
-  return '<div class="so-card'+(sel?" sel":"")+'"'+at+' '+st+'><div class="hd" style="color:'+su.col+'"><span class="rk">'+SO_RANKS[c.r-1]+'</span><span class="mk">'+su.mk+'</span></div><div class="ph" style="background-image:url('+su.img+')"></div></div>';
+  return '<div class="so-card'+(sel?" sel":"")+(o.shk?" shk":"")+'"'+at+' '+st+'><div class="hd" style="color:'+su.col+'"><span class="rk">'+SO_RANKS[c.r-1]+'</span><span class="mk">'+su.mk+'</span></div><div class="ph" style="background-image:url('+su.img+')"></div></div>';
 }
 function soRender(){
   var M=soMetrics();SO._m=M;
@@ -9358,13 +9394,13 @@ function soRender(){
   s+='</div><div class="so-cell">';
   if(SO.waste.length){
     var wc=SO.waste[SO.waste.length-1];
-    s+=soCardHTML(wc,{loc:"waste",sel:SO.sel&&SO.sel.type==="waste"});
+    s+=soCardHTML(wc,{loc:"waste",sel:SO.sel&&SO.sel.type==="waste",shk:SO._shk&&SO._shk.type==="waste"});
   }else s+='<div class="so-slot"></div>';
   s+='</div><div class="so-cell"></div>';
   for(var f=0;f<4;f++){
     var fp=SO.found[f];
     s+='<div class="so-cell">';
-    if(fp.length)s+=soCardHTML(fp[fp.length-1],{loc:"found",pile:f,sel:SO.sel&&SO.sel.type==="found"&&SO.sel.pile===f});
+    if(fp.length)s+=soCardHTML(fp[fp.length-1],{loc:"found",pile:f,sel:SO.sel&&SO.sel.type==="found"&&SO.sel.pile===f,shk:SO._shk&&SO._shk.type==="found"&&SO._shk.pile===f});
     else s+='<div class="so-slot" data-loc="found" data-pile="'+f+'" style="color:'+SO_SUITS[f].col+';font-size:20px;opacity:.8">'+SO_SUITS[f].mk+'</div>';
     s+='</div>';
   }
@@ -9377,8 +9413,9 @@ function soRender(){
     if(!col.length)t+='<div class="so-slot" data-loc="tab" data-col="'+c+'"></div>';
     for(j=0;j<col.length;j++){
       var selT=SO.sel&&SO.sel.type==="tab"&&SO.sel.col===c&&j>=SO.sel.idx;
-      if(col[j].up)t+=soCardHTML(col[j],{loc:"tab",col:c,idx:j,top:y,sel:selT});
-      else t+=soCardHTML(null,{back:true,loc:"tab",col:c,idx:j,top:y});
+      var shkT=SO._shk&&SO._shk.type==="tab"&&SO._shk.col===c&&j>=SO._shk.idx;
+      if(col[j].up)t+=soCardHTML(col[j],{loc:"tab",col:c,idx:j,top:y,sel:selT,shk:shkT});
+      else t+=soCardHTML(null,{back:true,loc:"tab",col:c,idx:j,top:y,shk:shkT});
       y+=col[j].up?M.up:M.down;
     }
     t+='</div>';
@@ -9438,27 +9475,47 @@ function soDrawStock(){
   else if(SO.waste.length){SO.stock=SO.waste.reverse();SO.waste=[];}
   SO.moves++;
 }
+/* one-tap auto move : tap a card once and it goes to its best legal
+   destination — foundation first, then a tableau stack, then (only
+   when it gains something) an empty column for a King. If nothing is
+   legal the tapped cards shake to say "can't move". */
+function soShake(o){
+  SO._shk=o;soRender();
+  if(SO._shkT)clearTimeout(SO._shkT);
+  SO._shkT=setTimeout(function(){SO._shk=null;soRender();},340);
+}
+function soAutoMove(src){
+  SO.sel=src;
+  var cards=soSelCards();
+  if(!cards.length){SO.sel=null;return false;}
+  if(cards.length===1&&soTryFound(cards[0].s)){SO.sel=null;return true;}
+  var b=cards[0],emptyDest=-1,c;
+  for(c=0;c<7;c++){
+    if(src.type==="tab"&&src.col===c)continue;
+    if(!SO.tab[c].length){if(emptyDest<0)emptyDest=c;continue;}
+    if(soTryTab(c)){SO.sel=null;return true;}
+  }
+  if(emptyDest>=0&&b.r===13&&(src.type!=="tab"||src.idx>0)){
+    if(soTryTab(emptyDest)){SO.sel=null;return true;}
+  }
+  SO.sel=null;return false;
+}
 function soTapTab(col,idx){
   var colA=SO.tab[col];
-  if(idx>=0&&idx===colA.length-1&&colA.length&&colA[idx].up&&soDbl("tab"+col+":"+idx)){
-    if(soAutoFound({type:"tab",col:col,idx:idx})){SO.sel=null;soAfter();return;}
-  }
-  if(SO.sel){
-    if(soTryTab(col)){SO.sel=null;soAfter();return;}
-    if(SO.sel.type==="tab"&&SO.sel.col===col&&idx>=SO.sel.idx){SO.sel=null;soRender();return;}
-  }
-  if(idx>=0&&colA[idx]&&colA[idx].up){SO.sel={type:"tab",col:col,idx:idx};soRender();}
-  else if(idx<0){SO.sel=null;soRender();}
+  if(idx<0||!colA[idx])return;
+  if(!colA[idx].up){soShake({type:"tab",col:col,idx:idx});return;}
+  if(soAutoMove({type:"tab",col:col,idx:idx})){soAfter();return;}
+  soShake({type:"tab",col:col,idx:idx});
 }
 function soTapWaste(){
   if(!SO.waste.length)return;
-  if(soDbl("waste")&&soAutoFound({type:"waste"})){SO.sel=null;soAfter();return;}
-  if(SO.sel&&SO.sel.type==="waste"){SO.sel=null;soRender();return;}
-  SO.sel={type:"waste"};soRender();
+  if(soAutoMove({type:"waste"})){soAfter();return;}
+  soShake({type:"waste"});
 }
 function soTapFound(pile){
-  if(SO.sel&&soTryFound(pile)){SO.sel=null;soAfter();return;}
-  if(SO.found[pile].length){SO.sel={type:"found",pile:pile};soRender();}
+  if(!SO.found[pile].length)return;
+  if(soAutoMove({type:"found",pile:pile})){soAfter();return;}
+  soShake({type:"found",pile:pile});
 }
 function soStartClock(){if(!SO.started&&!SO.won)SO.started=true;}
 function soNew(){
