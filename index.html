@@ -2476,15 +2476,15 @@ img{-webkit-user-drag:none}
 .sk-stage{position:relative;margin-top:12px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:#150b28;box-shadow:0 16px 32px rgba(0,0,0,.5);-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .sk-stage canvas{display:block;width:100%;height:auto;touch-action:none;background:linear-gradient(180deg,#2a1454,#170a30)}
 .sk-next{display:inline-flex;align-items:center;gap:5px}
-.sk-next img{width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:50% 0;background:#3a2470;border:1.5px solid rgba(255,255,255,.55)}
+.sk-next img{width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:50% 50%;background:#3a2470;border:1.5px solid rgba(255,255,255,.55)}
 .sk-next .sk-dot{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;border:1.5px solid rgba(255,255,255,.55)}
 .sk-overlay{position:absolute;left:0;right:0;bottom:0;top:31px;z-index:6}
 .sk-overlay[hidden]{display:none}
 .sk-evo{display:flex;align-items:flex-end;gap:2px;margin-top:12px;padding:10px 8px;border:1.5px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(10,4,24,.5)}
 .sk-evo .ev{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;justify-content:flex-end}
 .sk-evo .ev .ball{border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid rgba(255,255,255,.4);box-shadow:0 3px 6px rgba(0,0,0,.4)}
-.sk-evo .ev .ball img{width:100%;height:100%;object-fit:cover;object-position:50% 0}
-.sk-evo .ev span{font-size:9px;font-weight:800;color:var(--ink2);white-space:nowrap}
+.sk-evo .ev .ball img{width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.sk-evo .ev span{font-size:8.5px;font-weight:800;color:var(--ink2);white-space:nowrap}
 .sk-evo .arr{color:#8f7cc9;font-weight:900;font-size:10px;padding-bottom:16px}
 .so-board{position:relative;margin-top:12px;border-radius:16px;border:1.5px solid rgba(255,217,122,.6);background:radial-gradient(130% 105% at 50% 0%,#33195f,#150a2c 72%);box-shadow:0 16px 32px rgba(0,0,0,.5);padding:10px 8px 12px;overflow:hidden;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .so-top{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
@@ -2806,11 +2806,11 @@ img{-webkit-user-drag:none}
         <p>CPU3人と対戦 ― 最後の1人になれ！</p></span>
       </button>
       <button type="button" class="mg-entry" id="mgToSuika">
-        <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_suika.webp" alt="スイカゲーム ― ガラスの箱の中で合体するSDキャラ玉と特大のパラダイス玉" style="object-position:50% 45%">
+        <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_suika.webp" alt="合体ドリンク ― ガラスの箱の中で合体するドリンク玉と特大のパラダイス玉" style="object-position:50% 45%">
         <span class="mg-shade"></span>
-        <span class="mg-badge">🍉 スコア÷8コイン（最大600）</span>
+        <span class="mg-badge">🍸 スコア÷8コイン（最大600）</span>
         <span class="mg-tx">
-        <h3>🍉 スイカゲーム</h3>
+        <h3>🍸 合体ドリンク</h3>
         <p>落として合体進化 ― 目指せパラダイス！</p></span>
       </button>
       <button type="button" class="mg-entry" id="mgToSolitaire">
@@ -3198,15 +3198,15 @@ img{-webkit-user-drag:none}
   <div id="mgSuika" style="display:none">
     <section style="margin-top:8px">
       <button type="button" class="mg-back" id="skBack">‹ ミニゲーム一覧へ</button>
-      <div class="sec-head"><h2>🍉 スイカゲーム</h2><p>落として合体 ― 目指せパラダイス！</p></div>
+      <div class="sec-head"><h2>🍸 合体ドリンク</h2><p>落として合体 ― 目指せパラダイス！</p></div>
       <div class="sk-stage" id="skStage">
         <div class="rt-hud"><span id="skHudScore">SCORE 0</span><span class="sk-next">NEXT <span id="skNext"></span></span><span id="skHudBest">BEST 0</span></div>
         <canvas id="skCanvas" width="420" height="640"></canvas>
         <div class="mg-confetti" id="skConfetti"></div>
         <div class="sk-overlay" id="skOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/mg_suika.webp" alt="スイカゲーム ― 合体するSDキャラ玉" style="object-position:50% 45%">
-            <p class="rt-ov-ttl">スイカゲーム</p>
+            <img class="kv-img" src="assets/mg_suika.webp" alt="合体ドリンク ― 合体するドリンク玉とSDキャラ玉" style="object-position:50% 45%">
+            <p class="rt-ov-ttl">合体ドリンク</p>
             <p class="rt-ov-tx" id="skOvTx">同じ玉同士をくっつけて合体進化！<br>一番大きい「パラダイス」を作ろう。上のラインを超えたらゲームオーバー。</p>
             <div id="skUe" hidden></div>
             <button type="button" class="btn gold rt-start" id="skStartBtn">▶ スタート</button>
@@ -3214,7 +3214,7 @@ img{-webkit-user-drag:none}
         </div>
       </div>
       <div class="sk-evo" id="skEvo"></div>
-      <p class="note" style="margin-top:10px">遊び方：玉の落下位置は指（マウス）を左右に動かして決め、タップ（指を離す）で落下。同じ玉同士が触れると合体して一段階大きく進化します。進化順は さくらんぼ→いちご→ぶどう→みかん→みさ→奈々→楓→あかり→ももな→パラダイス。合体でスコアGET、連続合体でチェインボーナス。パラダイス同士を合体させると消えて1,000点の大ボーナス！ ゲームオーバー時にスコア÷8のコイン報酬（最大600）。</p>
+      <p class="note" style="margin-top:10px">遊び方：玉の落下位置は指（マウス）を左右に動かして決め、タップ（指を離す）で落下。同じ玉同士が触れると合体して一段階大きく進化します。進化順は ショット→レモンサワー→赤ワイン→ビール→シャンパン→みさ→奈々→楓→あかり→ももな→パラダイス。合体でスコアGET、連続合体でチェインボーナス。パラダイス同士を合体させると消えて1,000点の大ボーナス！ ゲームオーバー時にスコア÷8のコイン報酬（最大600）。</p>
     </section>
   </div>
   <!-- solitaire : klondike with talent photo cards -->
@@ -3244,7 +3244,7 @@ img{-webkit-user-drag:none}
           <button type="button" class="btn ghost so-mini" id="soNew">新しいゲーム</button>
         </span>
       </div>
-      <p class="note" style="margin-top:10px">遊び方：カードをタップで選んで、移動先をタップ（ドラッグ不要）。山札タップで1枚めくり、空になったらタップで裏返して再利用。場札は暖色（♥ピンク／★オレンジ）と寒色（♦ティール／♣レッド）を交互に、Kから小さい順に重ねます。空いた列にはKだけ置けます。組札は同じマークでA→K。カードをダブルタップすると、置ける組札へ自動で送ります。全部揃えばクリアで300コイン＋タイムボーナス！</p>
+      <p class="note" style="margin-top:10px">遊び方：カードをタップで選んで、移動先をタップ（ドラッグ不要）。山札タップで1枚めくり、空になったらタップで裏返して再利用。場札は赤（♥♦）と黒（♠♣）を交互に、Kから小さい順に重ねます。空いた列にはKだけ置けます。組札は同じマークでA→K。カードをダブルタップすると、置ける組札へ自動で送ります。全部揃えばクリアで300コイン＋タイムボーナス！</p>
     </section>
   </div>
 </div>
@@ -9099,16 +9099,17 @@ renderCharSel();
 var SK={on:false,raf:0,_lt:0,_acc:0,state:"ready",balls:[],fx:[],score:0,best:0,cur:0,next:0,dropX:210,cool:0,over:0,chain:0,chainT:0,paid:false};
 var SK_W=420,SK_H=640,SK_LINE=118,SK_WALL=14,SK_FLOOR=626;
 var SK_TIERS=[
- {r:16,name:"さくらんぼ",emoji:"🍒",col:"#e5342d"},
- {r:23,name:"いちご",emoji:"🍓",col:"#ff5c7a"},
- {r:30,name:"ぶどう",emoji:"🍇",col:"#8b5cf6"},
- {r:38,name:"みかん",emoji:"🍊",col:"#ff9f1e"},
- {r:47,name:"みさ",img:"assets/sd_misa.webp",col:"#e5342d"},
- {r:56,name:"奈々",img:"assets/sd_nana.webp",col:"#9a7bff"},
- {r:67,name:"楓",img:"assets/sd_kaede.webp",col:"#1f9d8a"},
- {r:79,name:"あかり",img:"assets/sd_akari.webp",col:"#ff8a1e"},
- {r:92,name:"ももな",img:"assets/sd_momona.webp",col:"#ff5c9e"},
- {r:106,name:"パラダイス",img:"assets/sd_paradise.webp",col:"#ffd23f"}
+ {r:15,name:"ショット",img:"assets/sk_drink_shot.webp",col:"#59c2ff"},
+ {r:21,name:"レモンサワー",img:"assets/sk_drink_lemon.webp",col:"#ffd23f"},
+ {r:27,name:"赤ワイン",img:"assets/sk_drink_wine.webp",col:"#d6336c"},
+ {r:34,name:"ビール",img:"assets/sk_drink_beer.webp",col:"#ff9f1e"},
+ {r:42,name:"シャンパン",img:"assets/sk_drink_champagne.webp",col:"#2fbf71"},
+ {r:50,name:"みさ",img:"assets/sk_face_misa.webp",col:"#e5342d"},
+ {r:60,name:"奈々",img:"assets/sk_face_nana.webp",col:"#9a7bff"},
+ {r:71,name:"楓",img:"assets/sk_face_kaede.webp",col:"#1f9d8a"},
+ {r:83,name:"あかり",img:"assets/sk_face_akari.webp",col:"#ff8a1e"},
+ {r:96,name:"ももな",img:"assets/sk_face_momona.webp",col:"#ff5c9e"},
+ {r:110,name:"パラダイス",img:"assets/sk_face_paradise.webp",col:"#ffd23f"}
 ];
 var SK_IMGS={};
 (function(){for(var i=0;i<SK_TIERS.length;i++){if(SK_TIERS[i].img){var im=new Image();im.src=SK_TIERS[i].img;SK_IMGS[i]=im;}}})();
@@ -9172,7 +9173,7 @@ function skStep(){
     var mx=(a2.x+c2.x)/2,my=(a2.y+c2.y)/2;
     SK.chain=(SK.chainT>0)?SK.chain+1:1;SK.chainT=55;
     var chM=Math.min(SK.chain,8);
-    if(a2.tier>=9){
+    if(a2.tier>=10){
       var pts=1000*chM;SK.score+=pts;
       SK.fx.push({x:mx,y:my,txt:"+"+pts,col:"#ffd23f",size:36,life:75,max:75,big:true});
       SK.fx.push({ring:true,x:mx,y:my,r:24,life:26,max:26,col:"#ffd23f"});
@@ -9182,7 +9183,7 @@ function skStep(){
       spawned.push({tier:nt,x:mx,y:my,vx:(a2.vx+c2.vx)/2,vy:(a2.vy+c2.vy)/2-40,age:0,pop:10});
       SK.fx.push({x:mx,y:my-SK_TIERS[nt].r,txt:"+"+pts2,col:nt>=7?"#ffd23f":"#ffffff",size:nt>=7?30:19,life:55,max:55,big:nt>=7});
       if(nt>=6)SK.fx.push({ring:true,x:mx,y:my,r:SK_TIERS[nt].r*0.6,life:20,max:20,col:SK_TIERS[nt].col});
-      if(nt===9){
+      if(nt===10){
         mgConfetti($("skConfetti"),46,["#ffd23f","#ff5c9e","#7ce7ff","#b49aff","#ffffff"]);
         SK.fx.push({x:mx,y:my-76,txt:"パラダイス誕生！",col:"#ffd23f",size:25,life:85,max:85,big:true});
       }
@@ -9208,13 +9209,13 @@ function skDrawBall(g,b){
   if(t.img){
     g.clip();
     var img=SK_IMGS[b.tier];
-    if(img&&img.naturalWidth){var w=r*3.35,h=w*img.naturalHeight/img.naturalWidth;g.drawImage(img,-w/2,-h*0.285,w,h);}
+    if(img&&img.naturalWidth){g.drawImage(img,-r,-r,r*2,r*2);}
     g.beginPath();g.ellipse(-r*0.34,-r*0.46,r*0.32,r*0.18,-0.6,0,7);g.fillStyle="rgba(255,255,255,.32)";g.fill();
   }else{
     var gr=g.createRadialGradient(-r*0.35,-r*0.4,r*0.15,0,0,r);
     gr.addColorStop(0,"rgba(255,255,255,.5)");gr.addColorStop(0.55,"rgba(255,255,255,0)");gr.addColorStop(1,"rgba(0,0,0,.18)");
     g.beginPath();g.arc(0,0,r,0,7);g.fillStyle=gr;g.fill();
-    g.font=(r*1.05)+"px sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText(t.emoji,0,r*0.06);
+    g.font=(r*1.05)+"px sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText(t.emoji||"",0,r*0.06);
   }
   g.restore();
   g.save();g.translate(b.x,b.y);g.scale(sc,sc);
@@ -9284,7 +9285,7 @@ window.__skStop=function(){SK.on=false;SK._lt=0;SK._acc=0;if(SK.raf)cancelAnimat
 window.__skReset=function(){
   SK.state="ready";SK.balls=[];SK.fx=[];SK.score=0;SK.over=0;SK.chain=0;SK.chainT=0;SK.paid=false;
   var ov=$("skOverlay");if(!ov)return;
-  ov.querySelector(".rt-ov-ttl").textContent="スイカゲーム";
+  ov.querySelector(".rt-ov-ttl").textContent="合体ドリンク";
   $("skOvTx").innerHTML="同じ玉同士をくっつけて合体進化！<br>一番大きい「パラダイス」を作ろう。上のラインを超えたらゲームオーバー。";
   $("skStartBtn").textContent="▶ スタート";
   var ue=$("skUe");ue.hidden=true;ue.innerHTML="";
@@ -9305,23 +9306,25 @@ window.__on("skBack",function(){window.__skStop();mgShow("hub");});
 /* evolution chart under the stage */
 (function(){
   var h=$("skEvo");if(!h)return;var s="";
+  var SK_SHORT=["ショット","レモン","ワイン","ビール","シャンパン","みさ","奈々","楓","あかり","ももな","パラダイス"];
   SK_TIERS.forEach(function(t,i){
-    var d=Math.round(13+i*3.4);
-    s+='<div class="ev"><div class="ball" style="width:'+d+'px;height:'+d+'px;background:'+t.col+'">'+(t.img?'<img src="'+t.img+'" alt="'+t.name+'">':'<span style="font-size:'+Math.round(d*0.62)+'px">'+t.emoji+'</span>')+'</div><span>'+t.name+'</span></div>';
+    var d=Math.round(10+i*2.4);
+    s+='<div class="ev"><div class="ball" style="width:'+d+'px;height:'+d+'px;background:'+t.col+'">'+(t.img?'<img src="'+t.img+'" alt="'+t.name+'">':'<span style="font-size:'+Math.round(d*0.62)+'px">'+(t.emoji||"")+'</span>')+'</div><span>'+(SK_SHORT[i]||t.name)+'</span></div>';
     if(i<SK_TIERS.length-1)s+='<span class="arr">›</span>';
   });
   h.innerHTML=s;
 })();
 
 /* ================= SOLITAIRE : Klondike =================
-   Tap-to-select, tap-to-move (no drag). Suits are 4 marks with a
-   talent photo each; tableau builds down alternating colour
-   groups (warm ♥★ / cool ♦♣), foundations climb A→K per mark. */
+   Tap-to-select, tap-to-move (no drag). Suits are the standard 4
+   marks with a talent photo each; red ♥♦ / black ♠♣, tableau
+   builds down alternating red and black, foundations climb
+   A→K per mark. */
 var SO_SUITS=[
- {mk:"♥",col:"#ff4d8d",grp:0,img:"assets/char_momona.webp"},
- {mk:"★",col:"#ff8a1e",grp:0,img:"assets/char_akari.webp"},
- {mk:"♦",col:"#12b5a5",grp:1,img:"assets/char_kaede.webp"},
- {mk:"♣",col:"#e5342d",grp:1,img:"assets/char_misa.webp"}
+ {mk:"♠",col:"#1a1a1a",grp:1,img:"assets/char_kaede.webp"},
+ {mk:"♥",col:"#e5342d",grp:0,img:"assets/char_momona.webp"},
+ {mk:"♦",col:"#e5342d",grp:0,img:"assets/char_akari.webp"},
+ {mk:"♣",col:"#1a1a1a",grp:1,img:"assets/char_misa.webp"}
 ];
 var SO_RANKS=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 var SO={stock:[],waste:[],found:[[],[],[],[]],tab:[[],[],[],[],[],[],[]],sel:null,moves:0,sec:0,started:false,won:false,dealt:false,_tick:0,_flyT:0,_flyRaf:0,_tapKey:"",_tapT:0,_m:null};
