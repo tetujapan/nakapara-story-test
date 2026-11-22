@@ -15,11 +15,10 @@
 <script src="assets-data-12.js"></script>
 <script src="assets-data-13.js"></script>
 <script>
-/* __ASSET_PRELUDE__ resolve 'assets/<name>' references to embedded data URIs.
-   Hooks: HTMLImageElement src setter, Element.setAttribute('src'),
-   and Element innerHTML (rewrites src=/href="assets/<known name>" in the
-   markup string before parsing). Unknown names and non-'assets/' values
-   (data URIs, http URLs, ...) pass through untouched. */
+/* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
+   Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
+   CSSStyleDeclaration.setProperty url() values, parser-inserted static markup
+   (MutationObserver + DOMContentLoaded sweep over img/srcset/inline styles/<style>). */
 (function(){
   function resolve(v){
     if(typeof v!=='string'||v==='')return v;
@@ -34,40 +33,96 @@
     }
     return v;
   }
+  function fixUrls(text){
+    if(typeof text!=='string'||text.indexOf('assets/')===-1)return text;
+    return text.replace(/url\((\s*['"]?)(assets\/[^)'"]+)\1\)/g,function(m,q,p){
+      var r=resolve(p);
+      return (r===p)?m:('url('+q+r+q+')');
+    });
+  }
+  function fixAttrs(html){
+    html=html.replace(/\b(src|href)=("assets\/([^"]*)"|'assets\/([^']*)')/g,function(m,attr,q,n1,n2){
+      var name=(n1!==undefined?n1:n2);
+      var r=resolve('assets/'+name);
+      if(r!==('assets/'+name)){var quote=q.charAt(0);return attr+'='+quote+r+quote;}
+      return m;
+    });
+    return fixUrls(html);
+  }
+  function fixEl(el){
+    try{
+      if(el.tagName==='IMG'){
+        var s=el.getAttribute('src');
+        if(s){var r=resolve(s);if(r!==s)el.setAttribute('src',r);}
+        var ss=el.getAttribute('srcset');
+        if(ss&&ss.indexOf('assets/')!==-1){
+          el.setAttribute('srcset',ss.replace(/assets\/[^\s,]+/g,function(p){return resolve(p);}));
+        }
+      }
+      if(el.getAttribute){
+        var st=el.getAttribute('style');
+        if(st&&st.indexOf('assets/')!==-1){var nf=fixUrls(st);if(nf!==st)el.setAttribute('style',nf);}
+      }
+      if(el.tagName==='STYLE'&&el.textContent&&el.textContent.indexOf('assets/')!==-1){
+        var nt=fixUrls(el.textContent);if(nt!==el.textContent)el.textContent=nt;
+      }
+    }catch(e){}
+  }
+  function fixTree(root){
+    if(!root)return;
+    try{
+      if(root.nodeType===1)fixEl(root);
+      var all=root.querySelectorAll?root.querySelectorAll('img,style,[style]'):[];
+      for(var i=0;i<all.length;i++)fixEl(all[i]);
+    }catch(e){}
+  }
   try{
     var ip=window.HTMLImageElement&&HTMLImageElement.prototype;
-    if(ip){
+    var ep=window.Element&&Element.prototype;
+    if(ip&&ep){
       var d=Object.getOwnPropertyDescriptor(ip,'src');
       if(d&&d.set&&d.get){
         Object.defineProperty(ip,'src',{configurable:true,enumerable:d.enumerable,get:d.get,set:function(v){d.set.call(this,resolve(v));}});
       }
-      var ep=window.Element&&Element.prototype;
-      if(ep){
-        if(typeof ep.setAttribute==='function'){
-          var osa=ep.setAttribute;
-          ep.setAttribute=function(name,value){
-            if(this instanceof HTMLImageElement&&typeof name==='string'&&name.toLowerCase()==='src'){
-              return osa.call(this,name,resolve(value));
-            }
-            return osa.call(this,name,value);
-          };
-        }
-        var ihd=Object.getOwnPropertyDescriptor(ep,'innerHTML');
-        if(ihd&&ihd.set&&ihd.get){
-          Object.defineProperty(ep,'innerHTML',{configurable:true,enumerable:ihd.enumerable,get:ihd.get,set:function(html){
-            if(typeof html==='string'&&html.indexOf('assets/')!==-1){
-              html=html.replace(/\b(src|href)=("assets\/([^"]*)"|'assets\/([^']*)')/g,function(m,attr,q,n1,n2){
-                var name=(n1!==undefined?n1:n2);
-                var r=resolve('assets/'+name);
-                if(r!==('assets/'+name)){var quote=q.charAt(0);return attr+'='+quote+r+quote;}
-                return m;
-              });
-            }
-            return ihd.set.call(this,html);
-          }});
-        }
+      if(typeof ep.setAttribute==='function'){
+        var osa=ep.setAttribute;
+        ep.setAttribute=function(name,value){
+          if(typeof name==='string'){
+            var ln=name.toLowerCase();
+            if(this instanceof HTMLImageElement&&ln==='src')return osa.call(this,name,resolve(value));
+            if(ln==='style'&&typeof value==='string')return osa.call(this,name,fixUrls(value));
+          }
+          return osa.call(this,name,value);
+        };
+      }
+      var ihd=Object.getOwnPropertyDescriptor(ep,'innerHTML');
+      if(ihd&&ihd.set&&ihd.get){
+        Object.defineProperty(ep,'innerHTML',{configurable:true,enumerable:ihd.enumerable,get:ihd.get,set:function(html){
+          if(typeof html==='string'&&html.indexOf('assets/')!==-1)html=fixAttrs(html);
+          return ihd.set.call(this,html);
+        }});
       }
     }
+    var csd=window.CSSStyleDeclaration&&CSSStyleDeclaration.prototype;
+    if(csd&&typeof csd.setProperty==='function'){
+      var osp=csd.setProperty;
+      csd.setProperty=function(name,value,priority){
+        if(typeof value==='string'&&value.indexOf('assets/')!==-1)value=fixUrls(value);
+        return osp.call(this,name,value,priority);
+      };
+    }
+  }catch(e){}
+  try{
+    var mo=new MutationObserver(function(muts){
+      for(var i=0;i<muts.length;i++){
+        var mu=muts[i];
+        if(mu.type==='attributes'){fixEl(mu.target);}
+        else{for(var j=0;j<mu.addedNodes.length;j++)fixTree(mu.addedNodes[j]);}
+      }
+    });
+    mo.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['src','style']});
+    document.addEventListener('DOMContentLoaded',function(){fixTree(document);});
+    if(document.readyState!=='loading')fixTree(document);
   }catch(e){}
 })();
 </script>
