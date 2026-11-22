@@ -2514,6 +2514,60 @@ img{-webkit-user-drag:none}
 #soFly{position:absolute;inset:0;z-index:80;pointer-events:none;overflow:hidden}
 #soFly .so-card{cursor:default}
 @media (max-width:380px){.so-card .rk{font-size:13px}.so-card .mk{font-size:11px}}
+/* ---------- v40 : hero name clip fix + pachislot reel rebuild ----------
+   HERO NAME : on a real 390px phone the vertical heroine name was
+   sliced on the right of every glyph (it reproduced in the 390px
+   audit capture too, while the wider desktop capture looked fine).
+   Cause : in vertical-rl the element's width IS the line box
+   (line-height), and M PLUS Rounded's glyph ink + its white
+   drop-shadow fringe fill that box to the edge, so the ink was
+   clipped at the element's own right edge — nudging `right` alone
+   could never fix it. The line box now has real slack
+   (line-height 1.7), the ink sits inside a padded border box,
+   and the whole element is inset deeper from the stage edge.
+   SIDE MEMBERS : at real phone stage heights (540px, not the
+   660px desktop cap) the upper-left member's name pill slid
+   under the lower-left member's head. The four corners are
+   pulled in and apart (smaller, higher tops, lower bottoms) so
+   every pill clears the next face at any stage height. */
+.main-vname{right:22px;top:42px;font-size:28px;line-height:1.7;letter-spacing:.06em;padding:10px 14px 10px 8px}
+.cut-p0,.cut-p1,.cut-p2,.cut-p3{width:21.5%}
+.cut-p0{left:24px;top:74px}
+.cut-p1{right:24px;top:74px}
+.cut-p2{left:24px;bottom:128px}
+.cut-p3{right:24px;bottom:128px}
+/* SLOT REELS : no more gold-ringed medallion discs. The symbols
+   are PRINTED on a cream reel band that travels with the strip —
+   classic stops (sevens, BAR, bell, melon, cherry, replay,
+   blank) drawn as flat printed art, talent faces as printed
+   portrait plates with a thin keyline, like a themed machine. */
+.sl-strip{background:#fdfaf0}
+.sl-strip.fast{filter:blur(1.4px) brightness(1.04)}
+.sl-cell{border-bottom:1px solid rgba(120,90,20,.16)}
+.sl-cell svg{width:92%;height:94%;border-radius:0;background:none;border:none;box-shadow:none;padding:0;box-sizing:border-box}
+.sl-cell img{width:76%;height:88%;border-radius:5px;object-fit:cover;object-position:50% 6%;background:#fff;border:1.5px solid rgba(120,80,0,.5);box-shadow:0 1px 2px rgba(60,35,0,.3);box-sizing:border-box}
+.sl-cell .bar{display:flex;flex-direction:column;gap:3px;width:76%}
+.sl-cell .bar i{display:block;font-style:normal;background:linear-gradient(180deg,#3d434f,#0e1118 58%,#2b303c);color:#f5f0df;font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:calc(var(--slcell)*.27);letter-spacing:.24em;text-indent:.24em;text-align:center;border-radius:3px;padding:1px 0 2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 2px rgba(60,35,0,.35)}
+.sl-cell.blankcell span{font-size:calc(var(--slcell)*.34);font-weight:900;color:rgba(96,74,28,.32);line-height:1}
+/* landing settle : a small dip-and-recover on the drum window,
+   a few px only — the strip itself always stops symbol-true */
+.sl-win.land{animation:slSettle .34s ease-out}
+@keyframes slSettle{0%{transform:translateY(-2.5px)}45%{transform:translateY(1.6px)}100%{transform:translateY(0)}}
+/* ---------- v41 : hero name moves into the background corridor ----------
+   v40 fixed the glyph clipping but seated the name on top of the
+   upper-right member's hair and face. Measured on the 390px audit
+   capture: that member's hair starts at x≈285, the heroine's hair
+   ends at x≈267 — the only face-free vertical band is the lit
+   curtain gap between them. So the upper-right member shifts
+   14px further right (hair edge → ≈299, widening the gap), the
+   name drops to 21px, and the strip is centred on the corridor
+   from the stage centre (both landmarks drift right together as
+   the stage widens, so a fixed centre offset tracks the gap at
+   phone and desktop widths alike). Ink lands at ≈274–295:
+   clear of the heroine's hair (≈267) and of the member's (≈299),
+   fully on stage, over curtain and spotlights only. */
+.cut-p1{right:10px}
+.main-vname{left:50%;right:auto;margin-left:72px;top:36px;font-size:21px;line-height:1.45;letter-spacing:.05em;padding:7px 2px}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -2981,13 +3035,17 @@ img{-webkit-user-drag:none}
       <div class="sl-pay">
         <h4>📖 配当表（説明はここから下）</h4>
         <div class="sl-payrow"><span>姫宮ももか ×3（大当たり）</span><b>ベット ×100</b></div>
+        <div class="sl-payrow"><span>赤7 ×3</span><b>ベット ×80</b></div>
+        <div class="sl-payrow"><span>青7 ×3</span><b>ベット ×60</b></div>
         <div class="sl-payrow"><span>タレントの顔 ×3（ももか以外）</span><b>ベット ×40</b></div>
-        <div class="sl-payrow"><span>宝石 ×3</span><b>ベット ×25</b></div>
-        <div class="sl-payrow"><span>星 ×3</span><b>ベット ×15</b></div>
-        <div class="sl-payrow"><span>コイン ×3</span><b>ベット ×8</b></div>
+        <div class="sl-payrow"><span>BAR ×3</span><b>ベット ×30</b></div>
+        <div class="sl-payrow"><span>ベル ×3</span><b>ベット ×15</b></div>
+        <div class="sl-payrow"><span>スイカ ×3</span><b>ベット ×12</b></div>
+        <div class="sl-payrow"><span>チェリー ×3</span><b>ベット ×6</b></div>
+        <div class="sl-payrow"><span>リプレイ ×3（中段）</span><b>次ゲーム無料</b></div>
         <div class="sl-payrow"><span>中段ラインのペア</span><b>ベット ×2</b></div>
         <div class="sl-payrow"><span>リーチ目（チャンスの出目）</span><b>ベット ×3 ＋ 次回チャンス</b></div>
-        <p class="note" style="margin-top:8px">当たりは横3ライン＋斜め2ラインの合計5ライン判定（中段が本命ラインで、他のラインは配当×1/5）。レバーを引いたら、ストップボタン3つを好きな順番で自分で止めます。あと1つで揃う形になるとリーチ演出が入り、最後のリールが勝負になります。</p>
+        <p class="note" style="margin-top:8px">リールは本物と同じ固定配列表方式：左・中・右で図柄の並び順が違う帯がそのまま流れ、止まった位置の図柄で判定します。当たりは横3ライン＋斜め2ラインの合計5ライン判定（中段が本命ラインで、他のラインは配当×1/5）。レバーを引いたら、ストップボタン3つを好きな順番で自分で止めます。あと1つで揃う形になるとリーチ演出が入り、最後のリールが勝負になります。</p>
       </div>
     </section>
   </div>
@@ -6592,33 +6650,45 @@ window.__on("pkBack",function(){
    The player works the machine : pull the lever, then stop the
    three drums in ANY order with the three stop buttons. Each
    window shows 3 symbols (3x3) and five lines pay. */
-var SL={spinning:false,bet:50,init:false,boost:false,phase:"idle",win:0,scene:0,raf:0,lastT:0,stopped:0,reach:false,idleTimer:0,pushCb:null,
+var SL={spinning:false,bet:50,init:false,boost:false,freeNext:false,phase:"idle",win:0,scene:0,raf:0,lastT:0,stopped:0,reach:false,idleTimer:0,pushCb:null,
   reels:[{pos:0,speed:0,state:"idle",target:0,stopIdx:0,decel:0,from:0,to:0,t:0,dur:0,deadline:0},
          {pos:0,speed:0,state:"idle",target:0,stopIdx:0,decel:0,from:0,to:0,t:0,dur:0,deadline:0},
          {pos:0,speed:0,state:"idle",target:0,stopIdx:0,decel:0,from:0,to:0,t:0,dur:0,deadline:0}]};
 var SL_SYMS=[
  {id:"momona",img:"assets/cut_momona.webp",w:1,pay:100,name:"ももか"},
+ {id:"sevenR",svg:"sevenR",w:1,pay:80,name:"赤7"},
+ {id:"sevenB",svg:"sevenB",w:1,pay:60,name:"青7"},
  {id:"akari",img:"assets/cut_akari.webp",w:2,pay:40,name:"ひかり"},
  {id:"kaede",img:"assets/cut_kaede.webp",w:2,pay:40,name:"しずく"},
  {id:"nana",img:"assets/cut_nana.webp",w:2,pay:40,name:"れい"},
  {id:"misa",img:"assets/cut_misa.webp",w:2,pay:40,name:"さくら"},
- {id:"gem",svg:"gem",w:2,pay:25,name:"宝石"},
- {id:"star",svg:"star",w:3,pay:15,name:"星"},
- {id:"coin",svg:"coin",w:4,pay:8,name:"コイン"}
+ {id:"bar",svg:"bar",w:2,pay:30,name:"BAR"},
+ {id:"bell",svg:"bell",w:3,pay:15,name:"ベル"},
+ {id:"melon",svg:"melon",w:3,pay:12,name:"スイカ"},
+ {id:"cherry",svg:"cherry",w:4,pay:6,name:"チェリー"},
+ {id:"replay",svg:"replay",w:4,pay:0,name:"リプレイ"},
+ {id:"blank",svg:"blank",w:5,pay:0,name:"ブランク"}
 ];
 var SL_BY_ID={};SL_SYMS.forEach(function(s){SL_BY_ID[s.id]=s;});
-/* designed reel-symbol art (SVG, not emoji) for the non-face stops */
+/* classic reel-symbol art (SVG, drawn flat like print on the
+   band — no medallion discs, no emoji) for the non-face stops.
+   BAR and blank are laid out in slCellHTML as printed plates. */
 var SL_SVG={
-  gem:'<svg viewBox="0 0 60 60" aria-hidden="true"><defs><linearGradient id="slgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8fbff"/><stop offset=".5" stop-color="#54d8f0"/><stop offset="1" stop-color="#1e7fd8"/></linearGradient></defs><path d="M18 10h24l10 14L30 52 8 24z" fill="url(#slgG)" stroke="#eafcff" stroke-width="2"/><path d="M8 24h44M18 10l7 14 5 28M42 10l-7 14-5 28" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.6"/><path d="M20 13h11l-4 8h-6z" fill="rgba(255,255,255,.85)"/></svg>',
-  star:'<svg viewBox="0 0 60 60" aria-hidden="true"><defs><linearGradient id="slgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffd23f"/><stop offset="1" stop-color="#e09c00"/></linearGradient></defs><path d="M30 5l6.4 14.6L52 22l-11.8 10.6L43.6 48 30 39.6 16.4 48 19.8 32.6 8 22l15.6-2.4z" fill="url(#slgS)" stroke="#a86e00" stroke-width="2"/><ellipse cx="24" cy="22" rx="4.4" ry="2.8" fill="rgba(255,255,255,.9)" transform="rotate(-24 24 22)"/></svg>',
-  coin:'<svg viewBox="0 0 60 60" aria-hidden="true"><defs><radialGradient id="slgC" cx=".38" cy=".34" r=".85"><stop offset="0" stop-color="#fff6bf"/><stop offset=".55" stop-color="#ffd23f"/><stop offset="1" stop-color="#c07f00"/></radialGradient></defs><circle cx="30" cy="30" r="25" fill="url(#slgC)" stroke="#a86e00" stroke-width="2.4"/><circle cx="30" cy="30" r="18.5" fill="none" stroke="rgba(255,251,232,.9)" stroke-width="1.8"/><path d="M30 19l3.2 6.9 7.5.8-5.6 5.1 1.6 7.4L30 35.4l-6.7 3.8 1.6-7.4-5.6-5.1 7.5-.8z" fill="#b57f00"/></svg>'
+  sevenR:'<svg viewBox="0 0 60 44" aria-hidden="true"><defs><linearGradient id="sl7r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a8a"/><stop offset=".45" stop-color="#f62b1d"/><stop offset="1" stop-color="#a80d02"/></linearGradient></defs><path d="M13 3h34v9L29 41H16L33 12H13z" fill="url(#sl7r)" stroke="#7d0800" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 5.8h27v3.2H19.5z" fill="rgba(255,255,255,.55)"/></svg>',
+  sevenB:'<svg viewBox="0 0 60 44" aria-hidden="true"><defs><linearGradient id="sl7b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd0ff"/><stop offset=".45" stop-color="#1d6ff6"/><stop offset="1" stop-color="#023fa8"/></linearGradient></defs><path d="M13 3h34v9L29 41H16L33 12H13z" fill="url(#sl7b)" stroke="#022f7d" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 5.8h27v3.2H19.5z" fill="rgba(255,255,255,.55)"/></svg>',
+  bell:'<svg viewBox="0 0 60 44" aria-hidden="true"><defs><linearGradient id="slbl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffd23f"/><stop offset="1" stop-color="#e09c00"/></linearGradient></defs><circle cx="30" cy="6.6" r="3.4" fill="#e09c00" stroke="#a86e00" stroke-width="1.4"/><path d="M30 9.5c-8 0-12 5.8-12 12.7 0 5.8-1.6 8.8-4 10.8h32c-2.4-2-4-5-4-10.8C42 15.3 38 9.5 30 9.5z" fill="url(#slbl)" stroke="#a86e00" stroke-width="2"/><path d="M13.5 35.4h33" stroke="#a86e00" stroke-width="2.4" stroke-linecap="round"/><circle cx="30" cy="39.6" r="3.5" fill="#c07f00"/><path d="M22.5 14.5c-1.8 1.9-2.7 4.4-2.9 7.2" stroke="rgba(255,255,255,.85)" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>',
+  melon:'<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M6 9a24 24 0 0 0 48 0z" fill="#1d9e4b"/><path d="M10.5 9a19.5 19.5 0 0 0 39 0z" fill="#f2f7e8"/><path d="M14.5 9a15.5 15.5 0 0 0 31 0z" fill="#ff5252"/><ellipse cx="23" cy="15" rx="1.5" ry="2.3" fill="#402020"/><ellipse cx="30" cy="18.5" rx="1.5" ry="2.3" fill="#402020"/><ellipse cx="37" cy="15" rx="1.5" ry="2.3" fill="#402020"/><ellipse cx="26.5" cy="11.6" rx="1.3" ry="2" fill="#402020"/><ellipse cx="33.5" cy="11.6" rx="1.3" ry="2" fill="#402020"/></svg>',
+  cherry:'<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M24 30C26 18 34 10 44 6M38 26C39 18 41 11 44 6" fill="none" stroke="#2e8b3a" stroke-width="2.6" stroke-linecap="round"/><path d="M44 6c5-3.2 10-2.2 12.4.8C53.4 10 48.4 10.2 44 6z" fill="#37b24d"/><circle cx="21" cy="33" r="9" fill="#e8232a"/><circle cx="39" cy="29" r="10" fill="#f03238"/><ellipse cx="17.5" cy="29.5" rx="3" ry="2" fill="rgba(255,255,255,.75)" transform="rotate(-24 17.5 29.5)"/><ellipse cx="35" cy="25" rx="3.4" ry="2.2" fill="rgba(255,255,255,.75)" transform="rotate(-24 35 25)"/></svg>',
+  replay:'<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M38.7 8.2A13.5 13.5 0 1 0 42.7 23.1" fill="none" stroke="#1d7fd8" stroke-width="4.6" stroke-linecap="round"/><path d="M49.8 26.2L34.8 27.8 41.2 14.2z" fill="#1d7fd8"/><text x="31" y="41.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="900" letter-spacing="1.5" fill="#1d7fd8">REPLAY</text></svg>'
 };
-/* the three drums : fixed 21-stop strips, like real machines.
-   Every face appears at least twice on every drum. */
+/* the three drums : fixed 21-stop strips with a DIFFERENT
+   printed order on each drum, like a real machine's reel
+   table. What stops is what is judged — the strips ARE the
+   game, there is no separate outcome layer. */
 var SL_DRUMS=[
- ["coin","gem","momona","star","akari","coin","nana","star","gem","kaede","coin","misa","star","akari","coin","gem","nana","star","kaede","misa","momona"],
- ["star","kaede","coin","gem","nana","star","momona","coin","akari","gem","star","misa","coin","kaede","gem","star","nana","coin","akari","misa","momona"],
- ["gem","nana","star","coin","misa","gem","akari","star","coin","momona","kaede","star","gem","coin","nana","star","akari","coin","misa","kaede","momona"]
+ ["replay","cherry","sevenR","bell","akari","blank","melon","bar","kaede","cherry","replay","nana","bell","blank","misa","melon","sevenB","cherry","momona","bar","replay"],
+ ["bell","blank","misa","cherry","replay","sevenB","melon","bar","momona","cherry","bell","blank","akari","replay","melon","kaede","cherry","sevenR","bar","nana","replay"],
+ ["melon","replay","kaede","blank","cherry","bar","nana","bell","sevenR","replay","misa","blank","melon","cherry","momona","bell","replay","akari","bar","sevenB","cherry"]
 ];
 var SL_CELLH=44,SL_N=21,SL_DRUMH=SL_CELLH*SL_N;
 var SL_LINES=[
@@ -6644,7 +6714,9 @@ function slPick(){
 }
 function slCellHTML(id){
   var s=SL_BY_ID[id];
-  return '<div class="sl-cell'+(id==="momona"?" rare":"")+'">'+(s.img?'<img src="'+s.img+'" alt="'+s.name+'">':SL_SVG[s.svg])+'</div>';
+  if(id==="bar")return '<div class="sl-cell"><span class="bar"><i>BAR</i><i>BAR</i></span></div>';
+  if(id==="blank")return '<div class="sl-cell blankcell"><span>✦</span></div>';
+  return '<div class="sl-cell'+((id==="momona"||id==="sevenR")?" rare":"")+'">'+(s.img?'<img src="'+s.img+'" alt="'+s.name+'">':SL_SVG[s.svg])+'</div>';
 }
 function slBuildStrip(i){
   var html="",c,k;
@@ -6700,9 +6772,9 @@ function slLayout(){
 }
 function slRenderCtl(){
   var btn=$("slSpinBtn");if(!btn)return;
-  btn.disabled=SL.spinning||SL.phase==="settle"||S.coin<SL.bet;
-  btn.textContent=SL.spinning?"回転中…":"スタート";
-  $("slLever").disabled=SL.spinning||SL.phase==="settle"||S.coin<SL.bet;
+  btn.disabled=SL.spinning||SL.phase==="settle"||(S.coin<SL.bet&&!SL.freeNext);
+  btn.textContent=SL.spinning?"回転中…":SL.freeNext?"フリーゲーム！":"スタート";
+  $("slLever").disabled=SL.spinning||SL.phase==="settle"||(S.coin<SL.bet&&!SL.freeNext);
   $("slCredit").textContent=S.coin;
   $("slBetD").textContent=SL.bet;
   slFitData();
@@ -6718,7 +6790,7 @@ window.__slEnter=function(){
   slLayout();
   if(!SL.init){
     SL.init=true;
-    var startSym=["star","gem","coin"];
+    var startSym=["bell","sevenR","replay"];
     for(var i=0;i<3;i++){
       $("slStrip"+i).innerHTML=slBuildStrip(i);
       var idx=SL_DRUMS[i].indexOf(startSym[i]);
@@ -6753,8 +6825,11 @@ window.__slEnter=function(){
 };
 function slSpin(){
   if(SL.spinning||SL.phase==="settle")return;
-  if(S.coin<SL.bet){toast("コインが足りません");return;}
-  S.coin-=SL.bet;renderStats();
+  if(SL.freeNext){SL.freeNext=false;}
+  else{
+    if(S.coin<SL.bet){toast("コインが足りません");return;}
+    S.coin-=SL.bet;renderStats();
+  }
   SL.spinning=true;SL.phase="spin";SL.stopped=0;SL.reach=false;SL.win=0;
   $("slWinD").textContent="0";
   var stage=$("slStage");
@@ -6775,7 +6850,11 @@ function slSpin(){
     var r=SL.reels[i],sym=slPick();
     var occ=[];SL_DRUMS[i].forEach(function(id,k){if(id===sym.id)occ.push(k);});
     r.stopIdx=occ[Math.floor(Math.random()*occ.length)];
-    r.state="spin";r.speed=1250+Math.random()*250;r.deadline=now+8000;
+    /* LAUNCH : every drum starts from rest and ramps up to the
+       SAME cruise speed — no instant top speed, no per-drum
+       speed lottery, so all three drums share one physical
+       feel and the lever answers at once. */
+    r.state="spin";r.speed=0;r.cruise=1400;r.accelT=0;r.deadline=now+9000;
     $("slWin"+i).classList.remove("land","hot");
   }
   SL.boost=false;
@@ -6786,18 +6865,25 @@ function slSpin(){
 function slStopReel(i){
   var r=SL.reels[i];
   if(!SL.spinning||r.state!=="spin")return;
-  /* land the chosen symbol on the centre row : the target is
-     the next alignment at or after a short minimum travel, so
-     the drum answers the button at once but still rolls a few
-     stops like a real machine's slip. On a reach the last drum
-     is given a long, teasing deceleration instead. */
+  /* SLIP （すべり) : the drum does NOT brake the instant the
+     button lands. It keeps cruising to a braking point, then
+     glides the last few stops to a halt exactly on the target
+     symbol. Travel is counted in whole symbols — at least the
+     braking zone (5 stops, 9 on a reach for the long tease),
+     plus however far the next alignment of the target strip
+     position sits — so the stop is always symbol-true : no
+     half positions, no snap-back, no overshoot-and-return. */
   var base=(r.stopIdx-1)*SL_CELLH;
   var cur=((r.pos%SL_DRUMH)+SL_DRUMH)%SL_DRUMH;
   var delta=((base-cur)%SL_DRUMH+SL_DRUMH)%SL_DRUMH;
-  var minT=SL.reach?SL_CELLH*7:SL_CELLH*3;
-  while(delta<minT)delta+=SL_DRUMH;
+  var zone=SL_CELLH*(SL.reach?9:5);
+  while(delta<zone)delta+=SL_DRUMH;
   r.from=r.pos;r.to=r.pos+delta;r.t=0;
-  r.dur=SL.reach?980:430+delta/SL_DRUMH*260;
+  r.brakeFrom=r.to-zone;
+  /* braking time is set so the glide ENTERS at cruise speed
+     (ease-out-quartic initial slope 4 × zone / dur = cruise)
+     and bleeds smoothly to zero — one continuous motion */
+  r.dur=4*zone/(r.cruise||1400)*1000;
   r.state="decel";
   if(SL.reach)$("slWin"+i).classList.add("hot");
   slRenderCtl();
@@ -6811,20 +6897,31 @@ function slTick(ts){
     var r=SL.reels[i];
     if(r.state==="spin"){
       allStopped=false;
+      /* launch ramp : speed eases from rest to cruise over
+         ~450ms (smoothstep), then holds at cruise. Position
+         integrates the speed every frame — no fixed-step
+         judder, no frame skips. */
+      if(r.accelT<1){r.accelT=Math.min(1,r.accelT+dt/450);r.speed=r.cruise*r.accelT*(2-r.accelT);}
       r.pos+=r.speed*dt/1000;
       if(ts>r.deadline)slStopReel(i);
     }else if(r.state==="decel"){
       allStopped=false;
-      r.t+=dt;
-      var k=Math.min(1,r.t/r.dur),e=1-Math.pow(1-k,3);
-      r.pos=r.from+(r.to-r.from)*e;
-      if(k>=1){
-        r.pos=r.to;r.state="idle";
-        while(r.pos>SL_DRUMH*2)r.pos-=SL_DRUMH;
-        var win=$("slWin"+i);
-        win.classList.remove("hot");win.classList.remove("land");void win.offsetWidth;win.classList.add("land");
-        SL.stopped++;
-        slOnReelStopped(i);
+      if(r.pos<r.brakeFrom){
+        /* coasting : still at full cruise on the way to the
+           braking point, exactly like a real drum */
+        r.pos=Math.min(r.brakeFrom,r.pos+(r.cruise||1400)*dt/1000);
+      }else{
+        r.t+=dt;
+        var k=Math.min(1,r.t/r.dur),e=1-Math.pow(1-k,4);
+        r.pos=r.brakeFrom+(r.to-r.brakeFrom)*e;
+        if(k>=1){
+          r.pos=r.to;r.state="idle";
+          while(r.pos>SL_DRUMH*2)r.pos-=SL_DRUMH;
+          var win=$("slWin"+i);
+          win.classList.remove("hot");win.classList.remove("land");void win.offsetWidth;win.classList.add("land");
+          SL.stopped++;
+          slOnReelStopped(i);
+        }
       }
     }
     if(r.state==="spin"&&r.pos>SL_DRUMH*2.6)r.pos-=SL_DRUMH;
@@ -6854,7 +6951,7 @@ function slOnReelStopped(i){
       $("slStage").classList.add("reach");
       var rr=$("slReach");rr.style.display="none";void rr.offsetWidth;rr.style.display="";
       var hot=SL_BY_ID[seen];
-      slLcd("reach","あと1つ…！ "+hot.name+"、来いッ！","assets/cut_"+(hot.img?seen:"momona")+".webp");
+      slLcd("reach","あと1つ…！ "+hot.name+"、来いッ！",hot.img?("assets/cut_"+seen+".webp"):"assets/cover_momona.webp");
       setTimeout(function(){$("slReach").style.display="none";},1600);
       return;
     }
@@ -6867,8 +6964,10 @@ function slEval(){
     var a=grid[L.cells[0][0]][L.cells[0][1]],b=grid[L.cells[1][0]][L.cells[1][1]],c=grid[L.cells[2][0]][L.cells[2][1]];
     if(a===b&&b===c){
       var pay=Math.round(SL.bet*SL_BY_ID[a].pay*L.w);
-      total+=pay;
-      if(!best||pay>best.pay)best={pay:pay,line:li,row:L.row,sym:a};
+      if(pay>0){
+        total+=pay;
+        if(!best||pay>best.pay)best={pay:pay,line:li,row:L.row,sym:a};
+      }
       if(a==="momona")jackpot=true;
     }
   });
@@ -6881,12 +6980,16 @@ function slEval(){
   /* chance patterns （リーチ目) : the drums' own sign that the
      flow is hot — pays a small bonus and boosts the next game */
   var reachme=false;
-  if(center[0]==="gem"&&center[1]==="star"&&center[2]==="gem")reachme=true;
-  if(center[0]==="star"&&center[1]==="gem"&&center[2]==="star")reachme=true;
+  if(center[0]==="bell"&&center[1]==="sevenR"&&center[2]==="bell")reachme=true;
+  if(center[0]==="sevenR"&&center[1]==="bell"&&center[2]==="sevenR")reachme=true;
+  if(center[0]==="bar"&&center[1]==="sevenB"&&center[2]==="bar")reachme=true;
   if(grid[0][0]==="momona"&&grid[2][2]==="momona")reachme=true;
   if(grid[0][2]==="momona"&&grid[2][0]==="momona")reachme=true;
-  if(grid[1][1]==="momona"&&(grid[0][0]==="star"||grid[2][0]==="star"||grid[0][2]==="star"||grid[2][2]==="star"))reachme=true;
-  return {total:total+pairPay,pairPay:pairPay,best:best,jackpot:jackpot,reachme:reachme,grid:grid};
+  if(grid[1][1]==="momona"&&(grid[0][0]==="bell"||grid[2][0]==="bell"||grid[0][2]==="bell"||grid[2][2]==="bell"))reachme=true;
+  /* REPLAY : three replays on the centre line replay the game
+     free — the classic small role, judged on the same strips */
+  var replayWin=center[0]==="replay"&&center[1]==="replay"&&center[2]==="replay";
+  return {total:total+pairPay,pairPay:pairPay,best:best,jackpot:jackpot,reachme:reachme,replayWin:replayWin,grid:grid};
 }
 /* CLIMAX, part one : the stacking numbers. Each chunk slams in
    as layered graphic figures with an impact ring and a cabinet
@@ -6959,6 +7062,12 @@ function slFinish(){
         setTimeout(function(){$("slLcdBonus").hidden=true;},3400);
       });
     }else payNow();
+    toast(msg);
+  }else if(res.replayWin){
+    msg="🔁 リプレイ！ 次ゲーム無料でもう一回";
+    slLcd("chance","リプレイ揃い！ 無料でもう1ゲーム");
+    SL.freeNext=true;
+    SL.phase="idle";
     toast(msg);
   }else if(res.reachme){
     var bonus=SL.bet*3;
