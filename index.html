@@ -2553,6 +2553,20 @@ img{-webkit-user-drag:none}
    a few px only — the strip itself always stops symbol-true */
 .sl-win.land{animation:slSettle .34s ease-out}
 @keyframes slSettle{0%{transform:translateY(-2.5px)}45%{transform:translateY(1.6px)}100%{transform:translateY(0)}}
+/* ---------- v42 : internal-system rebuild additions ----------
+   LCD data line (game counts are public info on a real
+   machine), PUSH expectation variants (colour/size carry the
+   designed reliability), the AT navi highlight on the correct
+   first stop button, and the freeze state (reels and LCD halt
+   mid-game on the 1/16384 flag). */
+.sl-lcd-data{position:absolute;z-index:6;left:50%;bottom:5px;transform:translateX(-50%);max-width:94%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(8,4,20,.78);color:#ffd76a;font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:2.5px 9px;border-radius:99px;border:1px solid rgba(255,215,106,.45)}
+.sl-push.push-gold{width:118px;height:118px;margin:-59px 0 0 -59px;filter:drop-shadow(0 0 18px rgba(255,190,40,.95)) saturate(1.25)}
+.sl-push.push-red{width:94px;height:94px;margin:-47px 0 0 -47px;filter:hue-rotate(-52deg) saturate(1.5) drop-shadow(0 0 12px rgba(255,70,40,.8))}
+.sl-push.push-blue{width:70px;height:70px;margin:-35px 0 0 -35px;filter:hue-rotate(140deg) saturate(1.2) drop-shadow(0 0 8px rgba(70,160,255,.7))}
+.sl-stop.navi{border-color:#ffe9a8;box-shadow:0 0 0 3px #232733,0 0 0 5px rgba(255,215,106,.8),0 0 26px rgba(255,200,60,1),0 5px 0 #38060f,0 10px 15px rgba(0,0,0,.55),inset 0 3px 5px rgba(255,255,255,.6);animation:slStopPulse .45s ease-in-out infinite}
+.sl-stage.freeze .sl-strip{filter:grayscale(.7) brightness(.55)}
+.sl-stage.freeze .sl-lcd-scene img{filter:grayscale(.8) brightness(.5)}
+.sl-stage.freeze .sl-cab{filter:brightness(.72)}
 /* ---------- v41 : hero name moves into the background corridor ----------
    v40 fixed the glyph clipping but seated the name on top of the
    upper-right member's hair and face. Measured on the 390px audit
@@ -2988,10 +3002,11 @@ img{-webkit-user-drag:none}
             <div class="sl-lcd-shine"></div>
             <div class="sl-lcd-cap" id="slLcdCap">ステージ開演中♪</div>
           </div>
+          <div class="sl-lcd-data" id="slLcdData">通常 0G ／ 天井まで あと 1000G</div>
           <img class="sl-lcd-bonus" id="slLcdBonus" src="assets/sl_bonus.webp" alt="BIG BONUS" hidden>
           <div class="sl-lcd-ue" id="slUe" hidden></div>
           <button type="button" class="sl-push" id="slPush" hidden><img src="assets/sl_push.webp" alt="PUSHボタン"></button>
-          <div class="sl-reach" id="slReach" style="display:none">リーチ！</div>
+          <div class="sl-reach" id="slReach" style="display:none">テンパイ！</div>
         </div>
         <!-- the drums, fitted into the frame's reel window -->
         <div class="sl-reelbox">
@@ -3033,19 +3048,22 @@ img{-webkit-user-drag:none}
       </div>
       <img loading="lazy" decoding="async" class="mg-bang" id="slBang" src="assets/bang_jackpot.webp" alt="大当たり！">
       <div class="sl-pay">
-        <h4>📖 配当表（説明はここから下）</h4>
-        <div class="sl-payrow"><span>姫宮ももか ×3（大当たり）</span><b>ベット ×100</b></div>
-        <div class="sl-payrow"><span>赤7 ×3</span><b>ベット ×80</b></div>
-        <div class="sl-payrow"><span>青7 ×3</span><b>ベット ×60</b></div>
-        <div class="sl-payrow"><span>タレントの顔 ×3（ももか以外）</span><b>ベット ×40</b></div>
-        <div class="sl-payrow"><span>BAR ×3</span><b>ベット ×30</b></div>
-        <div class="sl-payrow"><span>ベル ×3</span><b>ベット ×15</b></div>
-        <div class="sl-payrow"><span>スイカ ×3</span><b>ベット ×12</b></div>
-        <div class="sl-payrow"><span>チェリー ×3</span><b>ベット ×6</b></div>
-        <div class="sl-payrow"><span>リプレイ ×3（中段）</span><b>次ゲーム無料</b></div>
-        <div class="sl-payrow"><span>中段ラインのペア</span><b>ベット ×2</b></div>
-        <div class="sl-payrow"><span>リーチ目（チャンスの出目）</span><b>ベット ×3 ＋ 次回チャンス</b></div>
-        <p class="note" style="margin-top:8px">リールは本物と同じ固定配列表方式：左・中・右で図柄の並び順が違う帯がそのまま流れ、止まった位置の図柄で判定します。当たりは横3ライン＋斜め2ラインの合計5ライン判定（中段が本命ラインで、他のラインは配当×1/5）。レバーを引いたら、ストップボタン3つを好きな順番で自分で止めます。あと1つで揃う形になるとリーチ演出が入り、最後のリールが勝負になります。</p>
+        <h4>📖 本機の仕様（実機の内部システム準拠）</h4>
+        <p class="note" style="margin-top:2px">大原則：<b>レバーONの瞬間に、0〜65535の乱数と確率表でそのゲームの成立役が確定</b>します。リールは結果を表示する装置で、ストップボタンの押し方で当否は変わりません。演出は結果が決まった後に、信頼度つきで選ばれます。払い出しは「枚」単位（1枚＝BET÷10コイン、コインに1:1で加算）。CZ・BIG・AT中はBET消費なし。</p>
+        <div class="sl-payrow"><span>リプレイ（再遊技）</span><b>1/7.3 ・ 次ゲーム無料</b></div>
+        <div class="sl-payrow"><span>押し順ベル（合算）</span><b>約1/1.5 ・ 正解15枚／ミス3枚</b></div>
+        <div class="sl-payrow"><span>弱チェリー</span><b>1/85 ・ 4枚（左リール）</b></div>
+        <div class="sl-payrow"><span>スイカ</span><b>1/85 ・ 5枚</b></div>
+        <div class="sl-payrow"><span>強チェリー</span><b>1/400 ・ 4枚＋強力な抽選</b></div>
+        <div class="sl-payrow"><span>チャンス目</span><b>1/250 ・ 3枚</b></div>
+        <div class="sl-payrow"><span>フリーズ（最強役）</span><b>1/16384 ・ 上位AT確定</b></div>
+        <p class="note" style="margin-top:8px"><b>レア役の役割</b>：弱チェリー／スイカ／チャンス目／強チェリーは払い出しではなく、内部状態（通常→高確）とCZ抽選の引き金です。高確中はCZ当選率が大幅アップ（例：チャンス目契機の前兆の本物率 通常約20%→高確約60%）。状態は画面に出ず、演出の熱さだけで匂わせます。</p>
+        <p class="note" style="margin-top:6px"><b>前兆</b>：CZ・ATに当選しても即告知せず、最大32Gの前兆に入ります。ガセ前兆もあります（本物率：スイカ契機＝100%／弱チェリー契機＝約50%／チャンス目契機＝約20%）。終盤3Gは連続演出、最終ゲームはPUSHボタンで告知。PUSHの色と大きさが期待度そのもの（金＝大、赤＝中、青＝小）。</p>
+        <p class="note" style="margin-top:6px"><b>CZ（チャンスゾーン）</b>：15G。毎ゲームの成立役で成功抽選を行い、成功率トータル約45%。成功で擬似ボーナス（BIG）へ。<b>BIG</b>：30Gで約200枚、消化中にAT抽選（約50%）。<b>AT</b>：純増 約3.0枚/G、初期50G、押し順ナビあり。レア役で上乗せ抽選（スイカ・強チェリーで+10〜+100G）。残り0で引き戻しゾーン32G（レア役でAT復帰抽選）。<b>天井</b>：AT間1000GでAT確定（前兆を経て告知）。現在のゲーム数は液晶内のデータ表示で確認できます。</p>
+        <p class="note" style="margin-top:6px"><b>リール制御</b>：21コマ×3リールの固定配列、回転は1周0.75秒。ストップ押下時は押した位置から<b>最大4コマ</b>の範囲で、成立役を引き込む／ハズレ時は揃わないよう蹴飛ばすテーブル制御です。スイカ等のレア役は4コマ以内に無いと取りこぼし（チャンス目風の出目）になります ― 目押しが効くのはこのためです。</p>
+        <p class="note" style="margin-top:6px"><b>リーチ目とは</b>：パチンコの「リーチ」とは別物です。パチスロのリーチ目は「ボーナスフラグが既に内部成立していることが確定する出目」（本機では斜めの赤7ペア＝2確）。成立したのに揃えられなかったゲームで出ます。ハズレでも出る紛らわしい出目は「チャンス目」と呼び、こちらは確定ではありません。あと1つで揃う形は「テンパイ」と表示します。</p>
+        <p class="note" style="margin-top:6px"><b>演出の信頼度（設計値）</b>：演出は抽選の後に選ばれます。カットインはレア役時に約43%、ハズレ時に約3%の率で選ばれるため、「カットインが出たらレア役以上」の信頼度は約31%になります。金PUSHは本前兆時に55%、ガセ前兆時に12%の率で選ばれます（前兆全体の本物率を約35%とすると金PUSHの信頼度は約70%）。フリーズ等の確定演出はハズレ時に絶対出ません。</p>
+        <p class="note" style="margin-top:6px">数値の出典：リプレイ1/7.3・レア役確率帯・前兆の契機別本物率は機種解析値（1geki.jp／pachinavi.net／南国育ち系解析ほか）、最大4コマ・0.19秒停止・80rpm等の物理仕様は型式規則と特許（JP3977863B2）、CZ 10〜20G・成功率約35〜55%・純増2〜7枚/G・天井600〜1500Gは現行スマスロの解析レンジ。いずれもメーカー公式の型式試験値そのものではありません。</p>
       </div>
     </section>
   </div>
@@ -6638,41 +6656,67 @@ window.__on("pkBack",function(){
   mgShow("hub");
 });
 /* ================= SLOT : a real pachislot cabinet =================
-   The show is built like a real machine's, in four beats —
-   FORESHADOW : every game the LCD scene shifts a little, and a
-     hot flow announces itself before anything is decided.
-   BUILD : two reels home on a line and the machine leans in —
-     reach call, shaking drum, the last reel slowing down.
-   CLIMAX : the big PUSH button erupts on the LCD, or the win
-     lands as STACKING numbers （上乗せ) slammed in layers.
-   SETTLE : the total lands last and biggest, the WIN counter
-     finishes counting, and the stage breathes again.
-   The player works the machine : pull the lever, then stop the
-   three drums in ANY order with the three stop buttons. Each
-   window shows 3 symbols (3x3) and five lines pay. */
-var SL={spinning:false,bet:50,init:false,boost:false,freeNext:false,phase:"idle",win:0,scene:0,raf:0,lastT:0,stopped:0,reach:false,idleTimer:0,pushCb:null,
-  reels:[{pos:0,speed:0,state:"idle",target:0,stopIdx:0,decel:0,from:0,to:0,t:0,dur:0,deadline:0},
-         {pos:0,speed:0,state:"idle",target:0,stopIdx:0,decel:0,from:0,to:0,t:0,dur:0,deadline:0},
-         {pos:0,speed:0,state:"idle",target:0,stopIdx:0,decel:0,from:0,to:0,t:0,dur:0,deadline:0}]};
+   v42 — REBUILT ON THE REAL INTERNAL SYSTEM (research :
+   pachislot internal mechanics, 6th-gen / スマスロ）.
+   The old build judged the stopped outme after the fact. That
+   is abolished. The order of a real machine is :
+     1. LEVER ON : one 0..65535 random draw against the flag
+        table fixes this game's role (完全確率). The stop
+        buttons can NEVER change the draw.
+     2. SECOND DRAW : rare roles roll 状態 (通常/高確) and
+        CZ/AT against the state, still at lever-on. A win does
+        not announce at once — it loads a 前兆 (real or ガセ,
+        authenticity rate depends on the trigger role).
+     3. REEL CONTROL : the drums only DISPLAY the draw. On a
+        stop press the control table picks a stop within the
+        4-cell slip window （最大4コマ) that pulls the drawn
+        role in — or, for hazure, kicks every winning line
+        away. Miss a rare role's window and it falls to a
+        取りこぼし目 (chance-eye looking) : the payout is
+        lost, the internal draw is not.
+     4. SHOW : effects are chosen AFTER the result, with
+        designed 信頼度 (see the spec panel under the machine).
+   Flow : 通常 → 前兆 (max 32G) → CZ (15G, ~45%) → 擬似BIG
+   (30G, ~200枚, AT draw 50%) → AT （純増 ~3.0枚/G, 上乗せ)
+   → 引き戻し 32G → 通常. 天井 AT間1000G. フリーズ 1/16384
+   → 上位AT. Economy : 1枚 = BET/10 coins, paid 1:1 in coins.
+   CZ / BIG / AT games do not consume BET. */
+var SL={spinning:false,bet:50,init:false,freeNext:false,phase:"idle",scene:0,raf:0,lastT:0,stopped:0,reach:false,idleTimer:0,pushCb:null,pushKind:"",
+  mode:"normal",state:"normal",kouLeft:0,sinceAT:0,zencho:null,cz:null,bonus:null,at:null,hiki:null,bonusFlag:false,freezeGame:false,atPending:false,
+  flag:null,reachShown:false,reachGame:false,correctFirst:0,firstStopped:-1,stopOrder:[],naviFirst:-1,show:null,ueGames:0,
+  reels:[{pos:0,speed:0,state:"idle",target:0,stopIdx:0,desIdx:0,from:0,to:0,t:0,dur:0,deadline:0,cruise:1400,accelT:0},
+         {pos:0,speed:0,state:"idle",target:0,stopIdx:0,desIdx:0,from:0,to:0,t:0,dur:0,deadline:0,cruise:1400,accelT:0},
+         {pos:0,speed:0,state:"idle",target:0,stopIdx:0,desIdx:0,from:0,to:0,t:0,dur:0,deadline:0,cruise:1400,accelT:0}]};
+/* ---- the flag table : widths out of 65536, normal mode ----
+   replay 1/7.3 / bell ~1/1.5 / weak cherry 1/85 / suika 1/85 /
+   strong cherry 1/400 / chance 1/250 / freeze 1/16384 */
+var SL_TBL_NORMAL=[["replay",8977],["bell",43691],["weakCherry",771],["suika",771],["strongCherry",164],["chance",262],["freeze",4]];
+var SL_TBL_BONUS=[["replay",12000],["bell",38000],["weakCherry",771],["suika",771],["strongCherry",164],["chance",262]];
+var SL_TBL_AT=[["replay",8977],["bell",13107],["weakCherry",771],["suika",771],["strongCherry",164],["chance",262]];
+function slDrawFlag(){
+  var tbl=SL.mode==="bonus"?SL_TBL_BONUS:SL.mode==="at"?SL_TBL_AT:SL_TBL_NORMAL;
+  var r=Math.floor(Math.random()*65536),acc=0,i;
+  for(i=0;i<tbl.length;i++){acc+=tbl[i][1];if(r<acc)return tbl[i][0];}
+  return "hazure";
+}
+function slMai(){return SL.bet/10;} /* coins per 1枚 */
+var SL_FLAGNAME={replay:"リプレイ",bell:"ベル",weakCherry:"弱チェリー",suika:"スイカ",strongCherry:"強チェリー",chance:"チャンス目",freeze:"フリーズ",hazure:"ハズレ"};
 var SL_SYMS=[
- {id:"momona",img:"assets/cut_momona.webp",w:1,pay:100,name:"ももか"},
- {id:"sevenR",svg:"sevenR",w:1,pay:80,name:"赤7"},
- {id:"sevenB",svg:"sevenB",w:1,pay:60,name:"青7"},
- {id:"akari",img:"assets/cut_akari.webp",w:2,pay:40,name:"ひかり"},
- {id:"kaede",img:"assets/cut_kaede.webp",w:2,pay:40,name:"しずく"},
- {id:"nana",img:"assets/cut_nana.webp",w:2,pay:40,name:"れい"},
- {id:"misa",img:"assets/cut_misa.webp",w:2,pay:40,name:"さくら"},
- {id:"bar",svg:"bar",w:2,pay:30,name:"BAR"},
- {id:"bell",svg:"bell",w:3,pay:15,name:"ベル"},
- {id:"melon",svg:"melon",w:3,pay:12,name:"スイカ"},
- {id:"cherry",svg:"cherry",w:4,pay:6,name:"チェリー"},
- {id:"replay",svg:"replay",w:4,pay:0,name:"リプレイ"},
- {id:"blank",svg:"blank",w:5,pay:0,name:"ブランク"}
+ {id:"momona",img:"assets/cut_momona.webp",name:"ももか"},
+ {id:"sevenR",svg:"sevenR",name:"赤7"},
+ {id:"sevenB",svg:"sevenB",name:"青7"},
+ {id:"akari",img:"assets/cut_akari.webp",name:"ひかり"},
+ {id:"kaede",img:"assets/cut_kaede.webp",name:"しずく"},
+ {id:"nana",img:"assets/cut_nana.webp",name:"れい"},
+ {id:"misa",img:"assets/cut_misa.webp",name:"さくら"},
+ {id:"bar",svg:"bar",name:"BAR"},
+ {id:"bell",svg:"bell",name:"ベル"},
+ {id:"melon",svg:"melon",name:"スイカ"},
+ {id:"cherry",svg:"cherry",name:"チェリー"},
+ {id:"replay",svg:"replay",name:"リプレイ"},
+ {id:"blank",svg:"blank",name:"ブランク"}
 ];
 var SL_BY_ID={};SL_SYMS.forEach(function(s){SL_BY_ID[s.id]=s;});
-/* classic reel-symbol art (SVG, drawn flat like print on the
-   band — no medallion discs, no emoji) for the non-face stops.
-   BAR and blank are laid out in slCellHTML as printed plates. */
 var SL_SVG={
   sevenR:'<svg viewBox="0 0 60 44" aria-hidden="true"><defs><linearGradient id="sl7r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a8a"/><stop offset=".45" stop-color="#f62b1d"/><stop offset="1" stop-color="#a80d02"/></linearGradient></defs><path d="M13 3h34v9L29 41H16L33 12H13z" fill="url(#sl7r)" stroke="#7d0800" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 5.8h27v3.2H19.5z" fill="rgba(255,255,255,.55)"/></svg>',
   sevenB:'<svg viewBox="0 0 60 44" aria-hidden="true"><defs><linearGradient id="sl7b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd0ff"/><stop offset=".45" stop-color="#1d6ff6"/><stop offset="1" stop-color="#023fa8"/></linearGradient></defs><path d="M13 3h34v9L29 41H16L33 12H13z" fill="url(#sl7b)" stroke="#022f7d" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 5.8h27v3.2H19.5z" fill="rgba(255,255,255,.55)"/></svg>',
@@ -6681,10 +6725,8 @@ var SL_SVG={
   cherry:'<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M24 30C26 18 34 10 44 6M38 26C39 18 41 11 44 6" fill="none" stroke="#2e8b3a" stroke-width="2.6" stroke-linecap="round"/><path d="M44 6c5-3.2 10-2.2 12.4.8C53.4 10 48.4 10.2 44 6z" fill="#37b24d"/><circle cx="21" cy="33" r="9" fill="#e8232a"/><circle cx="39" cy="29" r="10" fill="#f03238"/><ellipse cx="17.5" cy="29.5" rx="3" ry="2" fill="rgba(255,255,255,.75)" transform="rotate(-24 17.5 29.5)"/><ellipse cx="35" cy="25" rx="3.4" ry="2.2" fill="rgba(255,255,255,.75)" transform="rotate(-24 35 25)"/></svg>',
   replay:'<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M38.7 8.2A13.5 13.5 0 1 0 42.7 23.1" fill="none" stroke="#1d7fd8" stroke-width="4.6" stroke-linecap="round"/><path d="M49.8 26.2L34.8 27.8 41.2 14.2z" fill="#1d7fd8"/><text x="31" y="41.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="900" letter-spacing="1.5" fill="#1d7fd8">REPLAY</text></svg>'
 };
-/* the three drums : fixed 21-stop strips with a DIFFERENT
-   printed order on each drum, like a real machine's reel
-   table. What stops is what is judged — the strips ARE the
-   game, there is no separate outcome layer. */
+/* the three drums : fixed 21-stop strips, a different printed
+   order per drum (unchanged from the real-machine rebuild) */
 var SL_DRUMS=[
  ["replay","cherry","sevenR","bell","akari","blank","melon","bar","kaede","cherry","replay","nana","bell","blank","misa","melon","sevenB","cherry","momona","bar","replay"],
  ["bell","blank","misa","cherry","replay","sevenB","melon","bar","momona","cherry","bell","blank","akari","replay","melon","kaede","cherry","sevenR","bar","nana","replay"],
@@ -6692,11 +6734,11 @@ var SL_DRUMS=[
 ];
 var SL_CELLH=44,SL_N=21,SL_DRUMH=SL_CELLH*SL_N;
 var SL_LINES=[
- {cells:[[0,1],[1,1],[2,1]],w:1,row:1},
- {cells:[[0,0],[1,0],[2,0]],w:0.2,row:0},
- {cells:[[0,2],[1,2],[2,2]],w:0.2,row:2},
- {cells:[[0,0],[1,1],[2,2]],w:0.2,row:1},
- {cells:[[0,2],[1,1],[2,0]],w:0.2,row:1}
+ {cells:[[0,1],[1,1],[2,1]],row:1},
+ {cells:[[0,0],[1,0],[2,0]],row:0},
+ {cells:[[0,2],[1,2],[2,2]],row:2},
+ {cells:[[0,0],[1,1],[2,2]],row:1},
+ {cells:[[0,2],[1,1],[2,0]],row:1}
 ];
 var SL_SCENES=[
  {img:"assets/cover_momona.webp",cap:"ももか、ステージ開演中♪"},
@@ -6706,12 +6748,13 @@ var SL_SCENES=[
  {img:"assets/cover_misa.webp",cap:"さくら、投げキッス♪"},
  {img:"assets/kv_sky.webp",cap:"夜空のステージ、熱気上昇中"}
 ];
-function slPick(){
-  var tot=0,i,x;for(i=0;i<SL_SYMS.length;i++)tot+=SL_SYMS[i].w*(SL.boost&&SL_SYMS[i].img?1.7:1);
-  x=Math.random()*tot;
-  for(i=0;i<SL_SYMS.length;i++){x-=SL_SYMS[i].w*(SL.boost&&SL_SYMS[i].img?1.7:1);if(x<0)return SL_SYMS[i];}
-  return SL_SYMS[SL_SYMS.length-1];
-}
+/* chance-eye patterns (centre line) : hazure can show these
+   too — they deny nothing. Reach-eye pattern : a diagonal
+   seven pair (2確) that ONLY a standing bonus flag produces —
+   hazure control actively avoids it. */
+var SL_CHANCE_PATTERNS=[["bell","sevenR","bell"],["sevenR","bell","sevenR"],["bar","sevenB","bar"]];
+function slIsChancePattern(c){for(var i=0;i<SL_CHANCE_PATTERNS.length;i++){var p=SL_CHANCE_PATTERNS[i];if(c[0]===p[0]&&c[1]===p[1]&&c[2]===p[2])return true;}return false;}
+function slIsReachEye(g){return g[0][0]==="sevenR"&&g[1][1]==="sevenR"&&g[2][2]!=="sevenR"||g[0][2]==="sevenR"&&g[1][1]==="sevenR"&&g[2][0]!=="sevenR";}
 function slCellHTML(id){
   var s=SL_BY_ID[id];
   if(id==="bar")return '<div class="sl-cell"><span class="bar"><i>BAR</i><i>BAR</i></span></div>';
@@ -6744,9 +6787,21 @@ function slScene(idx,cap){
   var s=SL_SCENES[idx%SL_SCENES.length];
   slLcd("",cap!=null?cap:s.cap,s.img);
 }
-/* the data-plate numbers auto-fit : measure the text and
-   shrink the font until ANY digit count sits inside its
-   plate (a 7-digit CREDIT can never clip again) */
+/* the LCD data line : game counts are public information on a
+   real machine — normal games since AT, ceiling distance, and
+   the live counters of CZ / BIG / AT / 引き戻し */
+function slSetData(){
+  var el=$("slLcdData");if(!el)return;
+  var t="";
+  if(SL.mode==="zencho"&&SL.zencho)t="前兆中… "+(SL.zencho.total-SL.zencho.left+1)+" / "+SL.zencho.total+"G";
+  else if(SL.mode==="cz"&&SL.cz)t="CZ 残り "+SL.cz.left+"G ／ 期待度 "+Math.round(SL.cz.heat)+"%";
+  else if(SL.mode==="bonus"&&SL.bonus)t="BIG 残り "+SL.bonus.left+"G ／ 獲得 "+SL.bonus.paid+"枚";
+  else if(SL.mode==="at"&&SL.at)t=(SL.at.upper?"上位AT":"AT")+" 残り "+SL.at.left+"G ／ 純増 約3.0枚/G";
+  else if(SL.mode==="hiki"&&SL.hiki)t="引き戻しゾーン 残り "+SL.hiki.left+"G";
+  else t="通常 "+SL.sinceAT+"G ／ 天井まで あと "+Math.max(0,1000-SL.sinceAT)+"G";
+  if(SL.bonusFlag)t+=" ／ ボーナス内部成立中！";
+  el.textContent=t;
+}
 var SL_MEAS=document.createElement("canvas").getContext("2d");
 function slFitNum(el,base){
   if(!el||!el.parentNode)return;
@@ -6759,9 +6814,6 @@ function slFitNum(el,base){
   el.style.fontSize=s+"px";
 }
 function slFitData(){slFitNum($("slCredit"),15);slFitNum($("slBetD"),11);slFitNum($("slWinD"),11);}
-/* the drum cell height is derived from the stage width so the
-   three cells exactly fill the frame's reel window at any
-   screen size (330 of the frame's 930-unit width, /3 cells) */
 function slLayout(){
   var st=$("slStage");if(!st||!st.clientWidth||SL.spinning)return;
   var cellH=Math.round(st.clientWidth*330/930/3*10)/10;
@@ -6772,17 +6824,19 @@ function slLayout(){
 }
 function slRenderCtl(){
   var btn=$("slSpinBtn");if(!btn)return;
-  btn.disabled=SL.spinning||SL.phase==="settle"||(S.coin<SL.bet&&!SL.freeNext);
-  btn.textContent=SL.spinning?"回転中…":SL.freeNext?"フリーゲーム！":"スタート";
-  $("slLever").disabled=SL.spinning||SL.phase==="settle"||(S.coin<SL.bet&&!SL.freeNext);
+  var freeMode=SL.mode==="cz"||SL.mode==="bonus"||SL.mode==="at";
+  btn.disabled=SL.spinning||SL.phase==="settle"||SL.phase==="pushwait"||(!freeMode&&!SL.freeNext&&S.coin<SL.bet);
+  btn.textContent=SL.spinning?"回転中…":SL.phase==="pushwait"?"PUSH待ち":SL.freeNext?"フリーゲーム！":freeMode?(SL.mode==="cz"?"CZ消化":SL.mode==="bonus"?"BIG消化":"AT消化"):"スタート";
+  $("slLever").disabled=btn.disabled;
   $("slCredit").textContent=S.coin;
   $("slBetD").textContent=SL.bet;
-  slFitData();
+  slFitData();slSetData();
   var chips=document.querySelectorAll("[data-slbet]");
   for(var i=0;i<chips.length;i++)chips[i].className="sl-bet"+(parseInt(chips[i].getAttribute("data-slbet"),10)===SL.bet?" on":"");
   for(var j=0;j<3;j++){
     var b=$("slStop"+j);
     b.classList.toggle("live",SL.reels[j].state==="spin"||SL.reels[j].state==="decel");
+    b.classList.toggle("navi",SL.spinning&&SL.naviFirst===j&&SL.firstStopped<0);
     b.disabled=!(SL.reels[j].state==="spin");
   }
 }
@@ -6810,54 +6864,277 @@ window.__slEnter=function(){
     });
     window.addEventListener("resize",function(){slLayout();slFitData();});
     for(var s2=0;s2<3;s2++)(function(n){window.__on("slStop"+n,function(){slStopReel(n);});})(s2);
-    window.__on("slPush",function(){if(SL.pushCb){var cb=SL.pushCb;SL.pushCb=null;$("slPush").hidden=true;cb();}});
+    window.__on("slPush",function(){if(SL.pushCb){var cb=SL.pushCb;SL.pushCb=null;$("slPush").hidden=true;$("slPush").className="sl-push";cb();}});
     window.__on("slBack",function(){
-      if(SL.spinning||SL.phase==="settle"){toast("演出中は戻れません");return;}
+      if(SL.spinning||SL.phase==="settle"||SL.phase==="pushwait"){toast("演出中は戻れません");return;}
       if(SL.idleTimer){clearInterval(SL.idleTimer);SL.idleTimer=0;}
       mgShow("hub");
     });
     SL.idleTimer=setInterval(function(){
-      if(SL.phase==="idle"&&!SL.spinning){SL.scene++;slScene(SL.scene);}
+      if(SL.phase==="idle"&&!SL.spinning&&SL.mode==="normal"){SL.scene++;slScene(SL.scene);}
     },6000);
   }
   slScene(SL.scene);
   slRenderCtl();
 };
+/* ============ internal draws at lever-on ============ */
+function slZenchoLen(){
+  var r=Math.random();
+  if(r<0.30)return 8+Math.floor(Math.random()*9);       /* 8-16G */
+  if(r<0.50)return 24+Math.floor(Math.random()*5);      /* 24-28G */
+  if(r<0.65)return 29; if(r<0.80)return 30;
+  if(r<0.92)return 31; return 32;
+}
+function slStartZencho(real,dest,trigger){
+  var len=slZenchoLen();
+  SL.mode="zencho";
+  SL.zencho={left:len,total:len,real:real,dest:dest,trigger:trigger};
+}
+/* rare-role second draw : 状態アップ + CZ抽選. 前兆の本物率は
+   契機で決まる （源さん系の解析値が土台）: チャンス目契機は
+   約8割ガセ / 弱チェリー契機は約5割ガセ / スイカ契機は
+   本前兆確定 / 強チェリーは大半が本物。*/
+function slRareDraw(flag){
+  var kou=SL.state==="koukaku";
+  var up={weakCherry:0.10,suika:0.15,chance:0.20,strongCherry:0.50}[flag]||0;
+  if(!kou&&Math.random()<up){SL.state="koukaku";SL.kouLeft=10;}
+  var T={
+    weakCherry:{start:kou?0.45:0.30,real:kou?0.65:0.50},
+    suika:{start:kou?0.55:0.35,real:1.0},
+    chance:{start:kou?0.60:0.40,real:kou?0.60:0.20},
+    strongCherry:{start:kou?0.95:0.80,real:kou?0.90:0.75}
+  }[flag];
+  if(!T||SL.mode!=="normal")return;
+  if(Math.random()<T.start){
+    var real=Math.random()<T.real;
+    var dest="cz";
+    if(flag==="strongCherry"&&real&&Math.random()<0.15)dest="bonus";
+    slStartZencho(real,dest,flag);
+  }
+}
+function slLeverDraws(){
+  var f=slDrawFlag();
+  SL.flag=f;SL.freezeGame=false;
+  if(SL.mode==="normal"||SL.mode==="zencho"){
+    if(f==="freeze"){SL.freezeGame=true;return f;}
+    if(SL.mode==="normal"){
+      if(SL.sinceAT>=999){ /* 天井 : AT間1000G */
+        slStartZencho(true,"at","tenjo");
+      }else if(f==="weakCherry"||f==="suika"||f==="chance"||f==="strongCherry"){
+        slRareDraw(f);
+      }
+    }
+  }
+  if(SL.mode==="cz"&&SL.cz){
+    /* CZ success draw, per game, by role — totals ~45% */
+    var p={hazure:0.02,replay:0.04,bell:0.035,weakCherry:0.22,suika:0.26,chance:0.30,strongCherry:0.55,freeze:1}[f]||0.01;
+    if(Math.random()<p)SL.cz.success=true;
+    if(f==="weakCherry"||f==="suika"||f==="chance"||f==="strongCherry")SL.cz.heat=Math.min(92,SL.cz.heat+18);
+  }
+  if(SL.mode==="hiki"&&SL.hiki){
+    var hp={weakCherry:0.05,suika:0.15,chance:0.10,strongCherry:0.50}[f]||0;
+    if(hp&&Math.random()<hp)SL.hiki.success=true;
+  }
+  if(SL.mode==="at"&&SL.at&&(f==="weakCherry"||f==="suika"||f==="chance"||f==="strongCherry")){
+    /* 上乗せ抽選 : スイカ・強チェリーが本命 */
+    var U=SL.at.upper?
+      {weakCherry:[[10,0.25],[30,0.08]],suika:[[10,0.35],[30,0.18],[50,0.08]],chance:[[10,0.30],[30,0.10]],strongCherry:[[30,0.35],[50,0.25],[100,0.15]]}:
+      {weakCherry:[[10,0.18]],suika:[[10,0.30],[30,0.12],[50,0.04]],chance:[[10,0.22],[30,0.06]],strongCherry:[[30,0.30],[50,0.18],[100,0.07]]};
+    var rows=U[f]||[],rr=Math.random(),add=0;
+    for(var i=0;i<rows.length;i++){if(rr<rows[i][1]){add=rows[i][0];break;}rr-=rows[i][1];}
+    SL.ueGames=add;
+  }else SL.ueGames=0;
+  /* 押し順ベルの正解 （最初に止めるリール) */
+  SL.correctFirst=Math.floor(Math.random()*3);
+  SL.naviFirst=(SL.mode==="at"&&f==="bell")?SL.correctFirst:-1;
+  return f;
+}
+/* ============ show selection (after the result) ============
+   Cut-in rates are set so the posterior lands on the design
+   value : rare roles combined ~3.0%, P(cutin|rare)~43%,
+   P(cutin|hazure)~3% → カットイン信頼度 約31%. 確定級の
+   演出 (金PUSH・フリーズ) never fires on a decided loss,
+   gase-zencho PUSH colours being the one designed exception. */
+function slChooseShow(){
+  var f=SL.flag,show={cutin:false,hot:false};
+  if(SL.freezeGame){show.freeze=true;return show;}
+  if(SL.mode==="zencho"&&SL.zencho){
+    var z=SL.zencho,elapsed=z.total-z.left+1;
+    show.zencho=true;show.heat=elapsed/z.total;
+    if(z.left<=3)show.climax=true;
+    return show;
+  }
+  if(SL.mode==="cz"){show.cz=true;return show;}
+  if(SL.mode==="bonus"){show.bonus=true;return show;}
+  if(SL.mode==="at"){show.at=true;return show;}
+  if(SL.mode==="hiki"){show.hiki=true;return show;}
+  var cr={weakCherry:0.30,suika:0.50,chance:0.45,strongCherry:0.70}[f];
+  if(cr!==undefined){show.cutin=Math.random()<cr;show.hot=true;}
+  else if(f==="hazure"&&Math.random()<0.03)show.cutin=true;
+  return show;
+}
+function slApplyShow(){
+  var s=SL.show||{},f=SL.flag;
+  var stage=$("slStage");
+  if(s.freeze){slLcd("reach","―― 時が、止まった");return;}
+  if(s.zencho){
+    var z=SL.zencho;
+    if(s.climax)slLcd("reach",z.left===1?"連続演出・最終ゲーム…！":"連続演出！ あと"+z.left+"G…",SL_SCENES[SL.scene%SL_SCENES.length].img);
+    else if(s.heat>0.45)slLcd("chance","ざわ…ざわ… 空気が変わってきた ("+(z.total-z.left+1)+"G目)",SL_SCENES[SL.scene%SL_SCENES.length].img);
+    else slLcd("chance","…ん？ 今の空気、ちょっと熱いかも",SL_SCENES[SL.scene%SL_SCENES.length].img);
+    return;
+  }
+  if(s.cz){slLcd("chance","CZ ― 成功でBIG！ レア役でチャンス",SL_SCENES[1].img);return;}
+  if(s.bonus){slLcd("chance","BIG消化中 ― ベルを揃えて枚数を伸ばせ！",SL_SCENES[0].img);return;}
+  if(s.at){slLcd(SL.naviFirst>=0?"reach":"chance",SL.naviFirst>=0?("ナビ！ まず"+["左","中","右"][SL.naviFirst]+"リールから止めろ！"):((SL.at.upper?"上位AT中！":"AT中！")+" レア役で上乗せ抽選"),SL_SCENES[SL.scene%SL_SCENES.length].img);return;}
+  if(s.hiki){slLcd("chance","引き戻しゾーン… レア役でAT復帰！",SL_SCENES[5].img);return;}
+  if(SL.bonusFlag){slLcd("chance","ボーナス内部成立中 ― 赤7を狙え！",SL_SCENES[0].img);return;}
+  if(s.cutin){
+    var img=(f==="weakCherry"||f==="chance")?"assets/cut_akari.webp":f==="suika"?"assets/cut_kaede.webp":f==="strongCherry"?"assets/cut_momona.webp":SL_SCENES[SL.scene%SL_SCENES.length].img;
+    slLcd("reach","カットイン！ "+SL_FLAGNAME[f]+"の気配…！",img);
+    stage.classList.remove("shake");void stage.offsetWidth;stage.classList.add("shake");
+    return;
+  }
+  if(s.hot){slLcd("chance",SL_FLAGNAME[f]+"成立 ― 何か起きるか…？",SL_SCENES[SL.scene%SL_SCENES.length].img);return;}
+  slScene(SL.scene);
+}
+/* ============ reel control ============ */
+function slOccurrences(i,sym){var o=[];for(var k=0;k<SL_N;k++)if(SL_DRUMS[i][k]===sym)o.push(k);return o;}
+function slDesiredStops(){
+  var f=SL.flag,des=[0,0,0],i,occ;
+  function pick(i2,sym){occ=slOccurrences(i2,sym);return occ[Math.floor(Math.random()*occ.length)];}
+  function rnd(i2){return Math.floor(Math.random()*SL_N);}
+  SL.reachGame=false;
+  if(SL.bonusFlag&&!SL.reachShown){
+    /* リーチ目 game : diagonal seven pair (2確) — top-left,
+       centre, and a non-seven bottom-right */
+    des=[3,17,6];SL.reachGame=true;return des;
+  }
+  if(SL.bonusFlag){for(i=0;i<3;i++)des[i]=pick(i,"sevenR");return des;}
+  switch(f){
+    case "replay":for(i=0;i<3;i++)des[i]=pick(i,"replay");break;
+    case "bell":for(i=0;i<3;i++)des[i]=pick(i,"bell");break;
+    case "suika":for(i=0;i<3;i++)des[i]=pick(i,"melon");break;
+    case "weakCherry":case "strongCherry":
+      des[0]=pick(0,"cherry");des[1]=rnd(1);des[2]=rnd(2);break;
+    case "chance":
+      var p=SL_CHANCE_PATTERNS[Math.floor(Math.random()*SL_CHANCE_PATTERNS.length)];
+      for(i=0;i<3;i++)des[i]=pick(i,p[i]);break;
+    case "freeze":for(i=0;i<3;i++)des[i]=pick(i,"sevenR");break;
+    default:for(i=0;i<3;i++)des[i]=rnd(i);
+  }
+  return des;
+}
+/* press-time control table : candidates are the press index
+   +0..4 cells only （最大4コマ滑り). Score = pull the drawn
+   role in / kick losing lines away on the last drum. */
+function slControlStop(i){
+  var r=SL.reels[i];
+  var posMod=((r.pos%SL_DRUMH)+SL_DRUMH)%SL_DRUMH;
+  var pressIdx=Math.round(posMod/SL_CELLH)%SL_N; /* stop index whose centre is at the line now */
+  var stoppedCount=0,grids=[null,null,null],j;
+  for(j=0;j<3;j++)if(SL.reels[j].state==="idle"){grids[j]=slGridOf(j);stoppedCount++;}
+  var isLast=stoppedCount===2;
+  var f=SL.flag,desIdx=r.desIdx;
+  var alignSym={replay:"replay",bell:"bell",suika:"melon",freeze:"sevenR"}[f]||null;
+  if(SL.bonusFlag)alignSym="sevenR";
+  function colOf(stopIdx){var d=SL_DRUMS[i];return [d[(stopIdx-1+SL_N)%SL_N],d[stopIdx],d[(stopIdx+1)%SL_N]];}
+  function score(stopIdx,slip){
+    var col=colOf(stopIdx),sc=-slip*0.01;
+    if(stopIdx===desIdx)sc+=60;
+    if(alignSym){
+      if(col[1]===alignSym)sc+=100;
+      else if(col[0]===alignSym||col[2]===alignSym)sc+=25;
+      if(isLast){
+        for(var L=0;L<SL_LINES.length;L++){
+          var cells=SL_LINES[L].cells,ok=true;
+          for(var c=0;c<3;c++){var ri=cells[c][0],row=cells[c][1];var v=ri===i?col[row]:(grids[ri]?grids[ri][row]:alignSym);if(v!==alignSym){ok=false;break;}}
+          if(ok)sc+=1000;
+        }
+      }
+    }
+    if(f==="weakCherry"||f==="strongCherry"){
+      if(i===0&&col[1]==="cherry")sc+=1000;
+      if(i===0&&(col[0]==="cherry"||col[2]==="cherry"))sc+=30;
+    }
+    if(f==="chance"&&isLast){
+      var cen=[grids[0]?grids[0][1]:(i===0?col[1]:null),grids[1]?grids[1][1]:(i===1?col[1]:null),grids[2]?grids[2][1]:(i===2?col[1]:null)];
+      if(cen[0]&&cen[1]&&cen[2]&&slIsChancePattern(cen))sc+=900;
+    }
+    if(isLast&&(f==="hazure"||f==="weakCherry"||f==="strongCherry"||f==="chance")){
+      /* 蹴飛ばし : on a non-aligned draw the last drum must
+         not complete any 3-of-a-kind, a replay line, the
+         chance pattern (unless drawn) or a reach-eye */
+      var g2=[grids[0]||col,grids[1]||col,grids[2]||col];
+      if(i===0)g2[0]=col;if(i===1)g2[1]=col;if(i===2)g2[2]=col;
+      for(var L2=0;L2<SL_LINES.length;L2++){
+        var cc=SL_LINES[L2].cells,a=g2[cc[0][0]][cc[0][1]],b=g2[cc[1][0]][cc[1][1]],c3=g2[cc[2][0]][cc[2][1]];
+        if(a===b&&b===c3)sc-=1000;
+      }
+      var cen2=[g2[0][1],g2[1][1],g2[2][1]];
+      if(f!=="chance"&&slIsChancePattern(cen2))sc-=400;
+      if(slIsReachEye(g2)&&!SL.reachGame)sc-=1000;
+    }
+    if(SL.reachGame&&stopIdx===desIdx)sc+=1000;
+    return sc;
+  }
+  var best=-1e9,bestStop=pressIdx,bestSlip=0;
+  for(var slip=0;slip<=4;slip++){
+    var cand=(pressIdx+slip)%SL_N;
+    var sc=score(cand,slip);
+    if(sc>best){best=sc;bestStop=cand;bestSlip=slip;}
+  }
+  /* replay / bell are the free-pull roles on a real machine
+     (evenly spaced on the band) : if the 4-cell window holds
+     no bell/replay at all, extend to the nearest one ahead */
+  if(alignSym&&(alignSym==="replay"||alignSym==="bell")){
+    var bc=colOf(bestStop);
+    if(bc[0]!==alignSym&&bc[1]!==alignSym&&bc[2]!==alignSym){
+      for(var s2=5;s2<SL_N;s2++){var c2=(pressIdx+s2)%SL_N;var cl=colOf(c2);if(cl[0]===alignSym||cl[1]===alignSym||cl[2]===alignSym){bestStop=c2;bestSlip=s2;break;}}
+    }
+  }
+  return {stopIdx:bestStop,slip:bestSlip};
+}
 function slSpin(){
-  if(SL.spinning||SL.phase==="settle")return;
+  if(SL.spinning||SL.phase==="settle"||SL.phase==="pushwait")return;
+  var freeMode=SL.mode==="cz"||SL.mode==="bonus"||SL.mode==="at";
   if(SL.freeNext){SL.freeNext=false;}
-  else{
+  else if(!freeMode){
     if(S.coin<SL.bet){toast("コインが足りません");return;}
     S.coin-=SL.bet;renderStats();
   }
-  SL.spinning=true;SL.phase="spin";SL.stopped=0;SL.reach=false;SL.win=0;
+  SL.spinning=true;SL.phase="spin";SL.stopped=0;SL.reach=false;SL.stopOrder=[];SL.firstStopped=-1;SL.ueGames=0;
   $("slWinD").textContent="0";
   var stage=$("slStage");
-  stage.classList.remove("reach","celebrate");stage.classList.add("spinning");
+  stage.classList.remove("reach","celebrate","freeze");stage.classList.add("spinning");
   $("slReach").style.display="none";
   $("slLcdBonus").hidden=true;$("slUe").hidden=true;$("slPush").hidden=true;
   $("slLineGlow").hidden=true;
   $("slConfetti").innerHTML="";
-  /* FORESHADOW : the scene always shifts as the game starts —
-     a boosted flow or a lucky hunch shows on the LCD before a
-     single drum has stopped */
+  /* 1) LEVER ON : the draw happens NOW, before any drum moves */
+  slLeverDraws();
   SL.scene++;
-  if(SL.boost)slLcd("chance","チャンス継続中…！ この流れ、熱い",SL_SCENES[SL.scene%SL_SCENES.length].img);
-  else if(Math.random()<0.22)slLcd("chance","…ん？ 今の空気、ちょっと熱いかも",SL_SCENES[SL.scene%SL_SCENES.length].img);
-  else slScene(SL.scene);
+  /* 2) the show is chosen from the decided result */
+  SL.show=slChooseShow();
+  slApplyShow();
+  /* 3) desired stops from the draw; the press-time table does
+        the final 4-cell control per drum */
+  var des=slDesiredStops();
   var now=performance.now();
   for(var i=0;i<3;i++){
-    var r=SL.reels[i],sym=slPick();
-    var occ=[];SL_DRUMS[i].forEach(function(id,k){if(id===sym.id)occ.push(k);});
-    r.stopIdx=occ[Math.floor(Math.random()*occ.length)];
-    /* LAUNCH : every drum starts from rest and ramps up to the
-       SAME cruise speed — no instant top speed, no per-drum
-       speed lottery, so all three drums share one physical
-       feel and the lever answers at once. */
-    r.state="spin";r.speed=0;r.cruise=1400;r.accelT=0;r.deadline=now+9000;
+    var r=SL.reels[i];
+    r.desIdx=des[i];r.stopIdx=des[i];
+    r.state="spin";r.speed=0;r.cruise=SL_DRUMH/0.75;r.accelT=0;r.deadline=now+9000; /* 1 revolution = 0.75s */
     $("slWin"+i).classList.remove("land","hot");
   }
-  SL.boost=false;
+  if(SL.freezeGame){
+    setTimeout(function(){
+      if(!SL.spinning)return;
+      stage.classList.add("freeze");
+      slLcd("reach","フリーズ…！！");
+      setTimeout(function(){stage.classList.remove("freeze");},1500);
+    },650);
+  }
   SL.lastT=now;
   if(!SL.raf)SL.raf=requestAnimationFrame(slTick);
   slRenderCtl();
@@ -6865,25 +7142,19 @@ function slSpin(){
 function slStopReel(i){
   var r=SL.reels[i];
   if(!SL.spinning||r.state!=="spin")return;
-  /* SLIP （すべり) : the drum does NOT brake the instant the
-     button lands. It keeps cruising to a braking point, then
-     glides the last few stops to a halt exactly on the target
-     symbol. Travel is counted in whole symbols — at least the
-     braking zone (5 stops, 9 on a reach for the long tease),
-     plus however far the next alignment of the target strip
-     position sits — so the stop is always symbol-true : no
-     half positions, no snap-back, no overshoot-and-return. */
-  var base=(r.stopIdx-1)*SL_CELLH;
-  var cur=((r.pos%SL_DRUMH)+SL_DRUMH)%SL_DRUMH;
-  var delta=((base-cur)%SL_DRUMH+SL_DRUMH)%SL_DRUMH;
-  var zone=SL_CELLH*(SL.reach?9:5);
-  while(delta<zone)delta+=SL_DRUMH;
+  if(SL.firstStopped<0)SL.firstStopped=i;
+  SL.stopOrder.push(i);
+  var ctl=slControlStop(i);
+  r.stopIdx=ctl.stopIdx;
+  var targetMod=((ctl.stopIdx-1)*SL_CELLH%SL_DRUMH+SL_DRUMH)%SL_DRUMH;
+  var curMod=((r.pos%SL_DRUMH)+SL_DRUMH)%SL_DRUMH;
+  var delta=((targetMod-curMod)%SL_DRUMH+SL_DRUMH)%SL_DRUMH;
+  if(delta<SL_CELLH*0.35)delta+=SL_DRUMH*0; /* a hair of travel is fine — ease-out handles it */
   r.from=r.pos;r.to=r.pos+delta;r.t=0;
-  r.brakeFrom=r.to-zone;
-  /* braking time is set so the glide ENTERS at cruise speed
-     (ease-out-quartic initial slope 4 × zone / dur = cruise)
-     and bleeds smoothly to zero — one continuous motion */
-  r.dur=4*zone/(r.cruise||1400)*1000;
+  /* glide time : ease-out-quartic entering at cruise speed
+     (initial slope 4*delta/dur = cruise), bleeding to zero.
+     Short slips stop fast, long slips glide — one motion. */
+  r.dur=Math.max(120,4*delta/(r.cruise||1400)*1000);
   r.state="decel";
   if(SL.reach)$("slWin"+i).classList.add("hot");
   slRenderCtl();
@@ -6892,28 +7163,23 @@ function slTick(ts){
   SL.raf=0;
   if(!SL.spinning)return;
   var dt=Math.min(50,ts-(SL.lastT||ts));SL.lastT=ts;
+  var frozen=$("slStage").classList.contains("freeze");
   var allStopped=true;
   for(var i=0;i<3;i++){
     var r=SL.reels[i];
     if(r.state==="spin"){
       allStopped=false;
-      /* launch ramp : speed eases from rest to cruise over
-         ~450ms (smoothstep), then holds at cruise. Position
-         integrates the speed every frame — no fixed-step
-         judder, no frame skips. */
-      if(r.accelT<1){r.accelT=Math.min(1,r.accelT+dt/450);r.speed=r.cruise*r.accelT*(2-r.accelT);}
-      r.pos+=r.speed*dt/1000;
-      if(ts>r.deadline)slStopReel(i);
+      if(!frozen){
+        if(r.accelT<1){r.accelT=Math.min(1,r.accelT+dt/450);r.speed=r.cruise*r.accelT*(2-r.accelT);}
+        r.pos+=r.speed*dt/1000;
+        if(ts>r.deadline)slStopReel(i);
+      }
     }else if(r.state==="decel"){
       allStopped=false;
-      if(r.pos<r.brakeFrom){
-        /* coasting : still at full cruise on the way to the
-           braking point, exactly like a real drum */
-        r.pos=Math.min(r.brakeFrom,r.pos+(r.cruise||1400)*dt/1000);
-      }else{
+      if(!frozen){
         r.t+=dt;
         var k=Math.min(1,r.t/r.dur),e=1-Math.pow(1-k,4);
-        r.pos=r.brakeFrom+(r.to-r.brakeFrom)*e;
+        r.pos=r.from+(r.to-r.from)*e;
         if(k>=1){
           r.pos=r.to;r.state="idle";
           while(r.pos>SL_DRUMH*2)r.pos-=SL_DRUMH;
@@ -6931,9 +7197,9 @@ function slTick(ts){
   else slFinish();
   slRenderCtl();
 }
-/* BUILD : after each stop, look for a live line — two stopped
-   drums sharing a symbol on any of the five lines with a drum
-   still turning is a reach, wherever the open drum sits */
+/* テンパイ表示 : two stopped drums share a symbol on a line
+   with one drum still turning. (This is NOT a リーチ目 —
+   reach-eyes are defined in the spec panel.) */
 function slOnReelStopped(i){
   if(SL.stopped>=3||SL.reach)return;
   var grids=[null,null,null],r2;
@@ -6946,10 +7212,10 @@ function slOnReelStopped(i){
       var id=grids[ri][row];
       if(seen===null)seen=id;else if(seen!==id)ok=false;
     }
-    if(ok&&open&&seen){
+    if(ok&&open&&seen&&seen!=="blank"){
       SL.reach=true;
       $("slStage").classList.add("reach");
-      var rr=$("slReach");rr.style.display="none";void rr.offsetWidth;rr.style.display="";
+      var rr=$("slReach");rr.textContent="テンパイ！";rr.style.display="none";void rr.offsetWidth;rr.style.display="";
       var hot=SL_BY_ID[seen];
       slLcd("reach","あと1つ…！ "+hot.name+"、来いッ！",hot.img?("assets/cut_"+seen+".webp"):"assets/cover_momona.webp");
       setTimeout(function(){$("slReach").style.display="none";},1600);
@@ -6957,45 +7223,37 @@ function slOnReelStopped(i){
     }
   }
 }
+/* payout is read off the DISPLAYED lines (the control pulled
+   the drawn role in, or it visibly fell) — progression was
+   already decided at lever-on */
 function slEval(){
   var grid=[slGridOf(0),slGridOf(1),slGridOf(2)];
-  var total=0,best=null,jackpot=false;
+  var mai=slMai(),bestMai=0,best=null,replayWin=false;
   SL_LINES.forEach(function(L,li){
     var a=grid[L.cells[0][0]][L.cells[0][1]],b=grid[L.cells[1][0]][L.cells[1][1]],c=grid[L.cells[2][0]][L.cells[2][1]];
     if(a===b&&b===c){
-      var pay=Math.round(SL.bet*SL_BY_ID[a].pay*L.w);
-      if(pay>0){
-        total+=pay;
-        if(!best||pay>best.pay)best={pay:pay,line:li,row:L.row,sym:a};
-      }
-      if(a==="momona")jackpot=true;
+      var m=0;
+      if(a==="bell")m=(SL.mode==="bonus")?12:(SL.firstStopped===SL.correctFirst)?15:3;
+      else if(a==="melon")m=5;
+      else if(a==="replay"){replayWin=true;m=0;}
+      else if(a==="sevenR")m=30;
+      else if(a==="sevenB")m=20;
+      else if(a==="bar")m=15;
+      else if(a==="momona")m=50;
+      else if(SL_BY_ID[a]&&SL_BY_ID[a].img)m=20;
+      if(m>bestMai){bestMai=m;best={sym:a,line:li,row:L.row};}
     }
   });
+  var cherryPay=0;
+  if(SL.flag==="weakCherry"||SL.flag==="strongCherry"){
+    for(var L2=0;L2<SL_LINES.length;L2++){var lc=SL_LINES[L2].cells;if(grid[lc[0][0]][lc[0][1]]==="cherry"){cherryPay=4;break;}}
+  }
   var center=[grid[0][1],grid[1][1],grid[2][1]];
-  var pairSym=null;
-  if(center[0]===center[1]||center[1]===center[2])pairSym=center[1];
-  else if(center[0]===center[2])pairSym=center[0];
-  var pairPay=0;
-  if(pairSym&&!(center[0]===center[1]&&center[1]===center[2]))pairPay=SL.bet*2;
-  /* chance patterns （リーチ目) : the drums' own sign that the
-     flow is hot — pays a small bonus and boosts the next game */
-  var reachme=false;
-  if(center[0]==="bell"&&center[1]==="sevenR"&&center[2]==="bell")reachme=true;
-  if(center[0]==="sevenR"&&center[1]==="bell"&&center[2]==="sevenR")reachme=true;
-  if(center[0]==="bar"&&center[1]==="sevenB"&&center[2]==="bar")reachme=true;
-  if(grid[0][0]==="momona"&&grid[2][2]==="momona")reachme=true;
-  if(grid[0][2]==="momona"&&grid[2][0]==="momona")reachme=true;
-  if(grid[1][1]==="momona"&&(grid[0][0]==="bell"||grid[2][0]==="bell"||grid[0][2]==="bell"||grid[2][2]==="bell"))reachme=true;
-  /* REPLAY : three replays on the centre line replay the game
-     free — the classic small role, judged on the same strips */
-  var replayWin=center[0]==="replay"&&center[1]==="replay"&&center[2]==="replay";
-  return {total:total+pairPay,pairPay:pairPay,best:best,jackpot:jackpot,reachme:reachme,replayWin:replayWin,grid:grid};
+  var chancePay=(SL.flag==="chance"&&slIsChancePattern(center))?3:0;
+  var reachEye=slIsReachEye(grid);
+  var totalMai=bestMai+cherryPay+chancePay;
+  return {coins:Math.round(totalMai*mai),mai:totalMai,best:best,replayWin:replayWin,reachEye:reachEye,grid:grid,center:center};
 }
-/* CLIMAX, part one : the stacking numbers. Each chunk slams in
-   as layered graphic figures with an impact ring and a cabinet
-   shudder, the earlier ones shrinking as the pile grows, the
-   WIN counter counting up in step — and the total lands last,
-   biggest. Coins are credited chunk by chunk with the slams. */
 function slUePay(total,done){
   var ue=$("slUe");ue.innerHTML="";ue.hidden=false;
   var chunks=[];
@@ -7026,62 +7284,184 @@ function slUePay(total,done){
   }
   slam();
 }
-/* CLIMAX, part two : the PUSH button. A jackpot is never just
-   paid — the machine stops, the button erupts out of the LCD
-   glowing, and the bonus only breaks when the player hits it. */
-function slPushShow(cb){
-  slLcd("reach","来た…ッ！ 押せ！！");
+function slUeGames(n,done){
+  var ue=$("slUe");ue.innerHTML="";ue.hidden=false;
+  var row=document.createElement("div");row.className="ue-row";
+  row.innerHTML='<span class="ue-num" data-t="+'+n+'G 上乗せ！">+'+n+'G 上乗せ！</span><span class="ue-ring"></span>';
+  ue.appendChild(row);
+  var st=$("slStage");st.classList.remove("shake");void st.offsetWidth;st.classList.add("shake");
+  setTimeout(function(){ue.hidden=true;if(done)done();},1250);
+}
+/* PUSH告知 : colour/size carry the expectation by design —
+   real zencho : gold 55% / red 30% / blue 15%
+   gase zencho : gold 12% / red 33% / blue 55%
+   CZ judgement : gold on success-leaning, plain on fail */
+function slPushShow(kind,cb){
+  var cls="sl-push",r=Math.random();
+  if(kind==="zenchoReal"){cls+=r<0.55?" push-gold":r<0.85?" push-red":" push-blue";}
+  else if(kind==="zenchoGase"){cls+=r<0.12?" push-gold":r<0.45?" push-red":" push-blue";}
+  else if(kind==="czOk"){cls+=" push-gold";}
+  else if(kind==="big"){cls+=" push-gold";}
+  $("slPush").className=cls;
   $("slPush").hidden=false;
-  SL.pushCb=cb;
+  SL.pushCb=cb;SL.phase="pushwait";
+  slRenderCtl();
+}
+function slStartCZ(){
+  SL.mode="cz";SL.zencho=null;SL.cz={left:15,success:false,heat:30};
+  /* the AT-interval ceiling counter keeps running through CZ
+     (天井 is AT間1000G, reset only when AT actually starts) */
+  slLcd("reach","CZ突入！ 15G ― 成功でBIGボーナス！",SL_SCENES[1].img);
+  toast("🎯 CZ（チャンスゾーン）突入！ 15G");
+}
+function slStartBonus(){
+  SL.mode="bonus";SL.bonusFlag=false;SL.reachShown=false;
+  SL.bonus={left:30,paid:0,atWin:Math.random()<0.50};
+  slLcd("reach","BIG BONUS！ 30Gで約200枚 ― AT抽選中…",SL_SCENES[0].img);
+  $("slLcdBonus").hidden=false;
+  setTimeout(function(){$("slLcdBonus").hidden=true;},3000);
+  mgBang($("slBang"));mgFlash($("slFlash"),true);
+  toast("🎰 BIG BONUS！");
+}
+function slStartAT(upper){
+  SL.mode="at";SL.zencho=null;SL.at={left:upper?100:50,upper:!!upper};
+  SL.sinceAT=0;SL.hiki=null;
+  slLcd("reach",(upper?"上位AT突入！！":"AT突入！")+" 初期"+(upper?100:50)+"G ― 純増 約3.0枚/G",SL_SCENES[0].img);
+  mgBang($("slBang"));mgFlash($("slFlash"),true);mgConfetti($("slConfetti"),60,["#ff5c9e","#ffd23f","#7ce7ff","#ffffff"]);
+  toast(upper?"👑 上位AT突入！ 初期100G":"🎉 AT突入！ 初期50G");
+}
+function slEndGameCommon(){
+  /* 高確 guarantee / fall draw */
+  if(SL.state==="koukaku"&&SL.mode!=="cz"&&SL.mode!=="bonus"&&SL.mode!=="at"){
+    SL.kouLeft--;
+    if(SL.kouLeft<=0&&Math.random()<1/1.2)SL.state="normal";
+    if(SL.kouLeft<0)SL.kouLeft=0;
+  }
+  SL.phase="idle";slRenderCtl();
 }
 function slFinish(){
   SL.spinning=false;SL.phase="settle";
   var stage=$("slStage");
   stage.classList.remove("spinning","reach");
-  var res=slEval(),msg;
-  if(res.best){
-    var glow=$("slLineGlow");
-    glow.style.top=(res.best.row*SL_CELLH)+"px";glow.hidden=false;
-  }
-  var bigWin=res.jackpot||res.total>=SL.bet*40;
-  if(res.total>0){
-    msg=res.jackpot?"🎰 大当たり！ ももか降臨 ― +"+res.total+"コイン":
-        res.best?(SL_BY_ID[res.best.sym].name+" ×3 揃い！ ― +"+res.total+"コイン"):
-        "中段ペア！ ― +"+res.total+"コイン";
-    var payNow=function(){
+  var res=slEval(),f=SL.flag,mode=SL.mode;
+  if(res.best){var glow=$("slLineGlow");glow.style.top=(res.best.row*SL_CELLH)+"px";glow.hidden=false;}
+  var payCoins=res.coins;
+  if(mode==="bonus"&&SL.bonus)SL.bonus.paid+=res.mai;
+  var afterPay=function(){slAdvance(res);};
+  var doPay=function(){
+    if(payCoins>0){
       stage.classList.add("celebrate");
-      if(res.jackpot){mgBang($("slBang"));mgFlash($("slFlash"),true);}
-      else mgFlash($("slFlash"));
-      mgConfetti($("slConfetti"),res.jackpot?76:40,["#ff5c9e","#ffd23f","#7ce7ff","#ffffff"]);
-      slUePay(res.total,function(){SL.phase="idle";slRenderCtl();});
-    };
-    if(bigWin){
-      slPushShow(function(){
-        $("slLcdBonus").hidden=false;
-        payNow();
-        setTimeout(function(){$("slLcdBonus").hidden=true;},3400);
-      });
-    }else payNow();
-    toast(msg);
-  }else if(res.replayWin){
-    msg="🔁 リプレイ！ 次ゲーム無料でもう一回";
-    slLcd("chance","リプレイ揃い！ 無料でもう1ゲーム");
-    SL.freeNext=true;
-    SL.phase="idle";
-    toast(msg);
-  }else if(res.reachme){
-    var bonus=SL.bet*3;
-    SL.boost=true;
-    msg="リーチ目！ チャンスのサイン ― +"+bonus+"コイン＆次回チャンス";
-    slLcd("chance","リーチ目…！ 流れが来てる。次が熱い");
-    slUePay(bonus,function(){SL.phase="idle";slRenderCtl();});
-    toast(msg);
-  }else{
-    msg="はずれ… もう一回！";
-    slScene(SL.scene,"はずれ…でも、空気が変わってきた");
-    SL.phase="idle";
+      mgFlash($("slFlash"));
+      if(res.best)toast(SL_BY_ID[res.best.sym].name+"揃い！ +"+res.mai+"枚");
+      slUePay(payCoins,function(){stage.classList.remove("celebrate");afterPay();});
+    }else afterPay();
+  };
+  if(SL.freezeGame){
+    slLcd("reach","フリーズ確定 ― 上位ATへ！");
+    setTimeout(function(){slStartAT(true);SL.phase="idle";slRenderCtl();},1400);
+    if(payCoins>0){S.coin+=payCoins;renderStats();$("slWinD").textContent=payCoins;}
+    return;
   }
-  slRenderCtl();
+  if(res.replayWin&&(mode==="normal"||mode==="zencho"||mode==="hiki")){
+    SL.freeNext=true;
+    toast("🔁 リプレイ！ 次ゲーム無料");
+  }
+  if(SL.bonusFlag&&res.reachEye&&mode!=="bonus"){
+    SL.reachShown=true;
+    slLcd("reach","リーチ目！！ ボーナスは既に内部成立している ― 次ゲーム、赤7を揃えろ！",SL_SCENES[0].img);
+    toast("👁 リーチ目！ ボーナス確定（内部成立中）");
+    doPay();return;
+  }
+  if(SL.bonusFlag&&res.best&&res.best.sym==="sevenR"&&mode!=="bonus"){
+    SL.phase="pushwait";slRenderCtl();
+    slPushShow("big",function(){
+      slStartBonus();
+      if(payCoins>0){S.coin+=payCoins;renderStats();}
+      SL.phase="idle";slRenderCtl();
+    });
+    return;
+  }
+  doPay();
+}
+/* mode progression after the game's payout settles */
+function slAdvance(res){
+  var mode=SL.mode;
+  if(mode==="normal"){
+    SL.sinceAT++;
+    if(SL.sinceAT%100===0&&SL.state!=="koukaku"&&Math.random()<0.20){SL.state="koukaku";SL.kouLeft=10;}
+    slEndGameCommon();return;
+  }
+  if(mode==="zencho"&&SL.zencho){
+    var z=SL.zencho;z.left--;
+    if(SL.mode==="normal"){slEndGameCommon();return;} /* a new zencho may have chained */
+    if(z.left>0){SL.sinceAT++;slEndGameCommon();return;}
+    /* final game : PUSH告知 */
+    SL.phase="pushwait";slRenderCtl();
+    if(z.real){
+      slLcd("reach","来た…ッ！ 押せ！！");
+      slPushShow("zenchoReal",function(){
+        if(z.dest==="cz")slStartCZ();
+        else if(z.dest==="at"){slStartAT(false);}
+        else if(z.dest==="bonus"){SL.bonusFlag=true;SL.reachShown=false;SL.mode="normal";slLcd("chance","ボーナス内部成立！ 次ゲーム赤7を狙え ― リーチ目にも注目",SL_SCENES[0].img);toast("🎰 ボーナス内部成立！");}
+        SL.phase="idle";slRenderCtl();
+      });
+    }else{
+      slLcd("chance","…押してみる？");
+      slPushShow("zenchoGase",function(){
+        SL.mode="normal";SL.zencho=null;
+        slScene(SL.scene,"残念…ガセ前兆だった。本物は必ず来る");
+        toast("前兆終了 ― ガセだった…");
+        SL.phase="idle";slRenderCtl();
+      });
+    }
+    return;
+  }
+  if(mode==="cz"&&SL.cz){
+    var cz=SL.cz;cz.left--;cz.heat=Math.min(95,cz.heat+3);
+    if(cz.left>0){slEndGameCommon();return;}
+    SL.phase="pushwait";slRenderCtl();
+    slLcd("reach",cz.success?"手応えあり…！ 押せ！":"最後のジャッジ… 押せ！");
+    slPushShow(cz.success?"czOk":"zenchoGase",function(){
+      if(cz.success){SL.cz=null;slStartBonus();}
+      else{SL.cz=null;SL.mode="normal";if(Math.random()<0.30){SL.state="koukaku";SL.kouLeft=10;}slScene(SL.scene,"CZ失敗… 通常へ（高確の気配？）");toast("CZ失敗 ― 通常時へ");}
+      SL.phase="idle";slRenderCtl();
+    });
+    return;
+  }
+  if(mode==="bonus"&&SL.bonus){
+    var b=SL.bonus;b.left--;
+    if(b.left>0){slEndGameCommon();return;}
+    var atWin=b.atWin;SL.bonus=null;
+    toast("BIG終了 ― 獲得 "+b.paid+"枚");
+    if(atWin){slStartAT(false);}
+    else{SL.mode="normal";if(Math.random()<0.30){SL.state="koukaku";SL.kouLeft=10;}slScene(SL.scene,"BIG終了 ― 通常へ");}
+    SL.phase="idle";slRenderCtl();return;
+  }
+  if(mode==="at"&&SL.at){
+    var at=SL.at;
+    if(SL.ueGames>0){
+      at.left+=SL.ueGames;
+      var add=SL.ueGames;SL.ueGames=0;
+      slUeGames(add,function(){slEndGameCommon();});
+      toast("⬆ 上乗せ +"+add+"G！");
+      slRenderCtl();return;
+    }
+    at.left--;
+    if(at.left>0){slEndGameCommon();return;}
+    SL.at=null;SL.mode="hiki";SL.hiki={left:32,success:false};
+    slLcd("chance","AT終了 ― 引き戻しゾーン32G！ レア役で復帰",SL_SCENES[5].img);
+    toast("AT終了 ― 引き戻しゾーンへ");
+    SL.phase="idle";slRenderCtl();return;
+  }
+  if(mode==="hiki"&&SL.hiki){
+    var h=SL.hiki;h.left--;
+    if(h.left>0){SL.sinceAT++;slEndGameCommon();return;}
+    var ok=h.success;SL.hiki=null;
+    if(ok){slStartAT(false);}
+    else{SL.mode="normal";SL.sinceAT=0;slScene(SL.scene,"引き戻しならず ― 通常時へ");}
+    SL.phase="idle";slRenderCtl();return;
+  }
+  slEndGameCommon();
 }
 /* ================= RETRO 1 : Mario Bros. style (fixed screen) ================= */
 var RT={on:false,raf:0,frame:0,score:0,coins:0,lives:3,wave:1,spawned:0,spawnT:0,kicked:0,state:"ready",stateT:0,
