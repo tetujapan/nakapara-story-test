@@ -14,6 +14,8 @@
 <script src="assets-data-11.js"></script>
 <script src="assets-data-12.js"></script>
 <script src="assets-data-13.js"></script>
+<script src="assets-data-14.js"></script>
+<script src="assets-data-15.js"></script>
 <script>
 /* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
    Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
@@ -1520,8 +1522,7 @@ footer{color:#8d76b8}
    first screen; the paytable lives below. */
 .sl-stage{position:relative;margin-top:18px;color:#fff;--slcell:42px}
 .sl-cab{display:block;width:100%;height:auto}
-.sl-stage.reach .sl-cab{animation:slCabGlow .5s ease-in-out infinite}
-@keyframes slCabGlow{0%,100%{filter:drop-shadow(0 0 6px rgba(255,190,40,.25))}50%{filter:drop-shadow(0 0 26px rgba(255,190,40,.9))}}
+.sl-stage.reach .sl-cab{filter:drop-shadow(0 0 18px rgba(255,190,40,.65))}
 .sl-stage.shake{animation:slCabShake .3s linear}
 @keyframes slCabShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-2.5px,1px)}55%{transform:translate(2.5px,-1.5px)}80%{transform:translate(-1.5px,-0.5px)}}
 /* emblem : designed image lettering, same treatment as the
@@ -1566,11 +1567,10 @@ footer{color:#8d76b8}
 @keyframes ueSlam{0%{transform:scale(2.5) rotate(-4deg);opacity:0}55%{transform:scale(.92) rotate(1deg);opacity:1}100%{transform:scale(1) rotate(0)}}
 @keyframes ueRing{from{transform:scale(.35);opacity:1}to{transform:scale(2.3);opacity:0}}
 /* the big PUSH button, erupting over the LCD at the climax */
-.sl-push{position:absolute;z-index:7;left:50%;top:50%;width:94px;height:94px;margin:-47px 0 0 -47px;border:none;border-radius:50%;padding:0;background:none;cursor:pointer;animation:slPushIn .38s cubic-bezier(.2,2,.4,1) both,slPushPulse .62s ease-in-out .4s infinite}
+.sl-push{position:absolute;z-index:7;left:50%;top:50%;width:94px;height:94px;margin:-47px 0 0 -47px;border:none;border-radius:50%;padding:0;background:none;cursor:pointer;animation:slPushIn .38s cubic-bezier(.2,2,.4,1) both}
 .sl-push[hidden]{display:none}
 .sl-push img{width:100%;height:100%;border-radius:50%;display:block;box-shadow:0 0 34px rgba(84,180,255,.95),0 10px 22px rgba(0,0,0,.6)}
 @keyframes slPushIn{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes slPushPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
 .sl-push:active{transform:scale(.93)}
 .sl-reach{position:absolute;z-index:6;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-5deg);font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:37px;color:#ffd23f;text-shadow:0 3px 0 rgba(140,40,0,.9),0 0 26px rgba(255,180,0,.95),0 6px 16px rgba(0,0,0,.6);animation:hintSlam .45s cubic-bezier(.2,2,.4,1) both;pointer-events:none;white-space:nowrap}
 /* data displays : on a real machine the CREDIT / BET / WIN
@@ -1605,8 +1605,7 @@ footer{color:#8d76b8}
 .sl-drumshade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(10,0,25,.66),rgba(10,0,25,.14) 27%,transparent 44%,transparent 56%,rgba(10,0,25,.14) 73%,rgba(10,0,25,.66)),linear-gradient(90deg,rgba(10,0,25,.36),transparent 16%,transparent 84%,rgba(10,0,25,.36));box-shadow:inset 0 0 0 1px rgba(0,0,0,.2),inset 0 14px 18px rgba(20,5,0,.4),inset 0 -14px 18px rgba(20,5,0,.4)}
 .sl-win.land{animation:slLand .3s ease}
 @keyframes slLand{0%{transform:translateY(0)}35%{transform:translateY(5px)}100%{transform:translateY(0)}}
-.sl-win.hot{animation:slShake .12s linear infinite;box-shadow:0 0 24px rgba(255,210,63,.95),inset 0 0 0 2px rgba(255,180,0,.9)}
-@keyframes slShake{0%{transform:translateX(-2px)}50%{transform:translateX(2px)}100%{transform:translateX(-2px)}}
+.sl-win.hot{box-shadow:0 0 24px rgba(255,210,63,.95),inset 0 0 0 2px rgba(255,180,0,.9)}
 .sl-lineglow{position:absolute;left:4px;right:4px;height:var(--slcell);border:2.5px solid rgba(255,220,90,.95);border-radius:8px;box-shadow:0 0 18px rgba(255,200,60,.85),inset 0 0 14px rgba(255,200,60,.4);pointer-events:none;z-index:3}
 .sl-lineglow[hidden]{display:none}
 /* lever : the photographed lever (assets/sl_lever.webp, cut
@@ -1623,8 +1622,7 @@ footer{color:#8d76b8}
 .sl-stops{position:absolute;left:0;right:26%;top:72.32%;height:11.36%;display:flex;align-items:center;justify-content:center;gap:30px;z-index:3}
 .sl-stop{position:relative;width:47px;height:47px;border-radius:50%;border:2px solid #e3bc66;background:radial-gradient(circle at 35% 27%,#ff8d9d,#d81f3f 42%,#8f0f27 74%,#5c0817);box-shadow:0 0 0 3px #232733,0 0 0 5px rgba(227,188,102,.55),0 5px 0 #38060f,0 10px 15px rgba(0,0,0,.55),inset 0 3px 5px rgba(255,255,255,.55),inset 0 -7px 9px rgba(0,0,0,.5);cursor:pointer;padding:0}
 .sl-stop:before{content:"";position:absolute;left:15%;top:7%;width:46%;height:32%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,255,255,.9),rgba(255,255,255,0) 70%);pointer-events:none}
-.sl-stop.live{background:radial-gradient(circle at 36% 30%,#ffc4b0,#ff3b1f 55%,#b00d04);border-color:#ffd9a8;box-shadow:0 0 0 3px #232733,0 0 0 5px rgba(227,188,102,.55),0 0 22px rgba(255,80,30,.95),0 5px 0 #38060f,0 10px 15px rgba(0,0,0,.55),inset 0 3px 5px rgba(255,255,255,.6),inset 0 -7px 9px rgba(0,0,0,.4);animation:slStopPulse .5s ease-in-out infinite}
-@keyframes slStopPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.sl-stop.live{background:radial-gradient(circle at 36% 30%,#ffc4b0,#ff3b1f 55%,#b00d04);border-color:#ffd9a8;box-shadow:0 0 0 3px #232733,0 0 0 5px rgba(227,188,102,.55),0 0 22px rgba(255,80,30,.95),0 5px 0 #38060f,0 10px 15px rgba(0,0,0,.55),inset 0 3px 5px rgba(255,255,255,.6),inset 0 -7px 9px rgba(0,0,0,.4)}
 .sl-stop:active{transform:translateY(3px) scale(.96)}
 .sl-stop:disabled{cursor:default;opacity:.94;animation:none}
 /* lower deck : the lower panel is the machine's billboard —
@@ -1632,8 +1630,7 @@ footer{color:#8d76b8}
    PUSH dock laid over it. At a climax the whole panel
    flashes like a real machine's light-up lower panel. */
 .sl-deck{position:absolute;left:3%;top:83.68%;width:94%;height:11.92%;display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,rgba(10,2,20,.42),rgba(10,2,20,.6)),url("assets/sl_panel.webp") 50% 22%/cover;border:1.5px solid rgba(255,217,122,.55);border-radius:12px;padding:6px 9px;z-index:3}
-.sl-stage.celebrate .sl-deck{animation:slPanelFlash .45s ease-in-out infinite}
-@keyframes slPanelFlash{0%,100%{filter:brightness(1)}50%{filter:brightness(1.6) saturate(1.25)}}
+.sl-stage.celebrate .sl-deck{filter:brightness(1.38) saturate(1.22)}
 .sl-bets{display:flex;gap:6px}
 .sl-bet{border:2px solid rgba(255,217,122,.55);background:linear-gradient(180deg,#3a2a12,#1c1004);color:#ffe9a8;border-radius:9px;padding:7px 11px;font-weight:900;font-size:14px;min-height:42px;cursor:pointer;box-shadow:inset 0 2px 0 rgba(255,240,200,.25),0 3px 6px rgba(0,0,0,.45)}
 .sl-bet.on{background:linear-gradient(180deg,#ffe98a,#d99a06);color:#50350a;border-color:#fff3b0;box-shadow:0 0 14px rgba(255,200,60,.65)}
@@ -2563,7 +2560,7 @@ img{-webkit-user-drag:none}
 .sl-push.push-gold{width:118px;height:118px;margin:-59px 0 0 -59px;filter:drop-shadow(0 0 18px rgba(255,190,40,.95)) saturate(1.25)}
 .sl-push.push-red{width:94px;height:94px;margin:-47px 0 0 -47px;filter:hue-rotate(-52deg) saturate(1.5) drop-shadow(0 0 12px rgba(255,70,40,.8))}
 .sl-push.push-blue{width:70px;height:70px;margin:-35px 0 0 -35px;filter:hue-rotate(140deg) saturate(1.2) drop-shadow(0 0 8px rgba(70,160,255,.7))}
-.sl-stop.navi{border-color:#ffe9a8;box-shadow:0 0 0 3px #232733,0 0 0 5px rgba(255,215,106,.8),0 0 26px rgba(255,200,60,1),0 5px 0 #38060f,0 10px 15px rgba(0,0,0,.55),inset 0 3px 5px rgba(255,255,255,.6);animation:slStopPulse .45s ease-in-out infinite}
+.sl-stop.navi{border-color:#ffe9a8;box-shadow:0 0 0 3px #232733,0 0 0 5px rgba(255,215,106,.8),0 0 26px rgba(255,200,60,1),0 5px 0 #38060f,0 10px 15px rgba(0,0,0,.55),inset 0 3px 5px rgba(255,255,255,.6)}
 .sl-stage.freeze .sl-strip{filter:grayscale(.7) brightness(.55)}
 .sl-stage.freeze .sl-lcd-scene img{filter:grayscale(.8) brightness(.5)}
 .sl-stage.freeze .sl-cab{filter:brightness(.72)}
@@ -2582,6 +2579,57 @@ img{-webkit-user-drag:none}
    fully on stage, over curtain and spotlights only. */
 .cut-p1{right:10px}
 .main-vname{left:50%;right:auto;margin-left:72px;top:36px;font-size:21px;line-height:1.45;letter-spacing:.05em;padding:7px 2px}
+/* ---------- v43 : cut-out artwork reel symbols + calm controls ----------
+   The drawn SVG stops are replaced by cut-out artwork that sits
+   directly on the cream band — no black tiles, no frames, the
+   art itself is the printed stop. Each symbol gets ONE box that
+   follows real-machine band proportions (sevens and BAR large,
+   bell / melon / replay full, cherry small, the gem blank
+   smallest), and the same box is used on all three drums, so a
+   symbol looks identical wherever it lands. The art's soft
+   drop-shadow is weighted to match the talent face plates
+   (0 1px 2px), so photos and artwork sit at the same weight.
+   Idle motion audit : every constant pulse / tremble loop on
+   the cabinet is removed. A pressable stop button simply stays
+   lit (colour + static glow), the PUSH button's appearance is
+   its own signal (its expectation size/colour design is kept,
+   the pulsing is not), the reach cabinet glow and the win
+   panel light are static while their state lasts. Shake stays
+   only where it means something : the landing settle, the
+   one-shot cabinet shake on a decided win, the freeze. */
+.sl-cell img.sym{object-fit:contain;background:none;border:none;border-radius:0;box-shadow:none;padding:0;box-sizing:border-box;filter:drop-shadow(0 1px 1.5px rgba(60,35,0,.35))}
+.sl-cell img.s-sevenR,.sl-cell img.s-sevenB{width:96%;height:97%}
+.sl-cell img.s-bar{width:99%;height:84%}
+.sl-cell img.s-bell{width:88%;height:93%}
+.sl-cell img.s-melon{width:95%;height:87%}
+.sl-cell img.s-replay{width:94%;height:93%}
+.sl-cell img.s-cherry{width:64%;height:74%}
+.sl-cell img.s-blank{width:58%;height:64%}
+/* ---------- v44 : reel images vanishing mid-spin — root-cause fix ----------
+   Report (with video) : a spinning drum sometimes went entirely
+   blank white. Two defects in the old strip caused it :
+   1) RUN-OFF-THE-END — the strip held only 3 copies of the drum
+      (63 cells), but a stop glide could carry the window to
+      ~3.6 drum-turns of travel, past the end of the printed
+      band. The window then showed nothing until the stop
+      normalised the position — blank reel, timing-dependent,
+      hence "sometimes".
+   2) GIANT FILTERED LAYER — while spinning, .fast put a blur
+      filter over the whole ~2,700px-tall strip. On phone
+      WebViews that offscreen surface exceeds what the GPU will
+      rasterise, so the whole drum dropped to white.
+   The drums are now VIRTUALISED : each window renders only the
+   5 cells around the visible rows, positioned by modulo
+   arithmetic on the drum position. There is no long band to
+   run off, no giant layer to filter (the blur now sits on a
+   window-sized surface), and only 15 <img> exist instead of
+   189. Face stops use reel-sized copies (sl_face_*.webp,
+   160px wide) instead of the full 960px cut-outs, and every
+   stop is preloaded + decoded when the machine is entered, so
+   a first spin never waits on an undecoded image. */
+.sl-strip{inset:0;top:0;will-change:auto;transform:none;background:#fdfaf0;overflow:hidden}
+.sl-strip.fast{filter:blur(1.4px) brightness(1.04)}
+.sl-cell{position:absolute;left:0;right:0;top:0}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -2630,12 +2678,12 @@ img{-webkit-user-drag:none}
   </section>
 
   <section>
-    <div class="sec-head"><h2>📢 お知らせ</h2></div>
+    <details class="fold newsfold"><summary>📢 お知らせ<span>3件</span></summary>
     <div class="news">
       <div><time>試作版</time><span>📖 ももかルート全141シーン収録！ 他4ルートは制作中</span></div>
       <div><time>ガチャ</time><span>🎰 10連はSR以上1枚確定！</span></div>
       <div><time>番外編</time><span>🔓 ももかUR所持で「休日の約束」解放</span></div>
-    </div>
+    </div></details>
   </section>
 </div>
 
@@ -5586,6 +5634,87 @@ function obFinish(){
   renderAll();
 }
 </script>
+<style>
+/* ================================================================
+   VN STORY PLAYER — the real NAKAPARA app's story-screen grammar:
+   white speech bubbles over the speaker's head, the speaker opaque
+   in front and everyone else a desaturated ghost, narration as
+   italic pale-violet text over a dimmed photo, location bands,
+   step counter top-left / やめる top-right / 完了 bottom-right.
+   ================================================================ */
+.vn-stage{position:relative;border-radius:20px;overflow:hidden;height:min(76dvh,600px);min-height:480px;background:#0a0616;border:1px solid rgba(217,169,79,.45);box-shadow:0 18px 36px rgba(20,2,18,.45),inset 0 0 0 1px rgba(0,0,0,.5);cursor:pointer;transition:opacity .22s ease;-webkit-tap-highlight-color:transparent}
+.vn-stage.leaving{opacity:0}
+.vn-bg{position:absolute;inset:0;background-size:cover;background-position:center 28%;transition:filter .5s ease}
+.vn-stage.dim .vn-bg{filter:brightness(.42) saturate(.75)}
+.vn-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,2,14,.5),transparent 26%,transparent 55%,rgba(6,2,14,.55));pointer-events:none}
+.vn-chars{position:absolute;inset:0;z-index:3;pointer-events:none}
+.vn-char{position:absolute;bottom:0;height:58%;display:flex;align-items:flex-end;transition:opacity .5s ease,filter .5s ease,transform .5s ease}
+.vn-char img{height:100%;width:auto;display:block;filter:drop-shadow(0 10px 14px rgba(0,0,0,.45));animation:vnImgIn .55s ease both}
+@keyframes vnImgIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+.vn-char.sd{height:36%}
+.vn-char.slot-l{left:1%}
+.vn-char.slot-r{right:1%}
+.vn-char.slot-c{left:50%;transform:translateX(-50%)}
+.vn-char.ghost{opacity:.38;filter:grayscale(.75) brightness(.72)}
+.vn-char.slot-c.ghost{transform:translateX(-50%) scale(.94)}
+.vn-char.slot-l.ghost,.vn-char.slot-r.ghost{transform:scale(.94)}
+.vn-char.front{z-index:6!important;opacity:1;filter:none}
+.vn-char.slot-c.front{transform:translateX(-50%) scale(1.03)}
+.vn-char.slot-l.front,.vn-char.slot-r.front{transform:scale(1.03)}
+.vn-narr{position:absolute;top:56px;left:18px;right:18px;z-index:8;margin:0;font-style:italic;font-size:14px;line-height:1.9;color:#e2d6ff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 14px rgba(20,5,40,.85);white-space:pre-line;display:none;transition:opacity .3s ease}
+.vn-bubble{position:absolute;z-index:9;width:88%;max-width:88%;background:#fff;color:#2a2140;border-radius:16px;padding:10px 14px 11px;box-shadow:0 10px 24px rgba(0,0,0,.45);display:none;transition:opacity .3s ease}
+.vn-bubble:after{content:"";position:absolute;bottom:-8px;width:18px;height:18px;background:#fff;transform:rotate(45deg);border-radius:0 0 4px 0;box-shadow:3px 3px 6px rgba(0,0,0,.16)}
+.vn-bubble[data-slot="l"]{left:6%}
+.vn-bubble[data-slot="l"]:after{left:calc(15% - 9px)}
+.vn-bubble[data-slot="r"]{right:6%}
+.vn-bubble[data-slot="r"]:after{right:calc(15% - 9px)}
+.vn-bubble[data-slot="c"]{left:50%;transform:translateX(-50%)}
+.vn-bubble[data-slot="c"]:after{left:calc(50% - 9px)}
+.vn-bname{display:block;font-size:12.5px;font-weight:900;color:#7b2fbe;margin-bottom:2px;letter-spacing:.03em}
+.vn-btext{margin:0;font-size:14.5px;line-height:1.75;font-weight:600;white-space:pre-line}
+.step-in{animation:vnStepIn .28s ease both}
+@keyframes vnStepIn{from{opacity:0}to{opacity:1}}
+.vn-top{position:absolute;top:0;left:0;right:0;z-index:12;display:flex;justify-content:space-between;align-items:flex-start;padding:10px 12px;pointer-events:none}
+.vn-count{background:rgba(10,4,22,.72);border:1px solid rgba(217,169,79,.5);color:#ffe9a8;font-size:12px;font-weight:900;border-radius:999px;padding:5px 12px;letter-spacing:.06em}
+.vn-quit{pointer-events:auto;background:rgba(10,4,22,.72);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:12px;font-weight:900;border-radius:999px;padding:6px 14px;min-height:32px;cursor:pointer}
+.vn-loc{position:absolute;inset:0;z-index:11;display:grid;place-items:center;background:rgba(5,2,12,.42);transition:opacity .45s ease}
+.vn-loc.off{opacity:0;pointer-events:none}
+.vn-stage.band-on .vn-bubble,.vn-stage.band-on .vn-narr,.vn-stage.band-on .vn-next{opacity:0;pointer-events:none}
+.vn-loc-band{text-align:center;background:linear-gradient(180deg,rgba(24,10,40,.9),rgba(10,4,22,.9));border-top:2px solid #d9a94f;border-bottom:2px solid #d9a94f;padding:16px 20px;box-shadow:0 14px 30px rgba(0,0,0,.5);width:100%}
+.vn-loc-name{display:block;font-size:19px;font-weight:900;color:#fff;letter-spacing:.08em}
+.vn-loc-band small{display:block;margin-top:5px;font-size:11px;color:#d9ccf5;letter-spacing:.1em}
+.vn-next{position:absolute;right:12px;bottom:12px;z-index:10;background:rgba(10,4,22,.66);border:1px solid rgba(217,169,79,.55);color:#ffe9a8;font-size:11.5px;font-weight:900;border-radius:999px;padding:7px 13px;cursor:pointer;transition:opacity .3s ease}
+.vn-done{position:absolute;right:12px;bottom:12px;z-index:10;background:linear-gradient(180deg,#ffe98a,#f5c542);border:1px solid #8a5f00;color:#50350a;font-size:14px;font-weight:900;border-radius:999px;padding:11px 22px;box-shadow:0 6px 14px rgba(0,0,0,.45);cursor:pointer}
+.vn-choices{margin-top:12px}
+.vn-choices[hidden]{display:none}
+/* choices: always side by side (left / right), never a single
+   vertical stack — 2 choices sit left+right, 3-4 form a 2-column
+   grid. The plate image is kept; type and padding shrink to stay
+   readable at half width. A lone choice spans the full row. */
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choices .choice{font-size:12.5px;line-height:1.55;min-height:54px;padding:10px 24px 10px 20px;display:flex;align-items:center}
+.choices .choice:only-child{grid-column:1/-1}
+.vn-choices{margin-top:8px}
+/* no-scroll story player: while a scene is playing, the cover /
+   synopsis chrome and the record folds below give their height to
+   the stage, the tools shrink to one compact row, and stage +
+   side-by-side choices + tools fit inside the viewport */
+body.vn-playing #storyTop{display:none}
+body.vn-playing #v-story>section~section{display:none}
+body.vn-playing #v-story>section{margin-top:8px!important}
+body.vn-playing .story-tools{margin-top:0}
+body.vn-playing .story-tools .btn{min-height:42px;padding:6px 10px}
+body.vn-playing #storyRoot{margin-top:8px!important;display:flex;flex-direction:column;height:calc(100dvh - 224px)}
+body.vn-playing .vn-stage{flex:1 1 auto;height:auto;min-height:0}
+body.vn-playing .stage{flex:1 1 auto;min-height:0;overflow:hidden}
+body.vn-playing .vn-choices{flex:none}
+body.vn-playing #vnEnd{flex:none}
+body.vn-playing #vnEnd:not(:empty){max-height:36%;overflow-y:auto}
+@media (prefers-reduced-motion: reduce){
+  .vn-char img,.step-in{animation:none}
+  .vn-stage,.vn-bg,.vn-char,.vn-loc{transition:none}
+}
+</style>
 <script>/* ===== story : full script (141 scenes / 6 endings) ===== */
 function bgSVG(){
   return '<img class="bg" src="assets/stage_bg.webp" alt="">';
@@ -5618,34 +5747,363 @@ function scrollToStage(){
   de.style.scrollBehavior=prev;
 }
 window.__scrollToStage=scrollToStage;
+/* ================================================================
+   VN PLAYER — the real NAKAPARA app's story-screen grammar:
+   one tap = one step. Dialogue is a white speech bubble (speaker
+   name in purple bold, dark body text) with a downward tail,
+   floating above the speaking character's head. The speaker
+   stands opaque and in front; everyone else on stage falls back
+   as a desaturated ghost. Narration has no bubble: the photo
+   dims and the text sits at the top in italic pale violet.
+   A location change opens on the full-screen location photo
+   with a centred location band. Step counter top-left,
+   やめる top-right, 完了 bottom-right at an ending's last step.
+   The 141-scene script data (FULL) is untouched; each scene's
+   lines are split into steps at render time.
+   ================================================================ */
+var VN_LOCS={
+  lit:{label:"エンタメBAR Lit ― 店内",bg:"assets/stage_bg.webp"},
+  greenroom:{label:"撮影会場 ― 控室",bg:"assets/bg_loc_greenroom.webp"},
+  studio:{label:"撮影会スタジオ ― 会場",bg:"assets/battle_studio.webp"},
+  office:{label:"なかよしパラダイス ― 事務所",bg:"assets/bg_loc_office.webp"},
+  street:{label:"帰り道 ― 夜の住宅街",bg:"assets/bg_loc_street.webp"},
+  home:{label:"彼女の家の最寄り ― 住宅街",bg:"assets/bg_loc_street.webp"},
+  hospital:{label:"病院 ― 病室",bg:"assets/bg_loc_hospital.webp"}
+};
+var VN_SCENE_LOC={"1":"lit","2":"studio","3":"greenroom","4":"studio","5":"studio","6":"studio","7":"studio","8":"greenroom","9":"studio","10":"studio","11":"studio","12":"greenroom","13":"studio","14":"studio","15":"studio","16":"studio","17":"studio","18":"studio","19":"studio","20":"greenroom","21":"studio","22":"greenroom","23":"greenroom","24":"studio","25":"studio","26":"office","27":"studio","28":"greenroom","29":"greenroom","30":"street","31":"office","32":"studio","33":"office","34":"lit","35":"studio","36":"street","37":"street","38":"office","39":"office","40":"office","41":"office","42":"studio","43":"studio","44":"greenroom","45":"greenroom","46":"home","47":"office","48":"studio","49":"studio","50":"greenroom","51":"greenroom","52":"street","53":"office","54":"studio","55":"studio","56":"studio","57":"studio","58":"street","59":"office","60":"studio","61":"studio","62":"studio","63":"studio","64":"office","65":"office","66":"office","67":"office","68":"home","69":"studio","70":"studio","71":"greenroom","72":"greenroom","73":"office","74":"office","75":"office","76":"office","77":"office","78":"studio","79":"studio","80":"studio","81":"office","82":"greenroom","83":"office","84":"studio","85":"office","86":"office","87":"street","88":"studio","89":"greenroom","90":"studio","91":"studio","92":"street","93":"studio","94":"office","95":"greenroom","96":"office","97":"street","98":"studio","99":"office","100":"greenroom","101":"office","102":"street","103":"studio","104":"office","105":"studio","106":"studio","107":"studio","108":"office","109":"home","110":"office","111":"street","112":"street","113":"street","114":"studio","115":"studio","116":"studio","117":"studio","118":"studio","119":"greenroom","120":"office","121":"street","122":"office","123":"street","124":"office","125":"office","126":"office","127":"greenroom","128":"studio","129":"street","130":"street","131":"home","132":"office","133":"office","134":"hospital","135":"street","136":"street","137":"hospital","138":"home","139":"studio","140":"studio","141":"studio"};
+var VN_LOC_LABEL={68:"彼女の家 ― 夜の電話",109:"深夜 ― 彼女からの電話",131:"その夜 ― 最後の連絡",138:"彼女の部屋 ― 夜"};
+var VN_NAME2ID={"ももか":"momona","姫宮ももか":"momona","姫宮":"momona","彼女":"momona",
+  "社長":"paradise","中川パラダイス":"paradise","パラダイス":"paradise",
+  "ひかり":"akari","朝倉ひかり":"akari","朝倉":"akari",
+  "しずく":"kaede","氷室しずく":"kaede","氷室":"kaede",
+  "れい":"nana","神宮寺れい":"nana","神宮寺":"nana",
+  "さくら":"misa","紅林さくら":"misa","紅林":"misa",
+  "ケンジ":"sup_fanm","サキ":"sup_fanf","ユナ":"sup_yuna",
+  "スタッフ":"sup_staff","店員":"sup_staff",
+  "眼鏡スタッフ":"sup_camera","カメラマン":"sup_camera",
+  "ファンA":"sup_fanm","ファンB":"sup_fanf","男":"sup_fanm"};
+/* provisional stand-in art for supporting characters (SD sheet,
+   cut out per person). Keyed by character id so each can be swapped
+   for final art later by replacing just the file / this entry. */
+var VN_SUPPORT={
+  "sup_staff":{img:"assets/cut_sup_staff.webp",name:"スタッフ"},
+  "sup_fanm":{img:"assets/cut_sup_fanm.webp",name:"男性ファン"},
+  "sup_fanf":{img:"assets/cut_sup_fanf.webp",name:"女性ファン"},
+  "sup_yuna":{img:"assets/cut_sup_yuna.webp",name:"ユナ"},
+  "sup_camera":{img:"assets/cut_sup_camera.webp",name:"カメラマン"}
+};
+function vnIsSD(cid){return cid==="paradise"||!!VN_SUPPORT[cid];}
+var VN_CUES=[
+  {keys:["手紙","封筒","便箋","封"],name:"手紙",cid:null},
+  {keys:["DM","メッセージ"],name:"DM",cid:null},
+  {keys:["掲示板"],name:"掲示板",cid:null},
+  {keys:["無言電話","電話"],name:"電話の声",cid:null},
+  {keys:["声"],name:"声",cid:null},
+  {keys:["ケンジ"],name:"ケンジ",cid:"sup_fanm"},
+  {keys:["サキ"],name:"サキ",cid:"sup_fanf"},
+  {keys:["ユナ"],name:"ユナ",cid:"sup_yuna"},
+  {keys:["眼鏡スタッフ","カメラマン"],name:"カメラマン",cid:"sup_camera"},
+  {keys:["店員"],name:"店員",cid:"sup_staff"},
+  {keys:["社長"],name:"社長",cid:"paradise"},
+  {keys:["彼女","ももか"],name:"ももか",cid:"momona"}
+];
+var VN=null, vnLastLoc="", vnPreloaded=false;
+function vnEsc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function vnBalanced(s){var d=0;for(var i=0;i<s.length;i++){var c=s.charAt(i);if(c==="「")d++;else if(c==="」")d--;}return d<=0;}
+/* a quote can span two script lines (the letter scenes) — merge
+   lines until the brackets balance again. The merge joins with NO
+   separator: the script's lines carry no newline between them, so
+   inserting one would alter the original text */
+function vnLogicalLines(b){
+  var out=[],buf=null;
+  (b||[]).forEach(function(l){
+    if(buf!==null){buf+=l;if(vnBalanced(buf)){out.push(buf);buf=null;}}
+    else if(!vnBalanced(l))buf=l;
+    else out.push(l);
+  });
+  if(buf!==null)out.push(buf);
+  return out;
+}
+function vnSegs(line){
+  var segs=[],buf="",i=0;
+  while(i<line.length){
+    if(line.charAt(i)==="「"){
+      if(buf){segs.push({t:"n",x:buf});buf="";}
+      var j=line.indexOf("」",i);
+      if(j<0){segs.push({t:"d",x:line.slice(i+1)});i=line.length;}
+      else{segs.push({t:"d",x:line.slice(i+1,j)});i=j+1;}
+    }else{buf+=line.charAt(i);i++;}
+  }
+  if(buf)segs.push({t:"n",x:buf});
+  return segs;
+}
+function vnResolveName(raw){
+  var nm=String(raw||"").replace(/[\s　]/g,"");
+  var base=nm.replace(/(は|が|も)$/,"");
+  var cid=VN_NAME2ID[nm]||VN_NAME2ID[base]||null;
+  return {name:cid?(base==="彼女"?"ももか":base):nm,cid:cid};
+}
+/* speaker guess for a bare quote: whichever cue (letter, DM,
+   voice, a person's name) sits closest before it in the text */
+function vnContextSpeaker(ctx){
+  var best=null,bestIdx=-1;
+  for(var i=0;i<VN_CUES.length;i++){
+    var c=VN_CUES[i];
+    for(var j=0;j<c.keys.length;j++){
+      var idx=ctx.lastIndexOf(c.keys[j]);
+      if(idx>bestIdx){bestIdx=idx;best=c;}
+    }
+  }
+  return best?{name:best.name,cid:best.cid}:null;
+}
+function vnBuildSteps(sc){
+  var lines=vnLogicalLines(sc.b);
+  var steps=[], narrBuf="", ctx="";
+  function flushNarr(){if(narrBuf){steps.push({k:"n",tx:narrBuf});narrBuf="";}}
+  function pushNarr(t){
+    if(!t)return;
+    if(narrBuf&&(narrBuf+t).length>110)flushNarr();
+    narrBuf+=t; ctx+=t;
+  }
+  /* VERBATIM RULE: a dialogue step's tx is the whole original line,
+     speaker prefix and 「」 included — quotes are never added or
+     stripped when a line becomes a bubble. The speaker name lives
+     only in the step's name label (and in `pre`, the raw prefix the
+     renderer hides because the label already shows it). Joining the
+     steps' tx in order must reproduce sc.b.join("") exactly. */
+  function addDlg(line,sp,lineIdx,pre){
+    flushNarr();
+    if(!sp){
+      sp=vnContextSpeaker(ctx);
+      if(!sp){
+        for(var k=lineIdx+1;k<Math.min(lines.length,lineIdx+3);k++){
+          var cand=lines[k].replace(/。$/,"");
+          if(/^(ケンジ|サキ|ユナ|社長|ももか|彼女)$/.test(cand)){sp=vnResolveName(cand);break;}
+        }
+      }
+      if(!sp)sp=vnContextSpeaker(lines.slice(lineIdx+1,lineIdx+3).join(""));
+    }
+    steps.push({k:"d",tx:line,pre:pre||"",name:sp?sp.name:"",cid:sp?sp.cid:null});
+    ctx+=line;
+  }
+  lines.forEach(function(line,idx){
+    if(line.charAt(0)==="（"){pushNarr(line);return;}
+    var segs=vnSegs(line), dCount=0;
+    segs.forEach(function(s){if(s.t==="d")dCount++;});
+    if(dCount===1){
+      if(segs.length===1){addDlg(line,null,idx,"");return;}
+      if(segs.length===2&&segs[0].t==="n"&&segs[1].t==="d"){
+        var pre=segs[0].x;
+        if(pre.length<=12&&!/[\n。、！？]/.test(pre)){addDlg(line,vnResolveName(pre),idx,pre);return;}
+        addDlg(line,null,idx,""); return;
+      }
+      if(segs.length===2&&segs[0].t==="d"&&segs[1].t==="n"&&/^[。、\s]*$/.test(segs[1].x)){addDlg(line,null,idx,"");return;}
+    }
+    /* anything else — quotes quoted inside narration, reported
+       speech with a verb after it — stays narration, verbatim */
+    pushNarr(line);
+  });
+  flushNarr();
+  if(!steps.length)steps.push({k:"n",tx:sc.t});
+  return steps;
+}
+/* who is physically on stage: characters who speak here, plus the
+   heroine when the narration is about her (the scene-1 name list,
+   where five surnames share one line, does not count) */
+function vnCast(sc,steps,sceneNo){
+  var cast=[],seen={};
+  function add(cid){if(cid&&!seen[cid]&&cast.length<3){seen[cid]=1;cast.push(cid);}}
+  steps.forEach(function(st){if(st.k==="d")add(st.cid);});
+  if(!seen.momona){
+    for(var i=0;i<steps.length;i++){
+      var st=steps[i];
+      if(st.tx.charAt(0)==="（")continue;
+      if((st.tx.match(/姫宮|朝倉|氷室|神宮寺|紅林/g)||[]).length>=2)continue;
+      /* in scene 1 she is only talked about, not yet met */
+      if(st.k==="d"&&sceneNo===1)continue;
+      if(st.tx.indexOf("彼女")>=0||st.tx.indexOf("ももか")>=0){add("momona");break;}
+    }
+  }
+  if(cast.length===3&&seen.momona&&cast[1]!=="momona"){
+    cast.splice(cast.indexOf("momona"),1); cast.splice(1,0,"momona");
+  }
+  return cast;
+}
+function vnSlots(n){return n<=1?["c"]:n===2?["l","r"]:["l","c","r"];}
+function vnCharHTML(cid,slot,idx){
+  var dl=' style="animation-delay:'+(idx*0.13).toFixed(2)+'s"';
+  var img;
+  if(cid==="paradise")img='<img src="assets/sd_paradise.webp" alt="中川パラダイス" decoding="async"'+dl+'>';
+  else if(VN_SUPPORT[cid])img='<img src="'+VN_SUPPORT[cid].img+'" alt="'+VN_SUPPORT[cid].name+'" decoding="async"'+dl+'>';
+  else img='<img src="assets/cut_'+cid+'.webp" alt="'+vnEsc(charOf(cid).name)+'" decoding="async"'+dl+'>';
+  return '<div class="vn-char slot-'+slot+(vnIsSD(cid)?" sd":"")+'" data-cid="'+cid+'" style="z-index:'+(2+idx)+'">'+img+'</div>';
+}
 function renderScene(){
   var sc=FULL[S.scene]; if(!sc)return;
-  var root=$("storyRoot");
-  var isEnd=!!sc.e;
-  root.innerHTML='<div class="stage"><div class="stage-bg">'+bgSVG()
-   +'<span class="scene-tag">シーン'+S.scene+' / 141 ・ '+sc.t+'</span>'
-   +'<div class="stage-char">'+charArt(charOf("momona"),2,true)+'</div>'
-   +'<div class="textbox"><div class="txt">'+dlgHTML(sc.b)+'</div><div class="choices" id="chBox"></div></div>'
-   +'</div></div>'
-   +(isEnd?'<div class="endcard" style="margin-top:12px"><span class="ek">ENDING</span><h3>「'+sc.e+'」</h3><div id="endBonus"></div><div class="btnrow" style="justify-content:center"><button class="btn" id="retryBtn">もう一度遊ぶ</button><button class="btn gold" id="toGacha">ガチャへ</button></div></div>':"");
-  var box=$("chBox");
-  sc.c.forEach(function(ch){
+  var root=$("storyRoot"); if(!root)return;
+  document.body.classList.add("vn-playing");
+  if(VN&&VN.bandT){clearTimeout(VN.bandT);VN.bandT=0;}
+  if(!vnPreloaded){
+    vnPreloaded=true;
+    Object.keys(VN_LOCS).forEach(function(k){var im=new Image();im.src=VN_LOCS[k].bg;});
+    ["momona","akari","kaede","nana","misa"].forEach(function(id){var im=new Image();im.src="assets/cut_"+id+".webp";});
+    Object.keys(VN_SUPPORT).forEach(function(id){var im=new Image();im.src=VN_SUPPORT[id].img;});
+  }
+  var n=S.scene;
+  var locId=VN_SCENE_LOC[n]||"studio";
+  var L=VN_LOCS[locId];
+  var steps=vnBuildSteps(sc);
+  var cast=vnCast(sc,steps,n);
+  var slots=vnSlots(cast.length);
+  VN={n:n,sc:sc,steps:steps,i:0,cast:cast,slots:slots,loc:locId,band:(vnLastLoc!==locId),done:false,bandT:0};
+  vnLastLoc=locId;
+  var chars=cast.map(function(cid,i){return vnCharHTML(cid,slots[i],i);}).join("");
+  root.innerHTML=
+   '<div class="vn-stage'+(VN.band?" band-on":"")+'" id="vnStage">'
+   +'<div class="vn-bg" style="background-image:url(\''+L.bg+'\')"></div>'
+   +'<div class="vn-shade"></div>'
+   +'<div class="vn-chars">'+chars+'</div>'
+   +'<p class="vn-narr" id="vnNarr"></p>'
+   +'<div class="vn-bubble" id="vnBubble"><span class="vn-bname" id="vnBName"></span><p class="vn-btext" id="vnBText"></p></div>'
+   +'<div class="vn-top"><span class="vn-count" id="vnCount"></span><button type="button" class="vn-quit" id="vnQuit">やめる</button></div>'
+   +(VN.band?'<div class="vn-loc" id="vnLoc"><div class="vn-loc-band"><span class="vn-loc-name">'+(VN_LOC_LABEL[n]||L.label)+'</span><small>シーン'+n+'「'+vnEsc(sc.t)+'」</small></div></div>':"")
+   +'<button type="button" class="vn-next" id="vnNext">つぎへ ▼</button>'
+   +'<button type="button" class="vn-done" id="vnDone" hidden>完了</button>'
+   +'</div>'
+   +'<div class="choices vn-choices" id="chBox" hidden></div>'
+   +'<div id="vnEnd"></div>';
+  var stage=$("vnStage");
+  stage.addEventListener("click",function(ev){
+    if(ev.target&&ev.target.closest&&ev.target.closest("button"))return;
+    vnTap();
+  });
+  $("vnQuit").addEventListener("click",function(ev){ev.stopPropagation();vnExit();});
+  $("vnNext").addEventListener("click",function(ev){ev.stopPropagation();vnTap();});
+  var dn=$("vnDone");
+  if(dn)dn.addEventListener("click",function(ev){ev.stopPropagation();vnFinish();});
+  vnShow();
+  if(VN.band)VN.bandT=setTimeout(function(){vnDismissBand();},2400);
+}
+function vnShow(){
+  if(!VN)return;
+  var st=VN.steps[VN.i]; if(!st)return;
+  var stage=$("vnStage"); if(!stage)return;
+  $("vnCount").textContent=(VN.i+1)+" / "+VN.steps.length;
+  var narr=$("vnNarr"), bub=$("vnBubble");
+  var charEls=stage.querySelectorAll(".vn-char");
+  function setChars(frontCid){
+    charEls.forEach(function(el){
+      var mine=frontCid&&el.getAttribute("data-cid")===frontCid;
+      el.classList.toggle("front",!!mine);
+      el.classList.toggle("ghost",!mine);
+    });
+  }
+  var animEl;
+  if(st.k==="n"){
+    stage.classList.add("dim");
+    bub.style.display="none";
+    narr.style.display="block";
+    narr.textContent=st.tx;
+    setChars(null);
+    animEl=narr;
+  }else{
+    stage.classList.remove("dim");
+    narr.style.display="none";
+    bub.style.display="block";
+    var nm=$("vnBName");
+    nm.textContent=st.name||"";
+    nm.style.display=st.name?"block":"none";
+    /* st.tx is the verbatim original line; the bubble shows it with
+       only the raw speaker prefix hidden (the name label above shows
+       that name) — the 「」 themselves stay exactly as written */
+    $("vnBText").textContent=(st.pre&&st.tx.indexOf(st.pre)===0)?st.tx.slice(st.pre.length):st.tx;
+    var slot="c", tall=true, frontCid=null;
+    if(st.cid&&VN.cast.indexOf(st.cid)>=0){
+      var ci=VN.cast.indexOf(st.cid);
+      slot=VN.slots[ci]; tall=!vnIsSD(st.cid); frontCid=st.cid;
+    }
+    bub.setAttribute("data-slot",slot);
+    bub.style.bottom=tall?"61%":"40%";
+    setChars(frontCid);
+    animEl=bub;
+  }
+  var last=VN.i>=VN.steps.length-1;
+  $("vnNext").style.display=last?"none":"block";
+  var dn=$("vnDone");
+  if(last&&VN.sc.e&&dn)dn.hidden=false;
+  if(last&&!VN.done){
+    VN.done=true;
+    if(!VN.sc.e)vnShowChoices();
+  }
+  animEl.classList.remove("step-in"); void animEl.offsetWidth; animEl.classList.add("step-in");
+}
+function vnTap(){
+  if(!VN)return;
+  if(VN.band){vnDismissBand();return;}
+  if(VN.i<VN.steps.length-1){VN.i++;vnShow();}
+}
+function vnDismissBand(){
+  if(!VN||!VN.band)return;
+  VN.band=false;
+  if(VN.bandT){clearTimeout(VN.bandT);VN.bandT=0;}
+  var stage=$("vnStage"); if(stage)stage.classList.remove("band-on");
+  var loc=$("vnLoc");
+  if(loc){loc.classList.add("off");setTimeout(function(){if(loc.parentNode)loc.parentNode.removeChild(loc);},480);}
+}
+function vnShowChoices(){
+  var box=$("chBox"); if(!box)return;
+  box.hidden=false; box.innerHTML="";
+  VN.sc.c.forEach(function(ch){
     var b=document.createElement("button");b.className="choice";b.textContent=ch[0];
     b.addEventListener("click",function(){
       if(ch[1]==="soon"){toast("そのルートは準備中です（試作版はももかルートのみ）");return;}
-      S.scene=ch[1]; renderScene(); scrollToStage();
+      vnFadeOut(function(){S.scene=ch[1]; renderScene(); scrollToStage();});
     });
     box.appendChild(b);
   });
-  if(isEnd){
-    var first=!S.endings[sc.e];
-    S.endings[sc.e]=1; if(first)S.coin+=500;
-    $("endBonus").innerHTML=first?'<p style="color:var(--pink);font-weight:900">初到達ボーナス +500コイン</p>':'<p class="note">到達済みのエンディングです</p>';
-    window.__on("retryBtn",function(){if(window.startStory)window.startStory();});
-    window.__on("toGacha",function(){showView("gacha");});
-    renderAll(); toast("エンディング「"+sc.e+"」に到達しました");
-  }
+  if(window.injectClueChoices){try{injectClueChoices();}catch(e){}}
 }
+function vnFadeOut(cb){
+  var stage=$("vnStage");
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(!stage||reduce){cb();return;}
+  stage.classList.add("leaving");
+  setTimeout(cb,230);
+}
+function vnFinish(){
+  if(!VN||!VN.sc.e)return;
+  var dn=$("vnDone"); if(dn)dn.hidden=true;
+  var sc=VN.sc;
+  var first=!S.endings[sc.e];
+  S.endings[sc.e]=1; if(first)S.coin+=500;
+  var host=$("vnEnd"); if(!host)return;
+  host.innerHTML='<div class="endcard" style="margin-top:12px"><span class="ek">ENDING</span><h3>「'+vnEsc(sc.e)+'」</h3><div id="endBonus"></div><div class="btnrow" style="justify-content:center"><button class="btn" id="retryBtn">もう一度遊ぶ</button><button class="btn gold" id="toGacha">ガチャへ</button></div></div>';
+  $("endBonus").innerHTML=first?'<p style="color:var(--pink);font-weight:900">初到達ボーナス +500コイン</p>':'<p class="note">到達済みのエンディングです</p>';
+  window.__on("retryBtn",function(){if(window.startStory)window.startStory();});
+  window.__on("toGacha",function(){showView("gacha");});
+  renderAll(); toast("エンディング「"+sc.e+"」に到達しました");
+  if(host.scrollIntoView)host.scrollIntoView({block:"nearest"});
+}
+function vnExit(){
+  if(VN&&VN.bandT){clearTimeout(VN.bandT);VN.bandT=0;}
+  document.body.classList.remove("vn-playing");
+  VN=null;
+  S.started=false; S.scene=null;
+  var root=$("storyRoot"); if(!root)return;
+  root.innerHTML='<div style="max-width:196px;margin:2px auto 0">'+bookHTML(CHARS[0])+'</div><p class="note" style="text-align:center;margin-top:10px">表紙の本がそのままボタンです。タップすると物語が始まります。<br>他のタレントの本は、この画面の一番下の本棚に並んでいます。</p>';
+  if(window.renderStoryChrome)renderStoryChrome();
+  window.scrollTo(0,0);
+}
+/* read-skip fast-forward: jump straight to this scene's last step
+   so its choices are on screen for the skip hook to click */
+window.__vnSkip=function(){
+  if(!VN||VN.n!==S.scene)return false;
+  if(VN.band)vnDismissBand();
+  VN.i=VN.steps.length-1;
+  vnShow();
+  return VN.done&&!VN.sc.e;
+};
+
 /* extra episode */
 var EX=[
  {sp:"ももか",tx:"「今日は完全オフ！　新人さん、付き合って。まずは甘いもの、次に甘いもの、最後も甘いものでしょ」休日の約束は、打ち合わせなしの寄り道だらけだった。"},
@@ -5710,8 +6168,7 @@ window.__on("startBtn",function(){startStory();});
         /* read-skip: auto-advance read scenes that have a single choice; stop at branches, unread scenes and endings */
         if(S.skipMode){
           var sc2=(typeof FULL!=="undefined")?FULL[S.scene]:null;
-          var choices=document.querySelectorAll("#storyRoot .choice");
-          if(wasRead&&sc2&&!sc2.e&&choices.length===1){
+          if(wasRead&&sc2&&!sc2.e&&sc2.c&&sc2.c.length===1&&window.__vnSkip&&window.__vnSkip()){
             setTimeout(function(){ if(S.skipMode){var c=document.querySelector("#storyRoot .choice"); if(c)c.click();} },380);
           }else{
             S.skipMode=false; if(window.updateSkipBtn)updateSkipBtn();
@@ -6702,29 +7159,23 @@ function slDrawFlag(){
 function slMai(){return SL.bet/10;} /* coins per 1枚 */
 var SL_FLAGNAME={replay:"リプレイ",bell:"ベル",weakCherry:"弱チェリー",suika:"スイカ",strongCherry:"強チェリー",chance:"チャンス目",freeze:"フリーズ",hazure:"ハズレ"};
 var SL_SYMS=[
- {id:"momona",img:"assets/cut_momona.webp",name:"ももか"},
- {id:"sevenR",svg:"sevenR",name:"赤7"},
- {id:"sevenB",svg:"sevenB",name:"青7"},
- {id:"akari",img:"assets/cut_akari.webp",name:"ひかり"},
- {id:"kaede",img:"assets/cut_kaede.webp",name:"しずく"},
- {id:"nana",img:"assets/cut_nana.webp",name:"れい"},
- {id:"misa",img:"assets/cut_misa.webp",name:"さくら"},
- {id:"bar",svg:"bar",name:"BAR"},
- {id:"bell",svg:"bell",name:"ベル"},
- {id:"melon",svg:"melon",name:"スイカ"},
- {id:"cherry",svg:"cherry",name:"チェリー"},
- {id:"replay",svg:"replay",name:"リプレイ"},
- {id:"blank",svg:"blank",name:"ブランク"}
+ {id:"momona",img:"assets/sl_face_momona.webp",name:"ももか"},
+ {id:"sevenR",sym:"assets/sl_sym_seven_r.webp",name:"赤7"},
+ {id:"sevenB",sym:"assets/sl_sym_seven_b.webp",name:"青7"},
+ {id:"akari",img:"assets/sl_face_akari.webp",name:"ひかり"},
+ {id:"kaede",img:"assets/sl_face_kaede.webp",name:"しずく"},
+ {id:"nana",img:"assets/sl_face_nana.webp",name:"れい"},
+ {id:"misa",img:"assets/sl_face_misa.webp",name:"さくら"},
+ {id:"bar",sym:"assets/sl_sym_bar.webp",name:"BAR"},
+ {id:"bell",sym:"assets/sl_sym_bell.webp",name:"ベル"},
+ {id:"melon",sym:"assets/sl_sym_melon.webp",name:"スイカ"},
+ {id:"cherry",sym:"assets/sl_sym_cherry.webp",name:"チェリー"},
+ {id:"replay",sym:"assets/sl_sym_replay.webp",name:"リプレイ"},
+ {id:"blank",sym:"assets/sl_sym_gem.webp",name:"ブランク"}
 ];
 var SL_BY_ID={};SL_SYMS.forEach(function(s){SL_BY_ID[s.id]=s;});
-var SL_SVG={
-  sevenR:'<svg viewBox="0 0 60 44" aria-hidden="true"><defs><linearGradient id="sl7r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a8a"/><stop offset=".45" stop-color="#f62b1d"/><stop offset="1" stop-color="#a80d02"/></linearGradient></defs><path d="M13 3h34v9L29 41H16L33 12H13z" fill="url(#sl7r)" stroke="#7d0800" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 5.8h27v3.2H19.5z" fill="rgba(255,255,255,.55)"/></svg>',
-  sevenB:'<svg viewBox="0 0 60 44" aria-hidden="true"><defs><linearGradient id="sl7b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd0ff"/><stop offset=".45" stop-color="#1d6ff6"/><stop offset="1" stop-color="#023fa8"/></linearGradient></defs><path d="M13 3h34v9L29 41H16L33 12H13z" fill="url(#sl7b)" stroke="#022f7d" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 5.8h27v3.2H19.5z" fill="rgba(255,255,255,.55)"/></svg>',
-  bell:'<svg viewBox="0 0 60 44" aria-hidden="true"><defs><linearGradient id="slbl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffd23f"/><stop offset="1" stop-color="#e09c00"/></linearGradient></defs><circle cx="30" cy="6.6" r="3.4" fill="#e09c00" stroke="#a86e00" stroke-width="1.4"/><path d="M30 9.5c-8 0-12 5.8-12 12.7 0 5.8-1.6 8.8-4 10.8h32c-2.4-2-4-5-4-10.8C42 15.3 38 9.5 30 9.5z" fill="url(#slbl)" stroke="#a86e00" stroke-width="2"/><path d="M13.5 35.4h33" stroke="#a86e00" stroke-width="2.4" stroke-linecap="round"/><circle cx="30" cy="39.6" r="3.5" fill="#c07f00"/><path d="M22.5 14.5c-1.8 1.9-2.7 4.4-2.9 7.2" stroke="rgba(255,255,255,.85)" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>',
-  melon:'<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M6 9a24 24 0 0 0 48 0z" fill="#1d9e4b"/><path d="M10.5 9a19.5 19.5 0 0 0 39 0z" fill="#f2f7e8"/><path d="M14.5 9a15.5 15.5 0 0 0 31 0z" fill="#ff5252"/><ellipse cx="23" cy="15" rx="1.5" ry="2.3" fill="#402020"/><ellipse cx="30" cy="18.5" rx="1.5" ry="2.3" fill="#402020"/><ellipse cx="37" cy="15" rx="1.5" ry="2.3" fill="#402020"/><ellipse cx="26.5" cy="11.6" rx="1.3" ry="2" fill="#402020"/><ellipse cx="33.5" cy="11.6" rx="1.3" ry="2" fill="#402020"/></svg>',
-  cherry:'<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M24 30C26 18 34 10 44 6M38 26C39 18 41 11 44 6" fill="none" stroke="#2e8b3a" stroke-width="2.6" stroke-linecap="round"/><path d="M44 6c5-3.2 10-2.2 12.4.8C53.4 10 48.4 10.2 44 6z" fill="#37b24d"/><circle cx="21" cy="33" r="9" fill="#e8232a"/><circle cx="39" cy="29" r="10" fill="#f03238"/><ellipse cx="17.5" cy="29.5" rx="3" ry="2" fill="rgba(255,255,255,.75)" transform="rotate(-24 17.5 29.5)"/><ellipse cx="35" cy="25" rx="3.4" ry="2.2" fill="rgba(255,255,255,.75)" transform="rotate(-24 35 25)"/></svg>',
-  replay:'<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M38.7 8.2A13.5 13.5 0 1 0 42.7 23.1" fill="none" stroke="#1d7fd8" stroke-width="4.6" stroke-linecap="round"/><path d="M49.8 26.2L34.8 27.8 41.2 14.2z" fill="#1d7fd8"/><text x="31" y="41.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="900" letter-spacing="1.5" fill="#1d7fd8">REPLAY</text></svg>'
-};
+/* v43 : the drawn SVG stops are gone — every classic symbol
+   is now cut-out artwork (SL_SYMS .sym), printed on the band. */
 /* the three drums : fixed 21-stop strips, a different printed
    order per drum (unchanged from the real-machine rebuild) */
 var SL_DRUMS=[
@@ -6755,21 +7206,37 @@ var SL_SCENES=[
 var SL_CHANCE_PATTERNS=[["bell","sevenR","bell"],["sevenR","bell","sevenR"],["bar","sevenB","bar"]];
 function slIsChancePattern(c){for(var i=0;i<SL_CHANCE_PATTERNS.length;i++){var p=SL_CHANCE_PATTERNS[i];if(c[0]===p[0]&&c[1]===p[1]&&c[2]===p[2])return true;}return false;}
 function slIsReachEye(g){return g[0][0]==="sevenR"&&g[1][1]==="sevenR"&&g[2][2]!=="sevenR"||g[0][2]==="sevenR"&&g[1][1]==="sevenR"&&g[2][0]!=="sevenR";}
-function slCellHTML(id){
+/* v44 : virtualised drums. Only the 5 cells around the window
+   exist per reel; each frame maps the drum position onto them
+   with modulo arithmetic, so the band can never run out (the
+   old 63-cell strip ended at 3 drum-turns while a stop glide
+   could travel ~3.6) and no giant layer is ever painted. A
+   cell's <img> is only rebuilt when its symbol changes. */
+function slCellInner(id){
   var s=SL_BY_ID[id];
-  if(id==="bar")return '<div class="sl-cell"><span class="bar"><i>BAR</i><i>BAR</i></span></div>';
-  if(id==="blank")return '<div class="sl-cell blankcell"><span>✦</span></div>';
-  return '<div class="sl-cell'+((id==="momona"||id==="sevenR")?" rare":"")+'">'+(s.img?'<img src="'+s.img+'" alt="'+s.name+'">':SL_SVG[s.svg])+'</div>';
+  if(s.img)return '<img class="face" src="'+s.img+'" alt="'+s.name+'" decoding="async" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=\''+s.img+'\';}">';
+  return '<img class="sym s-'+id+'" src="'+s.sym+'" alt="'+s.name+'" decoding="async" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=\''+s.sym+'\';}">';
 }
 function slBuildStrip(i){
-  var html="",c,k;
-  for(c=0;c<3;c++)for(k=0;k<SL_N;k++)html+=slCellHTML(SL_DRUMS[i][k]);
+  var html="";
+  for(var k=0;k<5;k++)html+='<div class="sl-cell" data-sym=""></div>';
   return html;
 }
 function slSetPos(i){
   var r=SL.reels[i],strip=$("slStrip"+i);if(!strip)return;
-  strip.style.transform="translateY("+(-r.pos)+"px)";
   strip.classList.toggle("fast",r.state==="spin");
+  var cells=strip.children;
+  if(!cells.length)return;
+  var base=Math.floor(r.pos/SL_CELLH),frac=r.pos-base*SL_CELLH;
+  for(var j=0;j<cells.length;j++){
+    var ord=base+j-1,stop=((ord%SL_N)+SL_N)%SL_N,id=SL_DRUMS[i][stop],cell=cells[j];
+    cell.style.transform="translateY("+((j-1)*SL_CELLH-frac)+"px)";
+    if(cell.getAttribute("data-sym")!==id){
+      cell.setAttribute("data-sym",id);
+      cell.className="sl-cell"+((id==="momona"||id==="sevenR")?" rare":"");
+      cell.innerHTML=slCellInner(id);
+    }
+  }
 }
 function slGridOf(i){
   var d=SL_DRUMS[i],t=SL.reels[i].stopIdx;
@@ -6844,6 +7311,13 @@ window.__slEnter=function(){
   slLayout();
   if(!SL.init){
     SL.init=true;
+    /* preload + decode every reel stop up front : a spin must
+       never reveal an image the browser has not decoded yet */
+    SL_SYMS.forEach(function(s){
+      var u=s.sym||s.img;if(!u)return;
+      var im=new Image();im.src=u;
+      if(im.decode)im.decode().catch(function(){});
+    });
     var startSym=["bell","sevenR","replay"];
     for(var i=0;i<3;i++){
       $("slStrip"+i).innerHTML=slBuildStrip(i);
@@ -10128,6 +10602,161 @@ window.__on("soAuto",function(){
    so both screens are ready the moment they are opened */
 soNew();
 if(window.__skReset)window.__skReset();
+</script>
+<style>
+/* ================================================================
+   NO-SCROLL APP SHELL — every main screen completes inside the
+   viewport. The page itself never scrolls: the shell is locked to
+   100dvh, each view is a flex column, heroes/machines flex to fill
+   the leftover height, and long lists live in in-view panes,
+   accordions or compact grids instead of the page.
+   ================================================================ */
+html,body{height:100%;overflow:hidden}
+body{overscroll-behavior:none}
+.device{height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
+.topbar{flex:none}
+main.wrap{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:74px}
+footer{display:none}
+.view{display:none}
+.view.on{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.view>section{min-height:0}
+
+/* ---------- HOME : stage flexes, everything else is one compact row ---------- */
+#v-home .stage-home{flex:1 1 auto;height:auto;min-height:0;margin-top:0}
+#v-home>section{flex:none;margin-top:7px}
+#v-home .sec-head{margin-bottom:5px}
+#v-home .sec-head h2{font-size:14px}
+#v-home .sec-head p{font-size:10px}
+#v-home>p.note{flex:none;margin-top:6px!important;font-size:11px!important}
+#v-home .progress-line{flex:none;margin:4px 0 0}
+#v-home .books,#v-story .books{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+#v-home .bookcell,#v-story .bookcell{min-width:0;padding:4px 3px 0 1px}
+#v-home .bk-vol-line,#v-home .bk-tag{display:none}
+#v-home .newsfold{padding-bottom:7px}
+#v-home .newsfold>div{max-height:30dvh;overflow-y:auto}
+#v-home .news div:nth-child(n+3){display:flex}
+#v-home .book-cap,#v-story .book-cap{display:none}
+#v-home .book .bk-t,#v-story .book .bk-t{padding:12px 3px 5px 11px}
+#v-home .book .bk-t h3,#v-story .book .bk-t h3{font-size:9px;line-height:1.3}
+#v-home .book .bk-t p,#v-story .book .bk-t p,#v-home .book .bk-t .vol,#v-story .book .bk-t .vol{display:none}
+#v-home .book .bk-state,#v-story .book .bk-state{font-size:7.5px;padding:2px 5px;top:4px;right:4px}
+#v-home .imprint,#v-story .imprint{display:none}
+#v-home .mg-home{padding:7px 12px;border-radius:12px}
+#v-home .mg-home p{font-size:10.5px;line-height:1.45}
+#v-home .news{padding:2px 12px}
+#v-home .news div{padding:4px 0;font-size:11px;line-height:1.45}
+
+/* ---------- STORY top : slim cover, clamped synopsis, one-row shelf ---------- */
+#v-story>section{flex:none;margin-top:7px!important}
+#v-story>section:first-child{flex:0 1 auto}
+#v-story .nowcover .face{height:104px}
+#v-story .nowcover .nc-t{padding:6px 12px 7px}
+#v-story .nowcover .nc-t h2{font-size:15.5px;line-height:1.3}
+#v-story .nowcover .nc-t .vol{font-size:8.5px}
+#v-story .synopsis{padding:7px 12px;margin-top:6px}
+#v-story .synopsis h3{font-size:12.5px}
+#v-story .synopsis p{font-size:11px;line-height:1.55;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#v-story .synopsis .prog{margin-top:4px;font-size:10px}
+#v-story .story-tools{margin-top:6px}
+#v-story .story-tools .btn{min-height:38px;padding:6px 8px;font-size:11.5px}
+body:not(.vn-playing) #storyRoot{display:none!important}
+#v-story .fold{padding-bottom:7px}
+#v-story .fold>div{max-height:26dvh;overflow-y:auto}
+#v-story .gallery{max-height:24dvh}
+#bookShelfSec .sec-head{margin-bottom:5px}
+#bookShelfSec .sec-head h2{font-size:14px}
+
+/* ---------- STORY player : ending card fits, no inner scroll ---------- */
+body.vn-playing #v-story>section:first-child{flex:1;min-height:0;display:flex;flex-direction:column}
+body.vn-playing #storyRoot{height:auto;flex:1;min-height:0}
+body.vn-playing #vnEnd:not(:empty){max-height:none;overflow:visible}
+body.vn-playing #vnEnd .endcard{margin-top:8px!important;padding:10px 12px 12px}
+body.vn-playing #vnEnd .endcard h3{font-size:16px;margin:3px 0 2px}
+body.vn-playing #vnEnd .endcard p{font-size:11px;line-height:1.5}
+body.vn-playing #vnEnd .btnrow{margin-top:7px}
+body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
+
+/* ---------- GACHA top : three banners share the viewport height ---------- */
+#v-gacha>section{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:8px!important}
+#gachaTop{flex:1;min-height:0;display:flex;flex-direction:column}
+#gachaTop .sec-head{flex:none}
+.gbanner{flex:1 1 0;min-height:0;margin:0 0 8px}
+.gbanner:last-child{margin-bottom:0}
+/* ---------- GACHA play : machine stage + compact result strip ---------- */
+#gachaStageWrap{flex:1;min-height:0;display:flex;flex-direction:column}
+#gachaStageWrap .gacha-wrap{flex:1 1 auto;height:auto;min-height:0;max-height:none}
+#gachaStageWrap .gacha-info{flex:none;margin-top:6px}
+#gachaStageWrap .gacha-info .sub{display:none}
+#gachaStageWrap .grail{margin:0}
+#gachaStageWrap .gresult{flex:none;max-height:112px;overflow:hidden;margin-top:6px;gap:6px}
+#gachaStageWrap .gresult .pcard .art{aspect-ratio:3/2.1}
+#gachaStageWrap .gresult .pcard .meta{padding:4px 6px 5px}
+#gachaStageWrap .gresult .pcard .skill,#gachaStageWrap .gresult .minibars{display:none}
+
+/* ---------- COLLECTION : filters fixed, card grid is an in-view pane,
+   completion / extra / photo boxes fold into one accordion ---------- */
+#v-coll>section{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:8px!important}
+#v-coll .sec-head,#v-coll .filters,#v-coll>p.note{flex:none}
+#v-coll>p.note{margin-bottom:6px!important}
+#collGrid{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;align-content:start;padding:2px 2px 6px}
+#collBonusFold{flex:none;margin-top:7px}
+#collBonusFold>div{max-height:34dvh;overflow-y:auto}
+#collBonusFold #compBox,#collBonusFold #extraBox,#collBonusFold #shotBox{margin-top:8px!important}
+#v-coll>p.note:last-child{margin-top:6px;font-size:10.5px!important}
+
+/* ---------- MINIGAME hub : 12 games as a 3x4 in-view grid ---------- */
+#v-game.on{overflow-y:auto}
+#mgHub{height:100%}
+#mgHub>section{height:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto repeat(4,1fr);gap:8px;margin-top:8px!important}
+#mgHub .sec-head{grid-column:1/-1;margin-bottom:0}
+#mgHub .mg-entry{aspect-ratio:auto;height:100%;min-height:0;margin:0;border-radius:14px}
+#mgHub .mg-entry .mg-badge{top:6px;left:6px;font-size:8.5px;padding:2.5px 7px;max-width:calc(100% - 12px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mgHub .mg-entry .mg-tx{padding:0 8px 7px}
+#mgHub .mg-entry .mg-tx h3{font-size:12px;line-height:1.3}
+#mgHub .mg-entry .mg-tx p{font-size:9px;line-height:1.4;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- HOME collage, refit for the shorter stage : the heroine
+   keeps her scale (height % of the stage), side members sit fully
+   inside the corners above the badge bar, the badge bar itself is
+   click-transparent except for its buttons, and side members layer
+   above the heroine's edges so every cutout stays tappable ---------- */
+.badges{pointer-events:none;padding:10px 14px 8px}
+.badge-btn{pointer-events:auto;min-height:58px;flex-basis:72px;font-size:10.5px}
+.badge-btn.gold{min-height:88px;font-size:12px;padding:20px 22px 9px}
+.cut-main{height:56%;bottom:104px}
+.cut-p0,.cut-p1,.cut-p2,.cut-p3{z-index:6;width:auto;height:33%}
+.cut-p0{left:6px;top:52px}
+.cut-p1{right:6px;top:52px}
+.cut-p2{left:6px;bottom:106px;top:auto}
+.cut-p3{right:6px;bottom:106px;top:auto}
+.cut-p0 img,.cut-p1 img,.cut-p2 img,.cut-p3 img{width:auto;height:100%}
+.cut-name{font-size:8.5px;padding:2px 7px}
+.cut-main .cut-name{font-size:11px;padding:3px 11px}
+/* vertical lettering lives in the clear lanes between the centre
+   heroine and the corner members, above every cutout */
+.main-vname{font-size:25px;top:38px;right:100px;z-index:7}
+.main-catch{font-size:10.5px;top:40px;left:100px;letter-spacing:.09em;z-index:7}
+
+/* ---------- DAILY / menu : rows fit, open panel is an in-view pane ---------- */
+#v-idea>section{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:8px!important}
+#dMenu{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.dmenu-panel{max-height:36dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.dmenu-row{flex:none}
+</style>
+<script>
+/* Collection: fold the completion / extra-episode / photo-card boxes
+   (rendered below the card grid) into one closed-by-default accordion,
+   so the collection screen completes in the viewport. The boxes keep
+   their ids and are re-rendered in place by the existing code. */
+(function(){
+  var comp=document.getElementById("compBox"), ex=document.getElementById("extraBox"), shot=document.getElementById("shotBox");
+  if(!comp||!ex||!shot||document.getElementById("collBonusFold"))return;
+  var d=document.createElement("details"); d.className="fold"; d.id="collBonusFold";
+  var s=document.createElement("summary"); s.innerHTML="🏆 特典・番外編・撮影カード<span>タップで開く</span>"; d.appendChild(s);
+  var box=document.createElement("div"); d.appendChild(box);
+  comp.parentNode.insertBefore(d,comp);
+  box.appendChild(comp); box.appendChild(ex); box.appendChild(shot);
+})();
 </script>
 </body>
 </html>
