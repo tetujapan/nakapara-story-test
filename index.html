@@ -2889,7 +2889,7 @@ img{-webkit-user-drag:none}
         <span class="mg-badge">👾 固定1画面アクション</span>
         <span class="mg-tx">
         <h3>👾 レトロアクション</h3>
-        <p>下から叩いてひっくり返して蹴り飛ばせ！</p></span>
+        <p>🌐2P対戦／協力 ― 叩いて蹴り飛ばせ！</p></span>
       </button>
       <button type="button" class="mg-entry" id="mgToTwin">
         <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_twin.webp" alt="スカイシューティング ― 小さな翼で空を飛びマイクを掲げるアイドルとパパラッチドローン" style="object-position:50% 40%">
@@ -2897,7 +2897,7 @@ img{-webkit-user-drag:none}
         <span class="mg-badge">🛩️ 縦スクロールSTG</span>
         <span class="mg-tx">
         <h3>🛩️ スカイシューティング</h3>
-        <p>パパラッチを撃ち落とせ ― マイクでパワーアップ！</p></span>
+        <p>🌐2P協力 ― パパラッチを撃ち落とせ！</p></span>
       </button>
       <button type="button" class="mg-entry" id="mgToClimb">
         <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_climb.webp" alt="ビルクライム ― ドット絵のビルを登る中川パラダイス" style="object-position:50% 35%">
@@ -2921,7 +2921,7 @@ img{-webkit-user-drag:none}
         <span class="mg-badge">💣 4人対戦バトル</span>
         <span class="mg-tx">
         <h3>💣 ボンバーバトル</h3>
-        <p>CPU3人と対戦 ― 最後の1人になれ！</p></span>
+        <p>🌐オンライン／CPU対戦 ― 最後の1人になれ！</p></span>
       </button>
       <button type="button" class="mg-entry" id="mgToSuika">
         <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_suika.webp" alt="合体ドリンク ― ガラスの箱の中で合体するドリンク玉と特大のパラダイス玉" style="object-position:50% 45%">
@@ -3119,7 +3119,7 @@ img{-webkit-user-drag:none}
   <div id="mgRetro" style="display:none">
     <section style="margin-top:8px">
       <button type="button" class="mg-back" id="rtBack">‹ ミニゲーム一覧へ</button>
-      <div class="sec-head"><h2>👾 レトロアクション</h2><p>Lit店内バトル ― 固定1画面</p></div>
+      <div class="sec-head"><h2>👾 レトロアクション</h2><p>Lit店内バトル ― 固定1画面 ・ 🌐2P対応</p></div>
       <div class="rt-stage" id="rtStage">
         <div class="rt-hud"><span id="rtHudScore">SCORE 0</span><span id="rtHudWave">WAVE 1</span><span id="rtHudCoin">🪙 0</span><span id="rtHudLife">❤️❤️❤️</span></div>
         <canvas id="rtCanvas" width="480" height="920"></canvas>
@@ -3169,7 +3169,7 @@ img{-webkit-user-drag:none}
   <div id="mgTwin" style="display:none">
     <section style="margin-top:8px">
       <button type="button" class="mg-back" id="tbBack">‹ ミニゲーム一覧へ</button>
-      <div class="sec-head"><h2>🛩️ スカイシューティング</h2><p>縦スクロール ― パパラッチ迎撃</p></div>
+      <div class="sec-head"><h2>🛩️ スカイシューティング</h2><p>縦スクロール ― パパラッチ迎撃 ・ 🌐2P協力対応</p></div>
       <div class="rt-stage" id="tbStage">
         <div class="rt-hud"><span id="tbHudScore">SCORE 0</span><span id="tbHudPow">SHOT Lv.1</span><span id="tbHudLife">❤️❤️❤️</span></div>
         <canvas id="tbCanvas" width="360" height="690"></canvas>
@@ -3282,7 +3282,7 @@ img{-webkit-user-drag:none}
   <div id="mgBomber" style="display:none">
     <section style="margin-top:8px">
       <button type="button" class="mg-back" id="bmBack">‹ ミニゲーム一覧へ</button>
-      <div class="sec-head"><h2>💣 ボンバーバトル</h2><p>4人対戦 ― CPU3人とバトル</p></div>
+      <div class="sec-head"><h2>💣 ボンバーバトル</h2><p>4人対戦 ― オンライン／CPU</p></div>
       <div class="rt-stage" id="bmStage">
         <div class="rt-hud"><span id="bmHudAlive">対戦中…</span><span id="bmHudItem">💣×1 🔥2</span><span id="bmHudTime">⏱ 210</span></div>
         <canvas id="bmCanvas" width="364" height="700"></canvas>
@@ -7939,7 +7939,8 @@ function slAdvance(res){
 }
 /* ================= RETRO 1 : Mario Bros. style (fixed screen) ================= */
 var RT={on:false,raf:0,frame:0,score:0,coins:0,lives:3,wave:1,spawned:0,spawnT:0,kicked:0,state:"ready",stateT:0,
-  p:null,enemies:[],items:[],keys:{l:false,r:false},jumpBuf:0,coyote:0,clearT:0};
+  p:null,enemies:[],items:[],keys:{l:false,r:false},jumpBuf:0,coyote:0,clearT:0,
+  net:null,mySlot:0,p2:null,lives2:3,scores:[0,0],p1char:null,remoteIn:null,netRaf:0,_snapSeq:-1};
 /* portrait field (480 x 920) : the PLAY field is compressed into
    the upper part of the canvas — the ground floor sits at y=716,
    safely above the ghost pad that floats over the bottom ~200px
@@ -7978,7 +7979,7 @@ var RT_PLATS=[
   {x:80,y:122,w:120},{x:280,y:122,w:120}
 ];
 function rtPlatAt(x,y){for(var i=0;i<RT_PLATS.length;i++){var p=RT_PLATS[i];if(x>=p.x-2&&x<=p.x+p.w+2&&Math.abs(y-p.y)<3)return p;}return null;}
-function rtResetPlayer(){RT.p={x:228,y:682,w:25,h:34,vx:0,vy:0,ground:true,plat:RT_PLATS[0],invuln:150,face:1};}
+function rtResetPlayer(){RT.p={x:228,y:682,w:25,h:34,vx:0,vy:0,ground:true,plat:RT_PLATS[0],invuln:150,face:1,jb:0,cy:0,active:true};}
 /* jump : a press is BUFFERED for 9 steps and a 7-step coyote window
    covers walking off a ledge, so the jump fires the step the press
    (or the landing) lands — never a beat late. vy -11.6 against
@@ -7994,11 +7995,12 @@ function rtResetPlayer(){RT.p={x:228,y:682,w:25,h:34,vx:0,vy:0,ground:true,plat:
    is kept, so a direction pressed together with the jump goes
    exactly where the thumb says, and a held direction is already
    at full effect on the landing step. */
-function rtSteer(p){
+function rtSteer(p,keys){
+  keys=keys||RT.keys;
   var MAX=2.6,ACC=0.7;
   var want=0;
-  if(RT.keys.l){want=-1;p.face=-1;}
-  if(RT.keys.r){want=1;p.face=1;}
+  if(keys.l){want=-1;p.face=-1;}
+  if(keys.r){want=1;p.face=1;}
   if(want!==0){
     var turn=p.vx!==0&&(p.vx<0)!==(want<0);
     p.vx+=want*(turn?1.8:ACC);
@@ -8009,15 +8011,23 @@ function rtSteer(p){
     p.vx*=0.995;
   }
 }
-function rtJumpPress(){RT.jumpBuf=9;}
+function rtJumpPress(){
+  /* online guest : the press is streamed to the host as an input;
+     the host runs the physics. Everyone else buffers it locally
+     on their own player object. */
+  if(RT.net&&RT.net.role==="guest"){if(window.MP)MP.jumpPress();return;}
+  if(RT.p)RT.p.jb=9;
+}
 function rtJumpTick(p){
-  if(p.ground)RT.coyote=7;else if(RT.coyote>0)RT.coyote--;
-  if(RT.jumpBuf>0){
-    RT.jumpBuf--;
-    if(p.ground||RT.coyote>0){p.vy=-11.6;p.ground=false;RT.jumpBuf=0;RT.coyote=0;}
+  if(p.jb===undefined){p.jb=0;p.cy=0;}
+  if(p.ground)p.cy=7;else if(p.cy>0)p.cy--;
+  if(p.jb>0){
+    p.jb--;
+    if(p.ground||p.cy>0){p.vy=-11.6;p.ground=false;p.jb=0;p.cy=0;}
   }
 }
 function rtStartGame(){
+  RT.net=null;RT.p2=null;RT.lives2=3;RT.scores=[0,0];RT.p1char=null;RT.remoteIn=null;
   RT.score=0;RT.coins=0;RT.lives=3;RT.wave=1;
   rtStartWave();
   $("rtOverlay").hidden=true;
@@ -8028,7 +8038,15 @@ function rtStartGame(){
 }
 function rtStartWave(){
   RT.enemies=[];RT.items=[];RT.spawned=0;RT.spawnT=30;RT.kicked=0;RT.state="play";
-  rtResetPlayer();rtHud();
+  rtResetPlayer();
+  /* online co-op : a partner who ran out of lives spectates only
+     until the wave is cleared — the next wave revives them */
+  if(RT.net){
+    if(RT.lives<=0)RT.lives=1;
+    if(RT.lives2<=0)RT.lives2=1;
+    if(RT.p2){RT.p2.active=true;RT.p2.x=120;RT.p2.y=682;RT.p2.vx=0;RT.p2.vy=0;RT.p2.ground=true;RT.p2.plat=RT_PLATS[0];RT.p2.invuln=120;}
+  }
+  rtHud();
 }
 function rtWaveCount(){return Math.min(3+RT.wave,8);}
 function rtSpawnEnemy(){
@@ -8061,8 +8079,34 @@ function rtBonk(plat){
 }
 function rtKillPlayer(){
   RT.lives--;rtHud();
-  if(RT.lives<=0){rtGameOver();return;}
+  if(RT.lives<=0){
+    /* online co-op : while your partner still stands you only
+       spectate — the game ends when BOTH players are down */
+    if(RT.net&&RT.p2&&RT.p2.active){RT.p.active=false;toast("P1ダウン… ウェーブクリアで復活");return;}
+    rtGameOver();return;
+  }
   rtResetPlayer();
+}
+function rtKillP2(){
+  RT.lives2--;rtHud();
+  if(RT.lives2<=0){
+    if(RT.lives<=0){rtGameOver();return;}
+    RT.p2.active=false;toast("P2ダウン… ウェーブクリアで復活");return;
+  }
+  var q=RT.p2;
+  q.x=120;q.y=682;q.vx=0;q.vy=0;q.ground=true;q.plat=RT_PLATS[0];q.invuln=150;
+}
+/* dropout CPU partner for the store battle : kicks flipped
+   enemies, otherwise shadows the nearest walking enemy and hops
+   when it patrols the floor right above (the bonk attempt) */
+function rtPartnerAI(q){
+  var tgt=null,best=1e9,i,e,d;
+  for(i=0;i<RT.enemies.length;i++){e=RT.enemies[i];if(e.state==="flipped"){d=Math.abs(e.x-q.x);if(d<best){best=d;tgt=e;}}}
+  if(!tgt)for(i=0;i<RT.enemies.length;i++){e=RT.enemies[i];if(e.state==="walk"){d=Math.abs(e.x-q.x)+Math.abs(e.y-q.y)*0.5;if(d<best){best=d;tgt=e;}}}
+  q.keys.l=false;q.keys.r=false;
+  if(!tgt)return;
+  if(tgt.x>q.x+6)q.keys.r=true;else if(tgt.x<q.x-6)q.keys.l=true;
+  if(tgt.state==="walk"&&q.ground&&Math.abs(tgt.y-(q.y-66))<26&&Math.abs((tgt.x+tgt.w/2)-(q.x+q.w/2))<20&&Math.random()<0.2)q.jb=9;
 }
 function rtGameOver(){
   RT.state="over";
@@ -8072,10 +8116,18 @@ function rtGameOver(){
   if(reward>0){S.coin+=reward;renderStats();}
   $("rtOvTtl").textContent="ゲームオーバー";
   $("rtOvTx").innerHTML="WAVE "+RT.wave+" ・ SCORE "+RT.score+"<br>🪙 コイン "+RT.coins+"枚 ＋ スコアボーナス "+Math.floor(RT.score/100)+" ＝ <b>+"+reward+"コイン</b>";
+  if(RT.net)$("rtOvTx").innerHTML+="<br>⚔️ 対決スコア　P1 "+RT.scores[0]+" ― P2 "+RT.scores[1]+"（"+(RT.scores[0]===RT.scores[1]?"引き分け！":RT.scores[0]>RT.scores[1]?"P1の勝ち！":"P2の勝ち！")+"）";
   $("rtStartBtn").textContent="▶ もう一度";
   $("rtOverlay").hidden=false;
 }
 function rtHud(){
+  if(RT.net){
+    $("rtHudScore").textContent="P1 "+RT.scores[0]+" ・ P2 "+RT.scores[1];
+    $("rtHudWave").textContent="WAVE "+RT.wave;
+    $("rtHudCoin").textContent="🪙 "+RT.coins;
+    $("rtHudLife").textContent="P1"+"❤️".repeat(Math.max(0,RT.lives))+" P2"+"❤️".repeat(Math.max(0,RT.lives2));
+    return;
+  }
   $("rtHudScore").textContent="SCORE "+RT.score;
   $("rtHudWave").textContent="WAVE "+RT.wave;
   $("rtHudCoin").textContent="🪙 "+RT.coins;
@@ -8120,7 +8172,7 @@ function rtUpdate(){
        banner shows while the player can still run and jump around
        the emptied bar, then the next wave begins */
     var cp=RT.p;
-    if(cp){
+    if(cp&&cp.active!==false){
       if(cp.invuln>0)cp.invuln--;
       rtSteer(cp);
       rtJumpTick(cp);
@@ -8131,6 +8183,7 @@ function rtUpdate(){
   }
   if(RT.state!=="play")return;
   var p=RT.p;
+  if(p.active!==false){
   if(p.invuln>0)p.invuln--;
   rtSteer(p);
   rtJumpTick(p);
@@ -8148,6 +8201,35 @@ function rtUpdate(){
       var pl=RT_PLATS[i],bottom=pl.y+10;
       if(prevY>=bottom&&p.y<bottom&&p.x+p.w>pl.x+3&&p.x<pl.x+pl.w-3){
         p.y=bottom;p.vy=0;rtBonk(pl);break;
+      }
+    }
+  }
+  }
+  /* ---- online partner (host-authoritative) : the second player
+     runs the very same steer / jump / physics / bonk pipeline,
+     driven by the streamed input (or the dropout CPU partner) ---- */
+  var pq=RT.p2;
+  if(pq&&pq.active){
+    if(pq.invuln>0)pq.invuln--;
+    if(pq.ai)rtPartnerAI(pq);
+    else if(RT.remoteIn){
+      pq.keys.l=!!RT.remoteIn.l;pq.keys.r=!!RT.remoteIn.r;
+      if(typeof RT.remoteIn.jumpSeq==="number"&&RT.remoteIn.jumpSeq!==(pq._lj||0)){pq._lj=RT.remoteIn.jumpSeq;pq.jb=9;}
+    }
+    rtSteer(pq,pq.keys);
+    rtJumpTick(pq);
+    var qPrevVy=pq.vy,qPrevY=pq.y;
+    rtPhys(pq,0.52);
+    if(qPrevVy<0){
+      for(var qi=1;qi<RT_PLATS.length;qi++){
+        var qpl=RT_PLATS[qi],qbot=qpl.y+10;
+        if(qPrevY>=qbot&&pq.y<qbot&&pq.x+pq.w>qpl.x+3&&pq.x<qpl.x+qpl.w-3){
+          pq.y=qbot;pq.vy=0;qpl.bounceT=16;qpl.bounceX=pq.x+pq.w/2;
+          RT.enemies.forEach(function(e){
+            if(e.state==="walk"&&e.plat===qpl){e.state="flipped";e.flipT=280;e.fdir=e.vx<0?-1:1;e.vx=0;e.kickGrace=30;}
+          });
+          break;
+        }
       }
     }
   }
@@ -8184,7 +8266,7 @@ function rtUpdate(){
     /* vs player — two ways to stun : bonk the floor from below, or
        stomp the enemy from above. A standing enemy touched any
        other way is a miss. */
-    if(Math.abs((p.x+p.w/2)-(e.x+e.w/2))<(p.w+e.w)/2-4&&Math.abs((p.y+p.h/2)-(e.y+e.h/2))<(p.h+e.h)/2-4){
+    if(p.active!==false&&Math.abs((p.x+p.w/2)-(e.x+e.w/2))<(p.w+e.w)/2-4&&Math.abs((p.y+p.h/2)-(e.y+e.h/2))<(p.h+e.h)/2-4){
       if(p.vy>0.5&&(p.y+p.h)-e.y<15){
         e.state="flipped";e.flipT=280;e.fdir=e.vx<0?-1:1;e.vx=0;e.kickGrace=30;
         p.vy=-8.6;p.y=e.y-p.h-1;
@@ -8197,18 +8279,46 @@ function rtUpdate(){
   RT.enemies.forEach(function(e){
     if(e.state!=="flipped")return;
     if(e.kickGrace>0)return;
-    if(Math.abs((p.x+p.w/2)-(e.x+e.w/2))<(p.w+e.w)/2-2&&Math.abs((p.y+p.h/2)-(e.y+e.h/2))<(p.h+e.h)/2-2){
+    if(p.active!==false&&Math.abs((p.x+p.w/2)-(e.x+e.w/2))<(p.w+e.w)/2-2&&Math.abs((p.y+p.h/2)-(e.y+e.h/2))<(p.h+e.h)/2-2){
       e.state="kicked";e.vx=(e.x>=p.x?1:-1)*3.4;e.vy=-4;
-      RT.score+=100;RT.kicked++;rtHud();
+      RT.score+=100;RT.scores[0]+=100;RT.kicked++;rtHud();
       if(Math.random()<0.45)RT.items.push({x:230,y:682,w:14,h:14,vx:(Math.random()<0.5?-1:1)*1.1,vy:0,plat:null,t:0});
     }
   });
+  /* partner interactions : stomp / touch / kick / coins, scored
+     on P2's own tally (the versus half of co-op) */
+  if(pq&&pq.active){
+    RT.enemies.forEach(function(e){
+      if(e.state==="gone"||e.state==="kicked")return;
+      if(e.state==="walk"){
+        if(Math.abs((pq.x+pq.w/2)-(e.x+e.w/2))<(pq.w+e.w)/2-4&&Math.abs((pq.y+pq.h/2)-(e.y+e.h/2))<(pq.h+e.h)/2-4){
+          if(pq.vy>0.5&&(pq.y+pq.h)-e.y<15){
+            e.state="flipped";e.flipT=280;e.fdir=e.vx<0?-1:1;e.vx=0;e.kickGrace=30;
+            pq.vy=-8.6;pq.y=e.y-pq.h-1;
+          }else if(pq.invuln<=0){rtKillP2();}
+        }
+      }else if(e.state==="flipped"){
+        if(e.kickGrace>0)return;
+        if(Math.abs((pq.x+pq.w/2)-(e.x+e.w/2))<(pq.w+e.w)/2-2&&Math.abs((pq.y+pq.h/2)-(e.y+e.h/2))<(pq.h+e.h)/2-2){
+          e.state="kicked";e.vx=(e.x>=pq.x?1:-1)*3.4;e.vy=-4;
+          RT.score+=100;RT.scores[1]+=100;RT.kicked++;rtHud();
+          if(Math.random()<0.45)RT.items.push({x:230,y:682,w:14,h:14,vx:(Math.random()<0.5?-1:1)*1.1,vy:0,plat:null,t:0});
+        }
+      }
+    });
+    RT.items.forEach(function(it){
+      if(it.gone)return;
+      if(Math.abs((pq.x+pq.w/2)-(it.x+it.w/2))<(pq.w+it.w)/2&&Math.abs((pq.y+pq.h/2)-(it.y+it.h/2))<(pq.h+it.h)/2){
+        it.gone=true;RT.coins++;RT.score+=50;RT.scores[1]+=50;rtHud();
+      }
+    });
+  }
   /* coin items slide on the ground */
   RT.items.forEach(function(it){
     if(it.gone)return;it.t++;
     it.isEnemy=false;rtPhys(it,0.45);
-    if(Math.abs((p.x+p.w/2)-(it.x+it.w/2))<(p.w+it.w)/2&&Math.abs((p.y+p.h/2)-(it.y+it.h/2))<(p.h+it.h)/2){
-      it.gone=true;RT.coins++;RT.score+=50;rtHud();
+    if(p.active!==false&&Math.abs((p.x+p.w/2)-(it.x+it.w/2))<(p.w+it.w)/2&&Math.abs((p.y+p.h/2)-(it.y+it.h/2))<(p.h+it.h)/2){
+      it.gone=true;RT.coins++;RT.score+=50;RT.scores[0]+=50;rtHud();
     }
   });
   RT.items=RT.items.filter(function(it){return !it.gone;});
@@ -8330,22 +8440,31 @@ function rtDraw(){
   });
   /* player : the selected talent's SD sprite */
   var p=RT.p;
-  if(p&&!(p.invuln>0&&Math.floor(RT.frame/5)%2===0)){
+  if(p&&p.active!==false&&!(p.invuln>0&&Math.floor(RT.frame/5)%2===0)){
     var running=p.ground&&Math.abs(p.vx)>0.4;
-    if(!drawChara(g,SDIMG[RTCHAR],p.x-10,p.y-18,45,52,{faceLeft:p.face<0,bob:running&&Math.floor(RT.frame/7)%2===0?-1:0}))
-      drawSD(g,RTCHAR,p.x-4,p.y-11,2.05,{frame:running&&Math.floor(RT.frame/7)%2===0,faceLeft:p.face<0});
+    if(!drawChara(g,SDIMG[(RT.p1char||RTCHAR)],p.x-10,p.y-18,45,52,{faceLeft:p.face<0,bob:running&&Math.floor(RT.frame/7)%2===0?-1:0}))
+      drawSD(g,(RT.p1char||RTCHAR),p.x-4,p.y-11,2.05,{frame:running&&Math.floor(RT.frame/7)%2===0,faceLeft:p.face<0});
+    if(RT.net){g.fillStyle="#ffd23f";g.font="900 10px sans-serif";g.textAlign="center";g.fillText("P1",p.x+12,p.y-24);}
+  }
+  /* online partner : same SD treatment, cyan P2 tag */
+  var pq9=RT.p2;
+  if(pq9&&pq9.active!==false&&!(pq9.invuln>0&&Math.floor(RT.frame/5)%2===0)){
+    var running2=pq9.ground&&Math.abs(pq9.vx)>0.4;
+    if(!drawChara(g,SDIMG[pq9.char],pq9.x-10,pq9.y-18,45,52,{faceLeft:pq9.face<0,bob:running2&&Math.floor(RT.frame/7)%2===0?-1:0}))
+      drawSD(g,pq9.char,pq9.x-4,pq9.y-11,2.05,{frame:running2&&Math.floor(RT.frame/7)%2===0,faceLeft:pq9.face<0});
+    g.fillStyle="#7ce7ff";g.font="900 10px sans-serif";g.textAlign="center";g.fillText("P2",pq9.x+12,pq9.y-24);
   }
   if(RT.state==="ready"){
     g.fillStyle="rgba(8,3,18,.45)";g.fillRect(0,0,480,920);
   }
 }
-window.__rtStop=function(){RT.on=false;RT._lt=0;RT._acc=0;if(RT.raf)cancelAnimationFrame(RT.raf);};
+window.__rtStop=function(){RT.on=false;RT._lt=0;RT._acc=0;if(RT.raf)cancelAnimationFrame(RT.raf);if(RT.netRaf){cancelAnimationFrame(RT.netRaf);RT.netRaf=0;}};
 /* back to a clean start screen after a mid-game exit : score,
    enemies and held keys are wiped and the start overlay (with
    its original title and button label) comes back, so the next
    visit always starts from the top */
 window.__rtReset=function(){
-  RT.state="ready";RT.score=0;RT.coins=0;RT.lives=3;RT.wave=1;RT.enemies=[];RT.items=[];RT.p=null;RT.spawned=0;RT.kicked=0;RT.clearT=0;RT.jumpBuf=0;
+  RT.state="ready";RT.score=0;RT.coins=0;RT.lives=3;RT.wave=1;RT.enemies=[];RT.items=[];RT.p=null;RT.spawned=0;RT.kicked=0;RT.clearT=0;RT.jumpBuf=0;RT.net=null;RT.p2=null;RT.lives2=3;RT.scores=[0,0];RT.p1char=null;RT.remoteIn=null;
   RT.keys.l=false;RT.keys.r=false;
   $("rtOvTtl").textContent="Lit店内バトル";
   $("rtOvTx").innerHTML="ひっくり返して、蹴り飛ばせ！";
@@ -8377,8 +8496,9 @@ document.addEventListener("keyup",function(e){
 });
 /* ================= RETRO 2 : TwinBee style vertical shooter ================= */
 var TB={on:false,raf:0,frame:0,score:0,bells:0,lives:3,pow:1,rate:1,barrier:0,state:"ready",px:180,tx:180,py:520,ty:520,invuln:0,fireT:0,spawnT:0,
-  bullets:[],enemies:[],ebullets:[],items:[],stars:[],fx:[],trail:[]};
+  bullets:[],enemies:[],ebullets:[],items:[],stars:[],fx:[],trail:[],net:null,mySlot:0,p2:null,p1char:null,remoteIn:null,netRaf:0,_snapSeq:-1};
 function tbStart(){
+  TB.net=null;TB.p2=null;TB.p1char=null;TB.remoteIn=null;
   TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.px=180;TB.tx=180;TB.py=520;TB.ty=520;TB.invuln=0;
   TB.bullets=[];TB.enemies=[];TB.ebullets=[];TB.items=[];TB.fx=[];TB.trail=[];TB.spawnT=40;TB.state="play";
   if(TB.stars.length===0)for(var i=0;i<40;i++)TB.stars.push({x:Math.random()*360,y:Math.random()*690,s:Math.random()*2+0.5});
@@ -8496,6 +8616,27 @@ function tbUpdate(){
     else if(TB.pow===2){TB.bullets.push({x:TB.px+7,y:TB.py-43,vx:0,vy:-7});TB.bullets.push({x:TB.px+23,y:TB.py-43,vx:0,vy:-7});}
     else{TB.bullets.push({x:TB.px+15,y:TB.py-48,vx:0,vy:-7});TB.bullets.push({x:TB.px+1,y:TB.py-39,vx:-1.6,vy:-6.4});TB.bullets.push({x:TB.px+29,y:TB.py-39,vx:1.6,vy:-6.4});}
   }
+  /* ---- online partner (2P co-op, host-authoritative) : the
+     partner ship chases the target position the guest streams in
+     (TwinBee movement is target-tracked, so the same smoothing
+     the host applies is what the guest predicts locally), fires
+     the shared shot pattern, and after a dropout a simple AI
+     wingman takes the stick ---- */
+  if(TB.p2&&TB.p2.active){
+    var pq=TB.p2;
+    if(pq.ai){pq.tx=TB.px+58;pq.ty=TB.py+40;if(pq.tx>338){pq.tx=TB.px-58;}pq.ty=Math.max(60,Math.min(536,pq.ty));}
+    else if(TB.remoteIn){pq.tx=TB.remoteIn.tx;pq.ty=TB.remoteIn.ty;}
+    pq.tx=Math.max(20,Math.min(340,pq.tx));pq.ty=Math.max(56,Math.min(540,pq.ty));
+    pq.x+=(pq.tx-pq.x)*0.35;pq.y+=(pq.ty-pq.y)*0.35;
+    if(pq.invuln>0)pq.invuln--;
+    if(--pq.fireT<=0){
+      pq.fireT=Math.max(4,Math.round(9/TB.rate));
+      if(TB.pow===1)TB.bullets.push({x:pq.x+15,y:pq.y-46,vx:0,vy:-7});
+      else if(TB.pow===2){TB.bullets.push({x:pq.x+7,y:pq.y-43,vx:0,vy:-7});TB.bullets.push({x:pq.x+23,y:pq.y-43,vx:0,vy:-7});}
+      else{TB.bullets.push({x:pq.x+15,y:pq.y-48,vx:0,vy:-7});TB.bullets.push({x:pq.x+1,y:pq.y-39,vx:-1.6,vy:-6.4});TB.bullets.push({x:pq.x+29,y:pq.y-39,vx:1.6,vy:-6.4});}
+    }
+    if(TB.frame%2===0)TB.trail.push({x:pq.x+(Math.random()*22-11),y:pq.y+8+Math.random()*5,vy:1.5+Math.random()*1.3,vx:(Math.random()-0.5)*0.4,life:15,max:26,r:1.4,col:"#aef3ff"});
+  }
   TB.bullets.forEach(function(b){b.x+=b.vx;b.y+=b.vy;if(b.y<-12)b.dead=true;});
   /* spawn paparazzi drones */
   if(--TB.spawnT<=0){
@@ -8527,7 +8668,7 @@ function tbUpdate(){
   TB.items.forEach(function(it){
     it.y+=it.vy;it.x+=Math.sin(TB.frame*0.05+it.ph)*0.8;
     if(it.y>706)it.dead=true;
-    if(Math.abs(it.x-TB.px)<26&&Math.abs(it.y-TB.py)<26){
+    if((Math.abs(it.x-TB.px)<26&&Math.abs(it.y-TB.py)<26)||(TB.p2&&TB.p2.active&&Math.abs(it.x-TB.p2.x)<26&&Math.abs(it.y-TB.p2.y)<26)){
       it.dead=true;tbPickup(it);
     }
   });
@@ -8546,6 +8687,22 @@ function tbUpdate(){
       tbHud();
     }else if(hit){
       TB.lives--;TB.pow=Math.max(1,TB.pow-1);TB.rate=Math.max(1,TB.rate-1);TB.invuln=130;tbHud();
+      if(TB.lives<=0){tbGameOver();return;}
+    }
+  }
+  /* partner hits : the team shares lives and power-downs, the
+     star barrier covers whichever ship it saves */
+  if(TB.p2&&TB.p2.active&&TB.p2.invuln<=0&&TB.state==="play"){
+    var hit2=false;
+    TB.enemies.forEach(function(e){if(!e.dead&&Math.abs(e.x-TB.p2.x)<26&&Math.abs(e.y-TB.p2.y)<26)hit2=true;});
+    TB.ebullets.forEach(function(b){if(!b.dead&&Math.abs(b.x-TB.p2.x)<13&&Math.abs(b.y-TB.p2.y)<15){hit2=true;b.dead=true;}});
+    if(hit2&&TB.barrier>0){
+      TB.barrier=0;TB.p2.invuln=100;
+      TB.fx.push({type:"ring",x:TB.p2.x,y:TB.p2.y,r:12,vr:4,life:16,max:16,col:"#7ce7ff"});
+      tbPop(TB.p2.x,TB.p2.y-34,"バリアが守った！","#7ce7ff");
+      tbHud();
+    }else if(hit2){
+      TB.lives--;TB.pow=Math.max(1,TB.pow-1);TB.rate=Math.max(1,TB.rate-1);TB.p2.invuln=130;tbHud();
       if(TB.lives<=0){tbGameOver();return;}
     }
   }
@@ -8667,8 +8824,8 @@ function tbDraw(){
       g.drawImage(SPR.wingFly,-44,-28,46,32);g.restore();
     })();
     /* the idol herself */
-    if(!drawChara(g,SDIMG[RTCHAR],TB.px-20,TB.py-48+bobY,40,48,{}))
-      drawSD(g,RTCHAR,TB.px-16,TB.py-42+bobY,1.6,{});
+    if(!drawChara(g,SDIMG[(TB.p1char||RTCHAR)],TB.px-20,TB.py-48+bobY,40,48,{}))
+      drawSD(g,(TB.p1char||RTCHAR),TB.px-16,TB.py-42+bobY,1.6,{});
     /* her mic, raised in her right hand, head tipped up-stage */
     g.save();g.translate(TB.px+16,TB.py-38+bobY);g.rotate(-0.35+Math.sin(TB.frame*0.09)*0.05);
     drawSpr(g,SPR.mic,-11,-11,22,22);g.restore();
@@ -8684,6 +8841,24 @@ function tbDraw(){
     g.setLineDash([]);g.fillStyle="#ffe98a";
     for(var bk=0;bk<3;bk++){var bka=bk*2.094;g.beginPath();g.arc(Math.cos(bka)*35,Math.sin(bka)*35,2.4,0,7);g.fill();}
     g.restore();g.globalAlpha=1;
+  }
+  /* online partner ship : same wing + idol treatment, cyan name
+     tag so the two ships never get mixed up */
+  if(TB.p2&&TB.p2.active&&!(TB.p2.invuln>0&&Math.floor(TB.frame/5)%2===0)){
+    var pq2=TB.p2,bob3=Math.sin(TB.frame*0.09+2.1)*2.2;
+    g.save();g.translate(pq2.x,pq2.y-20+bob3);
+    g.globalAlpha=0.9;g.drawImage(SPR.wingFly,-42,-27,44,30);g.globalAlpha=1;
+    if(!drawChara(g,SDIMG[pq2.char],-20,-28,40,48,{}))drawSD(g,pq2.char,-16,-22,1.6,{});
+    g.restore();
+    g.fillStyle="#7ce7ff";g.font="900 10px 'M PLUS Rounded 1c',sans-serif";g.textAlign="center";
+    g.shadowColor="rgba(0,0,0,.7)";g.shadowBlur=3;
+    g.fillText("P2 "+(pq2.name||""),pq2.x,pq2.y-54+bob3);g.shadowBlur=0;
+    if(TB.barrier>0){
+      g.save();g.translate(pq2.x,pq2.y-20);g.rotate(-TB.frame*0.03);
+      g.globalAlpha=0.6;g.strokeStyle="#7ce7ff";g.lineWidth=2;
+      g.setLineDash([8,6]);g.beginPath();g.arc(0,0,33,0,7);g.stroke();
+      g.restore();g.globalAlpha=1;
+    }
   }
   /* effects layer : kill flashes, shock rings, debris shards
      and rising score / pickup popups */
@@ -8707,10 +8882,10 @@ function tbDraw(){
     }
   });
 }
-window.__tbStop=function(){TB.on=false;TB._lt=0;TB._acc=0;if(TB.raf)cancelAnimationFrame(TB.raf);};
+window.__tbStop=function(){TB.on=false;TB._lt=0;TB._acc=0;if(TB.raf)cancelAnimationFrame(TB.raf);if(TB.netRaf){cancelAnimationFrame(TB.netRaf);TB.netRaf=0;}};
 /* back to a clean start screen after a mid-game exit (see __rtReset) */
 window.__tbReset=function(){
-  TB.state="ready";TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;
+  TB.state="ready";TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;TB.net=null;TB.p2=null;TB.p1char=null;TB.remoteIn=null;
   TB.bullets=[];TB.enemies=[];TB.ebullets=[];TB.items=[];TB.fx=[];TB.trail=[];TB.px=180;TB.tx=180;TB.py=520;TB.ty=520;
   if(TB.keys){TB.keys.l=false;TB.keys.r=false;TB.keys.u=false;TB.keys.d=false;}
   var ov=$("tbOverlay");
@@ -9443,7 +9618,7 @@ document.addEventListener("keyup",function(e){
   if(e.key==="ArrowRight")BF.keys.r=false;
 });
 /* ================= RETRO 5 : Bomberman style 4P battle ================= */
-var BM={on:false,raf:0,frame:0,state:"ready",grid:[],players:[],bombs:[],flames:[],items:[],time:0,over:false,keys:{}};
+var BM={on:false,raf:0,frame:0,state:"ready",grid:[],players:[],bombs:[],flames:[],items:[],time:0,over:false,keys:{},net:null,mySlot:0,remoteIn:{},netRaf:0,_snapSeq:-1};
 /* the arena is 13 x 25 cells : at phone width the field now
    reaches the bottom of the screen like the other retro games
    (the old 13 x 11 arena letterboxed into the top half) */
@@ -9458,6 +9633,7 @@ function bmCellSolid(cx,cy){
 }
 function bmBombAt(cx,cy){for(var i=0;i<BM.bombs.length;i++)if(BM.bombs[i].cx===cx&&BM.bombs[i].cy===cy)return BM.bombs[i];return null;}
 function bmStart(){
+  BM.net=null;BM.mySlot=0;BM.remoteIn={};
   var x,y;
   BM.grid=[];
   for(y=0;y<BM_ROWS;y++){BM.grid.push([]);for(x=0;x<BM_COLS;x++){
@@ -9483,7 +9659,7 @@ function bmStart(){
 }
 function bmHud(){
   var alive=BM.players.filter(function(p){return p.alive;}).length;
-  var me=BM.players[0];
+  var me=BM.players[BM.mySlot||0];
   $("bmHudAlive").textContent=BM.state==="play"?("残り "+alive+"人"):"対戦";
   if(me)$("bmHudItem").textContent="💣×"+me.maxBombs+" 🔥"+me.fire+" 👟"+(Math.round(me.speed*10)/10);
   $("bmHudTime").textContent="⏱ "+Math.ceil(BM.time/60);
@@ -9569,6 +9745,15 @@ function bmPlaceBomb(p){
   var mine=BM.bombs.filter(function(b){return b.owner===p;}).length;
   if(mine>=p.maxBombs)return;
   BM.bombs.push({cx:cc.cx,cy:cc.cy,fuse:125,fire:p.fire,owner:p});
+}
+/* bomb button entry point : in an online guest session the press is
+   sent to the host as an input (the host places the bomb), in every
+   other mode the bomb is placed locally for my own slot */
+function bmBombPress(){
+  var me=BM.players[BM.mySlot||0];
+  if(BM.state!=="play"||!me||!me.alive)return;
+  if(BM.net&&BM.net.role==="guest"){if(window.MP)MP.bombPress();return;}
+  bmPlaceBomb(me);
 }
 function bmExplode(b){
   var cells=[{cx:b.cx,cy:b.cy}],dirs=[[1,0],[-1,0],[0,1],[0,-1]];
@@ -9759,20 +9944,35 @@ function bmUpdate(){
   /* player input : the last direction pressed wins, read fresh
      every step — a direction change answers on the next step,
      never after a beat of drift */
-  var me=BM.players[0];
-  if(me&&me.alive){
-    var dir=bmDir();
-    if(dir==="l")bmMove(me,-1,0);else if(dir==="r")bmMove(me,1,0);
-    else if(dir==="u")bmMove(me,0,-1);else if(dir==="d")bmMove(me,0,1);
-    var cc=bmCenterCell(me);
+  var me=BM.players[BM.mySlot||0];
+  /* humans : my slot reads the local pad, remote slots read the
+     inputs the host received over the room (MP keeps BM.remoteIn
+     keyed by slot). CPU slots move in the think block below.
+     Item pickup is shared by every slot; only my own pickup
+     pops the toast / HUD refresh. */
+  BM.players.forEach(function(p,pi){
+    if(!p.alive||p.cpu)return;
+    if(pi===(BM.mySlot||0)){
+      var dir=bmDir();
+      if(dir==="l")bmMove(p,-1,0);else if(dir==="r")bmMove(p,1,0);
+      else if(dir==="u")bmMove(p,0,-1);else if(dir==="d")bmMove(p,0,1);
+    }else if(p.remote){
+      var ri=BM.remoteIn?BM.remoteIn[pi]:null;
+      if(ri){
+        if(ri.dir==="l")bmMove(p,-1,0);else if(ri.dir==="r")bmMove(p,1,0);
+        else if(ri.dir==="u")bmMove(p,0,-1);else if(ri.dir==="d")bmMove(p,0,1);
+        if(typeof ri.bombSeq==="number"&&ri.bombSeq!==(p._lbSeq||0)){p._lbSeq=ri.bombSeq;bmPlaceBomb(p);}
+      }
+    }else{return;}
+    var cc=bmCenterCell(p);
     BM.items.forEach(function(it){
       if(!it.got&&it.cx===cc.cx&&it.cy===cc.cy){
         it.got=true;
-        if(it.type==="bomb")me.maxBombs++;else if(it.type==="fire")me.fire++;else me.speed=Math.min(2.6,me.speed+0.35);
-        bmHud();toast(it.type==="bomb"?"💣 爆弾数アップ！":it.type==="fire"?"🔥 火力アップ！":"👟 スピードアップ！");
+        if(it.type==="bomb")p.maxBombs++;else if(it.type==="fire")p.fire++;else p.speed=Math.min(2.6,p.speed+0.35);
+        if(pi===(BM.mySlot||0)){bmHud();toast(it.type==="bomb"?"💣 爆弾数アップ！":it.type==="fire"?"🔥 火力アップ！":"👟 スピードアップ！");}
       }
     });
-  }
+  });
   /* cpu */
   BM.players.forEach(function(p){
     if(!p.alive||!p.cpu)return;
@@ -9874,19 +10074,20 @@ function bmDraw(){
       g.fillStyle="rgba(255,220,90,"+(0.8*a+0.2)+")";g.fillRect(c.cx*BM_CELL+8,c.cy*BM_CELL+8,BM_CELL-16,BM_CELL-16);
     });
   });
-  BM.players.forEach(function(p){
+  BM.players.forEach(function(p,pi){
     if(!p.alive)return;
     if(!drawChara(g,SDIMG[p.char],p.x-8,p.y-16,36,42,{bob:Math.floor(BM.frame/9)%2===0?-0.8:0}))
       drawSD(g,p.char,p.x-5,p.y-10,1.5,{frame:Math.floor(BM.frame/9)%2===0});
-    if(!p.cpu){g.fillStyle="#ffd23f";g.beginPath();g.moveTo(p.x+8,p.y-9);g.lineTo(p.x+14,p.y-9);g.lineTo(p.x+11,p.y-4);g.fill();}
+    if(pi===(BM.mySlot||0)){g.fillStyle="#ffd23f";g.beginPath();g.moveTo(p.x+8,p.y-9);g.lineTo(p.x+14,p.y-9);g.lineTo(p.x+11,p.y-4);g.fill();}
+    else if(p.remote){g.fillStyle="#7ce7ff";g.beginPath();g.moveTo(p.x+8,p.y-9);g.lineTo(p.x+14,p.y-9);g.lineTo(p.x+11,p.y-4);g.fill();}
   });
 }
-window.__bmStop=function(){BM.on=false;BM._lt=0;BM._acc=0;if(BM.raf)cancelAnimationFrame(BM.raf);};
+window.__bmStop=function(){BM.on=false;BM._lt=0;BM._acc=0;if(BM.raf)cancelAnimationFrame(BM.raf);if(BM.netRaf){cancelAnimationFrame(BM.netRaf);BM.netRaf=0;}};
 /* back to a clean start screen after a mid-game exit (see __rtReset) :
    the arena, bombs and all four fighters are wiped, so a battle
    quit halfway never resumes itself or leaks into the next one */
 window.__bmReset=function(){
-  BM.state="ready";BM.players=[];BM.bombs=[];BM.flames=[];BM.items=[];BM.over=false;BM.time=210*60;BM.deadCount=0;
+  BM.state="ready";BM.players=[];BM.bombs=[];BM.flames=[];BM.items=[];BM.over=false;BM.time=210*60;BM.deadCount=0;BM.net=null;BM.mySlot=0;BM.remoteIn={};
   BM.keys.l=false;BM.keys.r=false;BM.keys.u=false;BM.keys.d=false;BM.dirStack=[];
   var ov=$("bmOverlay");
   ov.querySelector(".rt-ov-ttl").textContent="ボンバーバトル";
@@ -9910,7 +10111,7 @@ holdBtn("bmDown",function(){bmKey("d",true);},function(){bmKey("d",false);});
   var b=$("bmBomb");if(!b)return;
   b.addEventListener("pointerdown",function(e){
     if(e.cancelable)e.preventDefault();b.classList.add("on");
-    if(BM.state==="play"&&BM.players[0]&&BM.players[0].alive)bmPlaceBomb(BM.players[0]);
+    bmBombPress();
   });
   b.addEventListener("pointerup",function(){b.classList.remove("on");});
   b.addEventListener("pointerleave",function(){b.classList.remove("on");});
@@ -9919,7 +10120,7 @@ document.addEventListener("keydown",function(e){
   if(!BM.on)return;
   if(e.key==="ArrowLeft")BM.keys.l=true;if(e.key==="ArrowRight")BM.keys.r=true;
   if(e.key==="ArrowUp")BM.keys.u=true;if(e.key==="ArrowDown")BM.keys.d=true;
-  if(e.key===" "&&BM.state==="play"&&BM.players[0]&&BM.players[0].alive)bmPlaceBomb(BM.players[0]);
+  if(e.key===" ")bmBombPress();
 });
 document.addEventListener("keyup",function(e){
   if(e.key==="ArrowLeft")BM.keys.l=false;if(e.key==="ArrowRight")BM.keys.r=false;
@@ -10024,7 +10225,7 @@ padHold(vpBtn("bfStage","a"),function(){if(BF.state==="play"&&BF.p){BF.p.vy=Math
 padHold(vpBtn("bfStage","b"),function(){BF.keys.dive=true;},function(){BF.keys.dive=false;});
 /* bomber : 4-way cross key, A = bomb */
 padDir("bmStage",{u:function(on){bmKey("u",on);},d:function(on){bmKey("d",on);},l:function(on){bmKey("l",on);},r:function(on){bmKey("r",on);}});
-padHold(vpBtn("bmStage","a"),function(){if(BM.state==="play"&&BM.players[0]&&BM.players[0].alive)bmPlaceBomb(BM.players[0]);},null);
+padHold(vpBtn("bmStage","a"),function(){bmBombPress();},null);
 /* corner exit buttons : reuse the existing back-button handlers */
 (function(){
   var xs=document.querySelectorAll("[data-exit]");
@@ -10756,6 +10957,833 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
   var box=document.createElement("div"); d.appendChild(box);
   comp.parentNode.insertBefore(d,comp);
   box.appendChild(comp); box.appendChild(ex); box.appendChild(shot);
+})();
+</script>
+<script>
+/* ================================================================
+   v40 — ONLINE MULTIPLAYER for Bomber / Sky (TwinBee) / Store
+   (Mario Bros.) battles, on the SAME Firebase base as the card
+   battle (anonymous auth + minna-ichi project). Rooms live in
+   "story_rooms" (rules already deployed). Design rules :
+   - Room matchmaking : quick match (join a waiting room, else
+     create one) and code match (4-digit 合言葉).
+   - A room ALWAYS starts : when the wait timer runs out (or the
+     host taps start) empty slots are filled with CPU players.
+   - Host-authoritative sync : the host runs the simulation
+     (bombs / blasts / enemies / floors), guests stream inputs
+     and render snapshots. Bomber movement is grid-based, the
+     shooter is target-tracked, so both tolerate snapshot lag.
+   - Dropouts never stall a game : a guest who goes silent is
+     taken over by CPU on the host; a guest whose host vanishes
+     keeps playing the same match locally against CPU.
+   - ANY network failure (SDK blocked, rules, offline) falls
+     back to the normal solo/CPU start. Nothing here can wedge.
+   ================================================================ */
+(function(){
+"use strict";
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+var MP={
+  cur:null,bombSeq:0,jumpSeq:0,
+  cfg:{
+    bomber:{max:4,title:"ボンバーバトル",ov:"bmOverlay",startBtn:"bmStartBtn"},
+    twin:{max:2,title:"スカイシューティング",ov:"tbOverlay",startBtn:"tbStartBtn"},
+    retro:{max:2,title:"Lit店内バトル",ov:"rtOverlay",startBtn:"rtStartBtn"}
+  },
+  db:function(){return (typeof OnlineAPI!=="undefined"&&OnlineAPI&&OnlineAPI._db)?OnlineAPI._db:null;},
+  uid:function(){return (typeof OnlineAPI!=="undefined"&&OnlineAPI)?OnlineAPI._uid:null;},
+  col:function(){var d=this.db();return d?d.collection("story_rooms"):null;},
+  mySlot:function(){return {uid:this.uid(),name:(typeof S!=="undefined"&&S.playerName)||"プレイヤー",char:(typeof RTCHAR!=="undefined"?RTCHAR:"momona")};},
+  /* Firestore calls can hang for a long time when the network
+     is filtered rather than refused (the SDK retries silently),
+     so every matchmaking call races a hard timeout — a room
+     flow must never wait forever */
+  withTimeout:function(p,ms,fallback){
+    return Promise.race([p,new Promise(function(res){setTimeout(function(){res(fallback);},ms);})]);
+  },
+  soloStart:function(game){
+    try{
+      if(game==="bomber")bmStart();
+      else if(game==="twin")tbStart();
+      else rtStartGame();
+    }catch(e){}
+  },
+  /* ---------- connection ---------- */
+  ensureDb:function(cb){
+    var t0=Date.now(),self=this;
+    (function poll(){
+      if(self.db()&&self.uid()){cb(true);return;}
+      var off=(typeof OnlineAPI!=="undefined"&&OnlineAPI&&OnlineAPI._status==="offline");
+      if((off&&Date.now()-t0>3500)||Date.now()-t0>9000){cb(false);return;}
+      setTimeout(poll,400);
+    })();
+  },
+  /* ---------- panel UI ---------- */
+  panel:function(game){return document.querySelector('.mp-panel[data-game="'+game+'"]');},
+  setStatus:function(game,txt){var p=this.panel(game);if(!p)return;var s=p.querySelector("[data-mp-status]");if(s)s.textContent=txt;},
+  resetPanel:function(game){
+    var p=this.panel(game);if(!p)return;
+    var lb=p.querySelector("[data-mp-lobby]");if(lb)lb.hidden=true;
+    var sn=p.querySelector('[data-mp="startnow"]');if(sn)sn.hidden=true;
+    this.setStatus(game,"1人用と並んで選べます。相手が見つからなければCPUが入って必ず始まります。");
+  },
+  renderLobby:function(){
+    var cur=this.cur;if(!cur)return;
+    var p=this.panel(cur.game);if(!p)return;
+    var lb=p.querySelector("[data-mp-lobby]");if(lb)lb.hidden=false;
+    var bc=p.querySelector("[data-mp-bigcode]");
+    if(bc){
+      if(cur.mode==="code"&&cur.code){bc.innerHTML='合言葉　<span>'+esc(cur.code)+'</span><small>友達にこの4桁を伝えてね</small>';bc.hidden=false;}
+      else bc.hidden=true;
+    }
+    var d=cur.data,slots=(d&&d.slots)||cur.slots||[];
+    var mm=p.querySelector("[data-mp-members]");
+    if(mm){
+      var html="";
+      for(var i=0;i<cur.max;i++){
+        var s=slots[i];
+        if(s&&s.uid)html+='<div class="mp-mem"><b>P'+(i+1)+'</b> '+esc(s.name||"プレイヤー")+(s.uid===this.uid()?' <span class="mp-you">あなた</span>':"")+'</div>';
+        else if(s&&s.cpu)html+='<div class="mp-mem cpu"><b>P'+(i+1)+'</b> CPU</div>';
+        else html+='<div class="mp-mem wait"><b>P'+(i+1)+'</b> 参加待ち…</div>';
+      }
+      mm.innerHTML=html;
+    }
+    var sn=p.querySelector('[data-mp="startnow"]');
+    if(sn)sn.hidden=!(cur.role==="host"&&!cur.started);
+    if(!cur.started){
+      var humans=slots.filter(function(s){return s&&s.uid;}).length;
+      this.setStatus(cur.game,cur.role==="host"
+        ?("参加者 "+humans+"人 ― 全員そろうか、時間切れでCPUが入って始まります")
+        :("ルームに参加しました ― ホストの開始を待っています…"));
+    }
+  },
+  /* ---------- room lifecycle ---------- */
+  enter:function(game,mode,code){
+    this.leave();
+    this.bombSeq=0;this.jumpSeq=0;
+    var max=this.cfg[game].max;
+    this.cur={game:game,mode:mode,code:code||null,role:null,mySlot:-1,max:max,slots:null,data:null,
+      roomId:null,ref:null,started:false,finished:false,seq:0,tookOver:{},joinedAt:Date.now(),lastIn:"",lastInAt:0,finalPubs:0};
+    var lb=this.panel(game);if(lb){var l=lb.querySelector("[data-mp-lobby]");if(l)l.hidden=false;}
+    this.setStatus(game,"オンラインに接続中…");
+    var self=this;
+    this.ensureDb(function(ok){
+      if(!self.cur||self.cur.game!==game)return;
+      if(!ok){
+        self.setStatus(game,"オフラインのため接続できませんでした ― CPUで開始します");
+        toast("オフラインのためCPU対戦で開始します");
+        self.cur=null;self.resetPanel(game);self.soloStart(game);return;
+      }
+      if(mode==="quick")self.quickJoin(game);
+      else if(mode==="create")self.createRoom(game,"code");
+      else if(mode==="join")self.joinByCode(game,code);
+    });
+  },
+  createRoom:function(game,mode){
+    var cur=this.cur;if(!cur)return;
+    var col=this.col();if(!col){this.failToSolo(game);return;}
+    var slots=[];for(var i=0;i<cur.max;i++)slots.push(i===0?this.mySlot():null);
+    var code=(mode==="code")?String(1000+Math.floor(Math.random()*9000)):null;
+    var seen={};seen[this.uid()]=Date.now();
+    var data={game:game,mode:mode,code:code,host:this.uid(),status:"waiting",max:cur.max,
+      rp:(typeof S!=="undefined"&&typeof S.rankPt==="number")?S.rankPt:0,
+      createdAt:Date.now(),hostSeen:Date.now(),slots:slots,inputs:{},state:null,stateSeq:0,seen:seen};
+    var self=this;
+    this.withTimeout(col.add(data),6000,null).then(function(ref){
+      if(!ref){self.failToSolo(game);return;}
+      if(!self.cur||self.cur.game!==game)return;
+      cur.roomId=ref.id;cur.ref=ref;cur.role="host";cur.mySlot=0;cur.code=code;cur.slots=slots;
+      self.subscribe();self.startLobbyTimers();self.renderLobby();
+    }).catch(function(){self.failToSolo(game);});
+  },
+  quickJoin:function(game){
+    var col=this.col();if(!col){this.createRoom(game,"quick");return;}
+    var self=this;
+    this.withTimeout(col.where("game","==",game).where("mode","==","quick").where("status","==","waiting").limit(8).get(),6000,null)
+    .then(function(snap){
+      if(!snap){if(self.cur&&self.cur.game===game)self.createRoom(game,"quick");return;}
+      if(!self.cur||self.cur.game!==game)return;
+      var cand=[];
+      snap.forEach(function(doc){
+        var v=doc.data();
+        if(v&&Date.now()-(v.createdAt||0)<150000&&v.slots&&v.slots.some(function(s){return !s;}))cand.push({id:doc.id,v:v});
+      });
+      /* quick match order : nearest rank first (the room stores
+         its host's RP), ties broken by arrival — the longest
+         waiting room wins (先着) */
+      var myRp=(typeof S!=="undefined"&&typeof S.rankPt==="number")?S.rankPt:0;
+      cand.sort(function(a,b){
+        var da=Math.abs((a.v.rp||0)-myRp),db=Math.abs((b.v.rp||0)-myRp);
+        if(da!==db)return da-db;
+        return (a.v.createdAt||0)-(b.v.createdAt||0);
+      });
+      if(!cand.length){self.createRoom(game,"quick");return;}
+      self.tryJoin(cand[0].id,function(ok){if(!ok&&self.cur&&self.cur.game===game)self.createRoom(game,"quick");});
+    }).catch(function(){if(self.cur&&self.cur.game===game)self.createRoom(game,"quick");});
+  },
+  joinByCode:function(game,code){
+    var col=this.col();if(!col){this.failToSolo(game);return;}
+    var self=this;
+    this.withTimeout(col.where("game","==",game).where("mode","==","code").where("code","==",code).where("status","==","waiting").limit(5).get(),6000,null)
+    .then(function(snap){
+      if(!snap){if(self.cur&&self.cur.game===game){self.setStatus(game,"接続がタイムアウトしました ― もう一度試してください");self.cur=null;}return;}
+      if(!self.cur||self.cur.game!==game)return;
+      var cand=[];
+      snap.forEach(function(doc){
+        var v=doc.data();
+        if(v&&Date.now()-(v.createdAt||0)<600000&&v.slots&&v.slots.some(function(s){return !s;}))cand.push({id:doc.id,v:v});
+      });
+      cand.sort(function(a,b){return (b.v.createdAt||0)-(a.v.createdAt||0);});
+      if(!cand.length){
+        self.setStatus(game,"その合言葉のルームが見つかりませんでした（作った人の画面で合言葉を確認してね）");
+        self.cur=null;return;
+      }
+      self.tryJoin(cand[0].id,function(ok){
+        if(!ok&&self.cur&&self.cur.game===game){self.setStatus(game,"ルームが満員か、すでに始まっていました");self.cur=null;}
+      });
+    }).catch(function(){if(self.cur&&self.cur.game===game){self.setStatus(game,"接続エラー ― もう一度試してください");self.cur=null;}});
+  },
+  tryJoin:function(roomId,cb){
+    var cur=this.cur;if(!cur){cb(false);return;}
+    var col=this.col();if(!col){cb(false);return;}
+    var ref=col.doc(roomId),self=this;
+    this.withTimeout(ref.get(),6000,null).then(function(doc){
+      if(!doc){cb(false);return;}
+      if(!self.cur||self.cur!==cur){cb(false);return;}
+      if(!doc.exists){cb(false);return;}
+      var v=doc.data();
+      if(!v||v.status!=="waiting"||!v.slots){cb(false);return;}
+      var idx=-1;
+      for(var i=0;i<v.slots.length;i++)if(!v.slots[i]){idx=i;break;}
+      if(idx<0){cb(false);return;}
+      var slots=v.slots.slice();slots[idx]=self.mySlot();
+      self.withTimeout(ref.update({slots:slots}).then(function(){return true;}),6000,false).then(function(ok){
+        if(!ok){cb(false);return;}
+        if(!self.cur||self.cur!==cur){cb(false);return;}
+        cur.roomId=roomId;cur.ref=ref;cur.role="guest";cur.mySlot=idx;cur.code=v.code||null;cur.slots=slots;
+        self.subscribe();self.startLobbyTimers();self.renderLobby();
+        cb(true);
+      }).catch(function(){cb(false);});
+    }).catch(function(){cb(false);});
+  },
+  failToSolo:function(game){
+    if(!this.cur||this.cur.game!==game)return;
+    this.setStatus(game,"接続できませんでした ― CPUで開始します");
+    toast("接続できませんでした ― CPU対戦で開始します");
+    this.cur=null;this.resetPanel(game);this.soloStart(game);
+  },
+  subscribe:function(){
+    var cur=this.cur;if(!cur||!cur.ref)return;
+    var self=this;
+    cur.unsub=cur.ref.onSnapshot(function(snap){
+      if(!self.cur||self.cur!==cur)return;
+      if(!snap.exists){self.onRoomGone();return;}
+      self.onData(snap.data());
+    },function(){
+      if(!self.cur||self.cur!==cur)return;
+      if(!cur.started)self.failToSolo(cur.game);
+    });
+  },
+  onRoomGone:function(){
+    var cur=this.cur;if(!cur)return;
+    if(!cur.started){
+      this.setStatus(cur.game,"ルームが閉じられました");
+      this.leave();return;
+    }
+    if(cur.role==="guest")this.hostFallback();
+  },
+  onData:function(d){
+    var cur=this.cur;if(!cur||!d)return;
+    cur.data=d;
+    /* host : route streamed inputs into the running simulation */
+    if(cur.role==="host"&&d.inputs){
+      var slots=d.slots||cur.slots||[];
+      for(var uid in d.inputs){
+        for(var i=0;i<slots.length;i++){
+          if(slots[i]&&slots[i].uid===uid){
+            if(cur.game==="bomber")BM.remoteIn[i]=d.inputs[uid];
+            else if(cur.game==="twin")TB.remoteIn=d.inputs[uid];
+            else if(cur.game==="retro")RT.remoteIn=d.inputs[uid];
+          }
+        }
+      }
+    }
+    if(!cur.started){
+      this.renderLobby();
+      var humans=(d.slots||[]).filter(function(s){return s&&s.uid;}).length;
+      if(cur.role==="host"&&humans>=cur.max){this.startHost();return;}
+      if(cur.role==="guest"&&d.status==="playing"){
+        if(cur.game==="bomber"&&!(d.state&&d.state.init)){this.setStatus(cur.game,"ホストの準備中…");return;}
+        this.startGuest(d);return;
+      }
+      return;
+    }
+    if(cur.role==="guest"){
+      if(d.state)this.applyState(d.state);
+      if(d.status==="done"&&!cur.finished){
+        var over=(cur.game==="bomber"&&BM.over)||(cur.game==="twin"&&TB.state==="over")||(cur.game==="retro"&&RT.state==="over");
+        if(!over)this.hostFallback();
+      }
+    }
+  },
+  startLobbyTimers:function(){
+    var cur=this.cur;if(!cur)return;
+    var self=this;
+    cur.hbIv=setInterval(function(){
+      if(!self.cur||self.cur!==cur||!cur.ref)return;
+      var upd={};upd["seen."+self.uid()]=Date.now();
+      if(cur.role==="host")upd.hostSeen=Date.now();
+      cur.ref.update(upd).catch(function(){});
+      var d=cur.data,now=Date.now();
+      if(cur.started&&cur.role==="host"&&d&&d.slots){
+        d.slots.forEach(function(s,i){
+          if(!s||!s.uid||i===cur.mySlot||cur.tookOver[i])return;
+          var seen=(d.seen||{})[s.uid];
+          if(s.left||(seen&&now-seen>9000)){cur.tookOver[i]=1;self.takeover(i);}
+        });
+      }
+      if(cur.started&&cur.role==="guest"&&d&&d.hostSeen&&now-d.hostSeen>9000&&!cur.finished){
+        self.hostFallback();return;
+      }
+      if(!cur.started&&cur.role==="guest"&&now-cur.joinedAt>75000){
+        toast("ホストが開始しなかったため、ルームを出ました");
+        self.leave();
+      }
+    },2500);
+    if(cur.role==="host"){
+      var waitMs=(cur.mode==="quick")?10000:50000;
+      cur.autoT=setTimeout(function(){
+        if(self.cur&&self.cur===cur&&!cur.started)self.startHost();
+      },waitMs);
+    }
+  },
+  takeover:function(slot){
+    var cur=this.cur;if(!cur)return;
+    if(cur.game==="bomber"){
+      var p=BM.players[slot];
+      if(p){p.remote=false;p.cpu=true;p.thinkT=0;p.path=null;}
+    }else if(cur.game==="twin"){
+      if(TB.p2)TB.p2.ai=true;
+    }else if(cur.game==="retro"){
+      if(RT.p2)RT.p2.ai=true;
+    }
+    toast("相手が切断 ― CPUが引き継ぎます");
+  },
+  /* ---------- start ---------- */
+  startHost:function(){
+    var cur=this.cur;
+    if(!cur||cur.started||cur.role!=="host")return;
+    if(cur.autoT){clearTimeout(cur.autoT);cur.autoT=0;}
+    var slots=((cur.data&&cur.data.slots)||cur.slots||[]).slice();
+    var used={};
+    slots.forEach(function(s){if(s&&s.char)used[s.char]=1;});
+    var pool=["paradise","momona","akari","kaede","nana","misa"];
+    for(var i=0;i<cur.max;i++){
+      if(!slots[i]){
+        var ch=pool.filter(function(c){return !used[c];})[0]||"paradise";
+        used[ch]=1;
+        slots[i]={uid:null,name:"CPU",char:ch,cpu:true};
+      }
+    }
+    cur.slots=slots;cur.started=true;cur.seq=0;
+    var init=null;
+    if(cur.game==="bomber")init=bmHostStart();
+    else if(cur.game==="twin")tbHostStart();
+    else rtHostStart();
+    var upd={slots:slots,status:"playing",hostSeen:Date.now()};
+    if(init){upd.state=init;upd.stateSeq=init.seq;}
+    cur.ref.update(upd).catch(function(){});
+    this.startPubLoop();
+    this.setStatus(cur.game,"対戦中！");
+    var p=this.panel(cur.game);if(p){var lb=p.querySelector("[data-mp-lobby]");if(lb)lb.hidden=true;}
+    toast("🌐 オンライン対戦スタート！");
+  },
+  startGuest:function(d){
+    var cur=this.cur;
+    if(!cur||cur.started||cur.role!=="guest")return;
+    cur.slots=d.slots;cur.started=true;
+    var idx=-1;
+    for(var i=0;i<d.slots.length;i++)if(d.slots[i]&&d.slots[i].uid===this.uid())idx=i;
+    if(idx<0){this.leave();return;}
+    cur.mySlot=idx;
+    if(cur.game==="bomber")bmGuestStart(d);
+    else if(cur.game==="twin")tbGuestStart(d);
+    else rtGuestStart(d);
+    this.startInputLoop();
+    this.setStatus(cur.game,"対戦中！");
+    var p=this.panel(cur.game);if(p){var lb=p.querySelector("[data-mp-lobby]");if(lb)lb.hidden=true;}
+    toast("🌐 オンライン対戦スタート！");
+  },
+  /* ---------- sync loops ---------- */
+  startPubLoop:function(){
+    var cur=this.cur;if(!cur)return;
+    var self=this;
+    cur.pubIv=setInterval(function(){
+      if(!self.cur||self.cur!==cur||!cur.ref)return;
+      var snap=null;
+      if(cur.game==="bomber")snap=bmSnap(false);
+      else if(cur.game==="twin")snap=tbSnap();
+      else snap=rtSnap();
+      if(!snap)return;
+      cur.ref.update({state:snap,stateSeq:snap.seq,hostSeen:Date.now()}).catch(function(){});
+      var over=(cur.game==="bomber"&&BM.over)||(cur.game==="twin"&&TB.state==="over")||(cur.game==="retro"&&RT.state==="over");
+      if(over){
+        cur.finalPubs++;
+        if(cur.finalPubs>=4){
+          clearInterval(cur.pubIv);cur.pubIv=0;cur.finished=true;
+          cur.ref.update({status:"done"}).catch(function(){});
+        }
+      }
+    },130);
+  },
+  startInputLoop:function(){
+    var cur=this.cur;if(!cur)return;
+    var self=this;
+    cur.inIv=setInterval(function(){
+      if(!self.cur||self.cur!==cur)return;
+      self.sendInput(false);
+    },110);
+  },
+  inputPayload:function(){
+    var cur=this.cur;if(!cur)return null;
+    if(cur.game==="bomber")return {dir:(typeof bmDir==="function"?(bmDir()||""):""),bombSeq:this.bombSeq};
+    if(cur.game==="twin")return {tx:Math.round(TB.tx),ty:Math.round(TB.ty)};
+    return {l:RT.keys.l?1:0,r:RT.keys.r?1:0,jumpSeq:this.jumpSeq};
+  },
+  sendInput:function(force){
+    var cur=this.cur;if(!cur||!cur.ref||cur.role!=="guest"||!cur.started)return;
+    var payload=this.inputPayload();if(!payload)return;
+    var j=JSON.stringify(payload),now=Date.now();
+    if(!force&&j===cur.lastIn&&now-cur.lastInAt<600)return;
+    cur.lastIn=j;cur.lastInAt=now;
+    var upd={};upd["inputs."+this.uid()]=payload;
+    cur.ref.update(upd).catch(function(){});
+  },
+  bombPress:function(){this.bombSeq++;this.sendInput(true);},
+  jumpPress:function(){this.jumpSeq++;this.sendInput(true);},
+  applyState:function(st){
+    var cur=this.cur;if(!cur)return;
+    if(cur.game==="bomber")bmApplyState(st);
+    else if(cur.game==="twin")tbApplyState(st);
+    else rtApplyState(st);
+  },
+  /* ---------- leaving / fallback ---------- */
+  detach:function(game){
+    if(this.cur&&this.cur.game===game)this.leave();
+  },
+  leave:function(){
+    var cur=this.cur;if(!cur)return;
+    this.cur=null;
+    if(cur.hbIv)clearInterval(cur.hbIv);
+    if(cur.pubIv)clearInterval(cur.pubIv);
+    if(cur.inIv)clearInterval(cur.inIv);
+    if(cur.autoT)clearTimeout(cur.autoT);
+    if(cur.unsub){try{cur.unsub();}catch(e){}}
+    if(cur.ref){
+      var self=this;
+      if(cur.role==="host"){
+        if(cur.started)cur.ref.update({status:"done"}).catch(function(){});
+        else cur.ref.delete().catch(function(){});
+      }else if(cur.role==="guest"&&cur.mySlot>=0){
+        var slots=((cur.data&&cur.data.slots)||cur.slots||[]).slice();
+        if(slots[cur.mySlot]){
+          if(cur.started){var s2={};for(var k in slots[cur.mySlot])s2[k]=slots[cur.mySlot][k];s2.left=true;slots[cur.mySlot]=s2;}
+          else slots[cur.mySlot]=null;
+          cur.ref.update({slots:slots}).catch(function(){});
+        }
+      }
+    }
+    this.resetPanel(cur.game);
+  },
+  hostFallback:function(){
+    var cur=this.cur;if(!cur||cur.role!=="guest"||!cur.started)return;
+    var game=cur.game;
+    cur.finished=true;
+    this.leave();
+    try{
+      if(game==="bomber")bmHostFallback();
+      else if(game==="twin")tbHostFallback();
+      else rtHostFallback();
+    }catch(e){}
+    toast("ホストが切断しました ― CPU対戦で続行します");
+  }
+};
+window.MP=MP;
+
+/* ================= BOMBER : net start / snapshot / guest ================= */
+function bmGridStrings(){return BM.grid.map(function(r){return r.join("");});}
+function bmStartNet(cfg){
+  var x,y;
+  BM.net={role:cfg.role};BM.mySlot=cfg.mySlot;BM.remoteIn={};BM._snapSeq=-1;BM._overShown=false;
+  if(cfg.grid){
+    BM.grid=cfg.grid.map(function(r){return String(r).split("").map(function(ch){return parseInt(ch,10)||0;});});
+  }else{
+    BM.grid=[];
+    for(y=0;y<BM_ROWS;y++){BM.grid.push([]);for(x=0;x<BM_COLS;x++){
+      var v=0;
+      if(x%2===1&&y%2===1)v=1;
+      else if(Math.random()<0.62)v=2;
+      BM.grid[y].push(v);
+    }}
+    var safe=[[0,0],[1,0],[0,1],[BM_COLS-1,0],[BM_COLS-2,0],[BM_COLS-1,1],[0,BM_ROWS-1],[1,BM_ROWS-1],[0,BM_ROWS-2],[BM_COLS-1,BM_ROWS-1],[BM_COLS-2,BM_ROWS-1],[BM_COLS-1,BM_ROWS-2]];
+    safe.forEach(function(s){BM.grid[s[1]][s[0]]=0;});
+  }
+  var corners=[[0,0],[BM_COLS-1,0],[0,BM_ROWS-1],[BM_COLS-1,BM_ROWS-1]];
+  BM.players=cfg.slots.map(function(s,i){
+    return {char:s.char,cpu:!!s.cpu,remote:!!s.uid&&i!==cfg.mySlot,alive:true,
+      x:corners[i][0]*BM_CELL+4,y:corners[i][1]*BM_CELL+2,w:20,h:24,
+      maxBombs:1,fire:2,speed:1.5,dir:null,thinkT:Math.random()*10,deadOrder:0,stuckT:0,_lx:0,_ly:0};
+  });
+  BM.bombs=[];BM.flames=[];BM.items=[];BM.time=210*60;BM.over=false;BM.state="play";BM.deadCount=0;
+  BM.keys={l:false,r:false,u:false,d:false};BM.dirStack=[];
+  $("bmOverlay").hidden=true;
+  mgPad("bmStage",true);
+  BM.on=true;
+  if(cfg.role==="host"){BM.raf=requestAnimationFrame(bmLoop);}
+  else{BM.netRaf=requestAnimationFrame(bmGuestLoop);}
+  bmHud();
+}
+function bmHostStart(){
+  bmStartNet({role:"host",slots:MP.cur.slots,mySlot:0});
+  MP.cur.seq=1;
+  var snap=bmSnap(true);snap.seq=1;
+  return snap;
+}
+function bmGuestStart(d){
+  bmStartNet({role:"guest",slots:d.slots,mySlot:MP.cur.mySlot,grid:d.state.init.grid});
+}
+function bmSnap(withInit){
+  var cur=MP.cur;if(!cur)return null;
+  if(BM.state!=="play"&&!BM.over)return null;
+  cur.seq++;
+  var aliveN=BM.players.filter(function(p){return p.alive;}).length;
+  var snap={seq:cur.seq,t:Date.now(),grid:bmGridStrings(),
+    players:BM.players.map(function(p){return {x:Math.round(p.x*10)/10,y:Math.round(p.y*10)/10,alive:p.alive,mbo:p.maxBombs,fire:p.fire,spd:Math.round(p.speed*100)/100,do:p.deadOrder||0};}),
+    bombs:BM.bombs.map(function(b){return {cx:b.cx,cy:b.cy,fuse:b.fuse,fire:b.fire};}),
+    flames:BM.flames.map(function(f){return {cells:f.cells,t:f.t};}),
+    items:BM.items.map(function(it){return {cx:it.cx,cy:it.cy,type:it.type};}),
+    time:BM.time,over:BM.over,places:null,rewards:null};
+  if(withInit)snap.init={grid:bmGridStrings()};
+  if(BM.over){
+    snap.places=BM.players.map(function(p){return p.alive?(aliveN===1?1:aliveN):(BM.players.length-BM.deadCount+1);});
+    snap.rewards=snap.places.map(function(pl){return pl===1?150:pl===2?60:pl===3?30:10;});
+  }
+  return snap;
+}
+function bmApplyState(st){
+  if(!st||typeof st.seq!=="number"||st.seq<=BM._snapSeq)return;
+  BM._snapSeq=st.seq;
+  if(st.grid)BM.grid=st.grid.map(function(r){return String(r).split("").map(function(ch){return parseInt(ch,10)||0;});});
+  (st.players||[]).forEach(function(sp,i){
+    var p=BM.players[i];if(!p)return;
+    p._tx=sp.x;p._ty=sp.y;p.alive=sp.alive;p.maxBombs=sp.mbo;p.fire=sp.fire;p.speed=sp.spd;p.deadOrder=sp.do||0;
+    if(i===BM.mySlot){p._sx=sp.x;p._sy=sp.y;if(p._inited===undefined){p.x=sp.x;p.y=sp.y;p._inited=1;}}
+    else if(p._inited===undefined){p.x=sp.x;p.y=sp.y;p._inited=1;}
+  });
+  BM.bombs=st.bombs||[];BM.flames=st.flames||[];
+  BM.items=(st.items||[]).map(function(it){return {cx:it.cx,cy:it.cy,type:it.type};});
+  BM.time=st.time;
+  bmHud();
+  if(st.over&&!BM._overShown){BM._overShown=true;BM.over=true;BM.state="over";bmGuestOver(st);}
+}
+function bmGuestLoop(){
+  if(!BM.net||BM.net.role!=="guest")return;
+  BM.frame++;
+  var me=BM.players[BM.mySlot];
+  if(BM.state==="play"&&me&&me.alive&&!BM.over){
+    var dir=bmDir();
+    if(dir==="l")bmMove(me,-1,0);else if(dir==="r")bmMove(me,1,0);
+    else if(dir==="u")bmMove(me,0,-1);else if(dir==="d")bmMove(me,0,1);
+    if(me._sx!==undefined){
+      var dx=me._sx-me.x,dy=me._sy-me.y;
+      if(Math.abs(dx)+Math.abs(dy)>BM_CELL*1.7){me.x=me._sx;me.y=me._sy;}
+      else{me.x+=dx*0.12;me.y+=dy*0.12;}
+    }
+  }
+  BM.players.forEach(function(p,i){
+    if(i!==BM.mySlot&&p._tx!==undefined){p.x+=(p._tx-p.x)*0.42;p.y+=(p._ty-p.y)*0.42;}
+  });
+  try{bmDraw();}catch(e){}
+  BM.netRaf=requestAnimationFrame(bmGuestLoop);
+}
+function bmGuestOver(st){
+  mgPad("bmStage",false);
+  var place=(st.places&&st.places[BM.mySlot])||2;
+  var reward=(st.rewards&&st.rewards[BM.mySlot])||0;
+  var slots=(MP.cur&&MP.cur.slots)||[];
+  var winner="";
+  if(st.places)for(var i=0;i<st.places.length;i++)if(st.places[i]===1&&slots[i])winner=slots[i].name||"";
+  var ov=$("bmOverlay");
+  ov.querySelector(".rt-ov-ttl").textContent=place===1?"🏆 優勝！":(place+"位");
+  ov.querySelector(".rt-ov-tx").innerHTML=(place===1?"最後の1人になった！":(winner?esc2(winner)+" の勝ち…":"対戦終了"))+"<br>順位報酬 <b>+"+reward+"コイン</b>（オンライン対戦）";
+  $("bmStartBtn").textContent="▶ もう一度バトル";
+  if(reward>0){S.coin+=reward;renderStats();}
+  var bst=$("bmStage");bst.classList.remove("charge");void bst.offsetWidth;bst.classList.add("charge");
+  setTimeout(function(){if(BM.over)ov.hidden=false;},place===1?520:280);
+  if(MP.cur)MP.cur.finished=true;
+}
+function bmHostFallback(){
+  if(BM.netRaf){cancelAnimationFrame(BM.netRaf);BM.netRaf=0;}
+  BM.players.forEach(function(p){if(p.remote){p.remote=false;p.cpu=true;p.thinkT=0;p.path=null;}});
+  BM.net=null;
+  BM.raf=requestAnimationFrame(bmLoop);
+}
+/* ================= SKY (TwinBee) : net start / snapshot / guest ================= */
+function tbStartNet(cfg){
+  TB.net={role:cfg.role,slots:cfg.slots};TB.mySlot=cfg.mySlot;TB.p1char=cfg.slots[0].char;TB.remoteIn=null;TB._snapSeq=-1;TB._overShown=false;
+  TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;
+  TB.bullets=[];TB.enemies=[];TB.ebullets=[];TB.items=[];TB.fx=[];TB.trail=[];TB.spawnT=40;TB.state="play";
+  TB.px=140;TB.py=520;
+  if(cfg.role==="guest"){TB.tx=230;TB.ty=520;}
+  else{TB.tx=140;TB.ty=520;}
+  TB.p2={char:cfg.slots[1].char,name:cfg.slots[1].name||"P2",x:230,y:520,tx:230,ty:520,invuln:0,fireT:0,active:true,ai:!!cfg.slots[1].cpu};
+  if(TB.stars.length===0)for(var i=0;i<40;i++)TB.stars.push({x:Math.random()*360,y:Math.random()*690,s:Math.random()*2+0.5});
+  $("tbOverlay").hidden=true;
+  mgPad("tbStage",true);
+  TB.on=true;
+  if(cfg.role==="host"){TB._lt=0;TB._acc=0;TB.raf=requestAnimationFrame(tbLoop);}
+  else{TB.netRaf=requestAnimationFrame(tbGuestLoop);}
+  tbHud();
+}
+function tbHostStart(){tbStartNet({role:"host",slots:MP.cur.slots,mySlot:0});}
+function tbGuestStart(d){tbStartNet({role:"guest",slots:d.slots,mySlot:MP.cur.mySlot});}
+function tbSnap(){
+  var cur=MP.cur;if(!cur)return null;
+  if(TB.state!=="play"&&TB.state!=="over")return null;
+  cur.seq++;
+  return {seq:cur.seq,t:Date.now(),score:TB.score,bells:TB.bells,lives:TB.lives,pow:TB.pow,rate:TB.rate,barrier:TB.barrier,
+    p1:{x:Math.round(TB.px),y:Math.round(TB.py),invuln:TB.invuln},
+    p2:TB.p2?{x:Math.round(TB.p2.x),y:Math.round(TB.p2.y),invuln:TB.p2.invuln,active:TB.p2.active!==false}:null,
+    enemies:TB.enemies.map(function(e){return {x:Math.round(e.x),y:Math.round(e.y),w:e.w,h:e.h,hp:e.hp,big:!!e.big,flash:e.flash||0};}),
+    bullets:TB.bullets.map(function(b){return {x:Math.round(b.x),y:Math.round(b.y)};}),
+    ebullets:TB.ebullets.map(function(b){return {x:Math.round(b.x),y:Math.round(b.y)};}),
+    items:TB.items.map(function(it){return {x:Math.round(it.x),y:Math.round(it.y),kind:it.kind,ph:it.ph};}),
+    state:TB.state,reward:TB.state==="over"?(Math.floor(TB.score/80)+TB.bells*5):0};
+}
+function tbApplyState(st){
+  if(!st||typeof st.seq!=="number"||st.seq<=TB._snapSeq)return;
+  TB._snapSeq=st.seq;
+  TB.score=st.score;TB.bells=st.bells||0;TB.lives=st.lives;TB.pow=st.pow;TB.rate=st.rate;TB.barrier=st.barrier;
+  if(st.p1){TB._sx=st.p1.x;TB._sy=st.p1.y;TB.invuln=st.p1.invuln;}
+  if(TB.p2&&st.p2){TB.p2._sx=st.p2.x;TB.p2._sy=st.p2.y;TB.p2.invuln=st.p2.invuln;TB.p2.active=st.p2.active!==false;}
+  TB.enemies=st.enemies||[];TB.bullets=st.bullets||[];TB.ebullets=st.ebullets||[];TB.items=st.items||[];
+  tbHud();
+  if(st.state==="over"&&TB.state!=="over"){TB.state="over";tbGuestOver(st);}
+}
+function tbGuestLoop(){
+  if(!TB.net||TB.net.role!=="guest")return;
+  TB.frame++;
+  TB.stars.forEach(function(s){s.y+=s.s*1.6;if(s.y>692){s.y=-2;s.x=Math.random()*360;}});
+  if(TB._sx!==undefined){TB.px+=(TB._sx-TB.px)*0.4;TB.py+=(TB._sy-TB.py)*0.4;}
+  var q=TB.p2;
+  if(q){
+    q.x+=(TB.tx-q.x)*0.35;q.y+=(TB.ty-q.y)*0.35;
+    if(q._sx!==undefined){
+      /* reconcile with the host's authoritative position : snap
+         only on the very first snapshot — after that a firm pull,
+         never a teleport, so a fast drag across the screen is
+         predicted locally and the host's view catches up over a
+         few frames instead of snapping the ship back */
+      var dx=q._sx-q.x,dy=q._sy-q.y;
+      if(q._inited===undefined){q.x=q._sx;q.y=q._sy;q._inited=1;}
+      else{q.x+=dx*0.18;q.y+=dy*0.18;}
+    }
+  }
+  try{tbDraw();}catch(e){}
+  TB.netRaf=requestAnimationFrame(tbGuestLoop);
+}
+function tbGuestOver(st){
+  mgPad("tbStage",false);
+  var reward=st.reward||0;
+  var ov=$("tbOverlay");
+  ov.querySelector(".rt-ov-ttl").textContent="ゲームオーバー";
+  ov.querySelector(".rt-ov-tx").innerHTML="SCORE "+st.score+"（2P協力）<br>🎤 マイク "+(st.bells||0)+"本 ＋ スコアボーナス ＝ <b>+"+reward+"コイン</b>";
+  $("tbStartBtn").textContent="▶ もう一度";
+  if(reward>0){S.coin+=reward;renderStats();}
+  ov.hidden=false;
+  if(MP.cur)MP.cur.finished=true;
+}
+function tbHostFallback(){
+  if(TB.netRaf){cancelAnimationFrame(TB.netRaf);TB.netRaf=0;}
+  if(TB.p2){TB.px=TB.p2.x;TB.py=TB.p2.y;TB.invuln=Math.max(TB.invuln,TB.p2.invuln||0);}
+  TB.net=null;TB.p2=null;TB.p1char=null;
+  if(TB.state==="play"){TB._lt=0;TB._acc=0;TB.raf=requestAnimationFrame(tbLoop);}
+}
+/* ================= STORE (Mario Bros.) : net start / snapshot / guest ================= */
+function rtStartNet(cfg){
+  RT.net={role:cfg.role,slots:cfg.slots};RT.mySlot=cfg.mySlot;RT.p1char=cfg.slots[0].char;RT.remoteIn=null;RT._snapSeq=-1;RT._overShown=false;
+  RT.score=0;RT.coins=0;RT.lives=3;RT.lives2=3;RT.scores=[0,0];RT.wave=1;
+  rtStartWave();
+  RT.p2={char:cfg.slots[1].char,name:cfg.slots[1].name||"P2",x:120,y:682,w:25,h:34,vx:0,vy:0,ground:true,plat:RT_PLATS[0],invuln:150,face:-1,jb:0,cy:0,active:true,keys:{l:false,r:false},ai:!!cfg.slots[1].cpu};
+  $("rtOverlay").hidden=true;
+  $("rtBanner").hidden=true;
+  mgPad("rtStage",true);
+  RT.on=true;
+  if(cfg.role==="host"){RT._lt=0;RT._acc=0;RT.raf=requestAnimationFrame(rtLoop);}
+  else{RT.netRaf=requestAnimationFrame(rtGuestLoop);}
+  rtHud();
+}
+function rtHostStart(){rtStartNet({role:"host",slots:MP.cur.slots,mySlot:0});}
+function rtGuestStart(d){rtStartNet({role:"guest",slots:d.slots,mySlot:MP.cur.mySlot});}
+function rtSnapPlayer(p){
+  if(!p)return null;
+  return {x:Math.round(p.x*10)/10,y:Math.round(p.y*10)/10,vx:Math.round(p.vx*100)/100,vy:Math.round(p.vy*100)/100,face:p.face,invuln:p.invuln,ground:!!p.ground,active:p.active!==false};
+}
+function rtSnap(){
+  var cur=MP.cur;if(!cur)return null;
+  if(RT.state!=="play"&&RT.state!=="clear"&&RT.state!=="over")return null;
+  cur.seq++;
+  return {seq:cur.seq,t:Date.now(),score:RT.score,scores:RT.scores.slice(),coins:RT.coins,wave:RT.wave,lives:RT.lives,lives2:RT.lives2,
+    state:RT.state,p1:rtSnapPlayer(RT.p),p2:rtSnapPlayer(RT.p2),
+    enemies:RT.enemies.filter(function(e){return e.state!=="gone";}).map(function(e){return {x:Math.round(e.x*10)/10,y:Math.round(e.y*10)/10,vx:Math.round(e.vx*100)/100,state:e.state,flipT:e.flipT,kind:e.kind,spin:Math.round((e.spin||0)*100)/100,warpFx:e.warpFx||0};}),
+    items:RT.items.map(function(it){return {x:Math.round(it.x),y:Math.round(it.y),t:it.t||0};}),
+    reward:RT.state==="over"?(RT.coins+Math.floor(RT.score/100)):0};
+}
+function rtApplyPlayer(p,sp){
+  if(!p||!sp)return;
+  p._tx=sp.x;p._ty=sp.y;p.vx=sp.vx;p.vy=sp.vy;p.face=sp.face;p.invuln=sp.invuln;p.ground=sp.ground;p.active=sp.active!==false;
+  if(p._inited===undefined){p.x=sp.x;p.y=sp.y;p._inited=1;}
+}
+function rtApplyState(st){
+  if(!st||typeof st.seq!=="number"||st.seq<=RT._snapSeq)return;
+  RT._snapSeq=st.seq;
+  RT.score=st.score;RT.scores=st.scores||[0,0];RT.coins=st.coins;RT.wave=st.wave;RT.lives=st.lives;RT.lives2=st.lives2;
+  rtApplyPlayer(RT.p,st.p1);
+  rtApplyPlayer(RT.p2,st.p2);
+  (st.enemies||[]).forEach(function(se,i){
+    var e=RT.enemies[i];
+    if(!e){e={w:26,h:30,vy:0,plat:null,loops:0};RT.enemies[i]=e;}
+    e._tx=se.x;e._ty=se.y;e.vx=se.vx;e.state=se.state;e.flipT=se.flipT;e.kind=se.kind;e.spin=se.spin||0;e.warpFx=se.warpFx||0;
+    if(e._inited===undefined){e.x=se.x;e.y=se.y;e._inited=1;}
+  });
+  RT.enemies.length=(st.enemies||[]).length;
+  RT.items=(st.items||[]).map(function(it){return {x:it.x,y:it.y,w:14,h:14,vx:0,vy:0,plat:null,t:it.t||0};});
+  if(st.state!==RT.state){
+    RT.state=st.state;
+    if(st.state==="clear"){
+      $("rtBannerSub").textContent="WAVE "+st.wave+" クリア ― 次は WAVE "+(st.wave+1);
+      $("rtBanner").hidden=false;
+    }else if(st.state==="play"){
+      $("rtBanner").hidden=true;
+    }else if(st.state==="over"){
+      rtGuestOver(st);
+    }
+  }
+  rtHud();
+}
+function rtGuestLoop(){
+  if(!RT.net||RT.net.role!=="guest")return;
+  RT.frame++;
+  [RT.p,RT.p2].forEach(function(p){
+    if(p&&p._tx!==undefined){p.x+=(p._tx-p.x)*0.45;p.y+=(p._ty-p.y)*0.45;}
+  });
+  RT.enemies.forEach(function(e){
+    if(e._tx!==undefined){e.x+=(e._tx-e.x)*0.45;e.y+=(e._ty-e.y)*0.45;}
+  });
+  try{rtDraw();}catch(e){}
+  RT.netRaf=requestAnimationFrame(rtGuestLoop);
+}
+function rtGuestOver(st){
+  mgPad("rtStage",false);
+  $("rtBanner").hidden=true;
+  var reward=st.reward||0;
+  var sc=st.scores||[0,0];
+  $("rtOvTtl").textContent="ゲームオーバー";
+  $("rtOvTx").innerHTML="WAVE "+st.wave+" ・ SCORE "+st.score+"<br>🪙 コイン "+st.coins+"枚 ＋ スコアボーナス "+Math.floor(st.score/100)+" ＝ <b>+"+reward+"コイン</b>"
+    +"<br>⚔️ 対決スコア　P1 "+sc[0]+" ― P2 "+sc[1]+"（"+(sc[0]===sc[1]?"引き分け！":sc[0]>sc[1]?"P1の勝ち！":"P2の勝ち！")+"）";
+  $("rtStartBtn").textContent="▶ もう一度";
+  if(reward>0){S.coin+=reward;renderStats();}
+  $("rtOverlay").hidden=false;
+  if(MP.cur)MP.cur.finished=true;
+}
+function rtHostFallback(){
+  if(RT.netRaf){cancelAnimationFrame(RT.netRaf);RT.netRaf=0;}
+  var q=RT.p2;
+  if(q){
+    RT.p=q;RT.lives=RT.lives2;RT.p1char=q.char;
+    RT.scores=[RT.scores[1]||0,0];
+  }
+  RT.p2=null;RT.net=null;RT.remoteIn=null;
+  rtHud();
+  if(RT.state==="play"||RT.state==="clear"){RT._lt=0;RT._acc=0;RT.raf=requestAnimationFrame(rtLoop);}
+}
+function esc2(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+/* ================= panels : inject into the three start overlays ================= */
+var MP_TITLES={bomber:"🌐 オンライン対戦（最大4人）",twin:"🌐 オンライン協力（2P）",retro:"🌐 オンライン 2P対戦／協力"};
+var MP_SUBS={
+  bomber:"クイックマッチ or 合言葉ルーム。空き枠はCPUが埋めて必ず始まります。",
+  twin:"2機で協力プレイ。敵とアイテムはホストが管理し、パワーアップは2人で共有です。",
+  retro:"協力してウェーブをクリアしながら、個人スコアで対決します。"
+};
+function mpInject(){
+  var css=document.createElement("style");
+  css.textContent=
+  ".mp-panel [hidden]{display:none!important}"
+  +".mp-panel{margin-top:12px;border:1px solid rgba(217,169,79,.55);border-radius:14px;padding:10px 11px 11px;background:linear-gradient(180deg,rgba(38,20,72,.92),rgba(22,10,44,.94));text-align:left}"
+  +".mp-ttl{font-family:'M PLUS Rounded 1c',sans-serif;font-weight:900;font-size:13.5px;color:#ffe98a;letter-spacing:.03em}"
+  +".mp-sub{font-size:10.5px;line-height:1.6;color:#c9b6ea;margin-top:3px}"
+  +".mp-row{display:flex;gap:7px;margin-top:8px}"
+  +".mp-row .btn{flex:1;min-height:42px;font-size:12.5px;padding:8px 6px}"
+  +".mp-codein{flex:1;min-width:0;border:1.5px solid #4c357c;border-radius:12px;background:#150a28;color:#fff;font-size:16px;font-weight:900;letter-spacing:.35em;text-align:center;padding:8px 4px;font-family:inherit}"
+  +".mp-codein::placeholder{letter-spacing:.05em;font-size:11.5px;font-weight:700;color:#8d7ab8}"
+  +".mp-status{font-size:10.5px;line-height:1.65;color:#e9dcff;margin-top:8px}"
+  +".mp-lobby{margin-top:9px;border-top:1px dashed rgba(217,169,79,.4);padding-top:9px}"
+  +".mp-code{font-size:12px;color:#c9b6ea;text-align:center;margin-bottom:7px}"
+  +".mp-code span{display:block;font-size:30px;font-weight:900;letter-spacing:.4em;color:#ffe98a;line-height:1.25;text-indent:.4em}"
+  +".mp-code small{font-size:10px;color:#c9b6ea}"
+  +".mp-mem{font-size:12px;font-weight:700;color:#fff;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:6px 9px;margin-top:5px}"
+  +".mp-mem b{color:#ffe98a;margin-right:4px}"
+  +".mp-mem.wait{color:#9d8ac4}.mp-mem.cpu{color:#c9b6ea}"
+  +".mp-you{background:#e91e7a;color:#fff;font-size:9px;font-weight:900;border-radius:99px;padding:2px 7px;margin-left:4px}";
+  document.head.appendChild(css);
+  Object.keys(MP.cfg).forEach(function(game){
+    var ov=$(MP.cfg[game].ov);if(!ov)return;
+    var host=ov.querySelector(".rt-ov-in");if(!host)return;
+    if(host.querySelector('.mp-panel[data-game="'+game+'"]'))return;
+    var div=document.createElement("div");
+    div.className="mp-panel";div.setAttribute("data-game",game);
+    div.innerHTML='<div class="mp-ttl">'+MP_TITLES[game]+'</div>'
+      +'<div class="mp-sub">'+MP_SUBS[game]+'</div>'
+      +'<div class="mp-row"><button type="button" class="btn gold" data-mp="quick">⚡ クイックマッチ</button></div>'
+      +'<div class="mp-row"><button type="button" class="btn ghost" data-mp="create">🔑 合言葉ルームを作る</button></div>'
+      +'<div class="mp-row"><input class="mp-codein" data-mp-code type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="4桁の合言葉">'
+      +'<button type="button" class="btn ghost" data-mp="join">合言葉で入室</button></div>'
+      +'<div class="mp-status" data-mp-status>1人用と並んで選べます。相手が見つからなければCPUが入って必ず始まります。</div>'
+      +'<div class="mp-lobby" data-mp-lobby hidden>'
+      +'<div class="mp-code" data-mp-bigcode hidden></div>'
+      +'<div data-mp-members></div>'
+      +'<div class="mp-row"><button type="button" class="btn gold" data-mp="startnow" hidden>▶ このメンバーで開始（残りCPU）</button></div>'
+      +'<div class="mp-row"><button type="button" class="btn ghost" data-mp="cancel">ルームを出る</button></div>'
+      +'</div>';
+    host.appendChild(div);
+    div.addEventListener("click",function(ev){
+      var b=ev.target;
+      while(b&&b!==div&&!b.getAttribute("data-mp"))b=b.parentNode;
+      if(!b||b===div)return;
+      var act=b.getAttribute("data-mp");
+      if(act==="quick")MP.enter(game,"quick");
+      else if(act==="create")MP.enter(game,"create");
+      else if(act==="join"){
+        var inp=div.querySelector("[data-mp-code]");
+        var code=(inp&&inp.value||"").replace(/[^0-9]/g,"");
+        if(code.length!==4){toast("4桁の合言葉を入力してください");return;}
+        MP.enter(game,"join",code);
+      }
+      else if(act==="startnow"){if(MP.cur&&MP.cur.game===game)MP.startHost();}
+      else if(act==="cancel"){if(MP.cur&&MP.cur.game===game)MP.leave();}
+    });
+    /* pressing the normal solo start while in a room leaves it */
+    var sb=$(MP.cfg[game].startBtn);
+    if(sb)sb.addEventListener("click",function(){if(MP.cur&&MP.cur.game===game)MP.leave();},true);
+  });
+  /* leaving a game screen always leaves its room (wraps the
+     original stop hooks, which mgShow / mgStopAll call) */
+  var _bs=window.__bmStop;if(_bs)window.__bmStop=function(){MP.detach("bomber");_bs();};
+  var _ts=window.__tbStop;if(_ts)window.__tbStop=function(){MP.detach("twin");_ts();};
+  var _rs=window.__rtStop;if(_rs)window.__rtStop=function(){MP.detach("retro");_rs();};
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",mpInject);
+else mpInject();
 })();
 </script>
 </body>
