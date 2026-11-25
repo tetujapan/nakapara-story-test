@@ -11019,6 +11019,66 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 #dMenu{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
 .dmenu-panel{max-height:36dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .dmenu-row{flex:none}
+
+/* ---------- v79 : short-viewport fit — the real device shows
+   ≈390x670 inside the Muse app, not the audit's 390x844 ----------
+   HOME : the heroine's height is capped so her head always starts
+   below the ticker band (bottom:104px badges + 46px headroom =
+   150px reserved). On tall stages the 56% rule wins and nothing
+   changes; on short stages she shrinks a little instead of
+   sliding her face off the top of the stage. Side name labels are
+   re-centred on their cutouts so they stay inside the screen even
+   when the cutouts narrow with the shorter stage. */
+.cut-main{height:min(56%,calc(100% - 150px))}
+.cut-p0 .cut-name,.cut-p1 .cut-name,.cut-p2 .cut-name,.cut-p3 .cut-name{left:50%}
+/* side columns de-overlapped : at short stage heights the upper
+   member's bottom-anchored label used to land exactly where the
+   lower member stands, so she covered it. The lower pair steps
+   inward (clear of the heroine and of the vertical lettering) and
+   the upper pair's label now ends above the lower member's hair —
+   all four labels stay fully on screen at any stage height. */
+.cut-p0,.cut-p1,.cut-p2,.cut-p3{height:30%}
+.cut-p0{left:10px;top:48px}
+.cut-p1{right:10px;top:48px}
+.cut-p2{left:13%;bottom:108px}
+.cut-p3{right:13%;bottom:108px}
+
+/* SUIKA : the field keeps its logical 420x640 box, but its DISPLAY
+   width is capped by the real viewport height (same pattern as the
+   slot cabinet) so the floor's gold frame and the evolution strip
+   always end above the bottom nav. The canvas scales uniformly —
+   never squashed, never stretched. 272px = topbar + nav padding +
+   back link + heading + in-stage HUD + evolution strip + margins,
+   with headroom. On tall screens 100% width wins and the field
+   is unchanged. */
+#mgSuika .sk-stage{width:min(100%,calc((100dvh - 272px)*0.65625));margin-left:auto;margin-right:auto}
+
+/* short screens (<=720px tall — the real device's ~670px) : the
+   home stage only gets ~200px once the rows below it take their
+   share, which is not enough stage for the collage. So on short
+   screens ONLY, the under-stage rows compact (hint line and its
+   progress bar fold away, section heads and the minigame banner
+   slim down, the badge bar shortens) and the stage keeps ~275px.
+   The heroine's cap tightens to match the shorter badge bar, the
+   upper side pair shrinks a step so its labels end above the
+   lower pair's eyes, and all four side labels anchor to the
+   screen-side edge of their cutout so they can never spill off
+   screen or be covered. Screens taller than 720px are untouched. */
+@media (max-height:720px){
+  #v-home>p.note,#v-home .progress-line{display:none}
+  #v-home .sec-head{margin-bottom:2px}
+  #v-home .mg-home p{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  #v-home .newsfold{padding-bottom:2px}
+  #v-home .badges{padding-top:6px;padding-bottom:6px}
+  #v-home .badge-btn{min-height:50px}
+  #v-home .badge-btn.gold{min-height:76px}
+  .cut-main{bottom:94px;height:min(56%,calc(100% - 130px))}
+  .cut-p0,.cut-p1{z-index:7;height:27%}
+  .cut-p2{bottom:98px}
+  .cut-p3{bottom:98px}
+  .cut-p0 .cut-name,.cut-p2 .cut-name{left:0;transform:none}
+  .cut-p1 .cut-name,.cut-p3 .cut-name{left:auto;right:0;transform:none}
+}
 </style>
 <script>
 /* Collection: fold the completion / extra-episode / photo-card boxes
