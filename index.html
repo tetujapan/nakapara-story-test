@@ -17,6 +17,11 @@
 <script src="assets-data-14.js"></script>
 <script src="assets-data-15.js"></script>
 <script src="assets-data-16.js"></script>
+<script src="assets-data-17.js"></script>
+<script src="assets-data-18.js"></script>
+<script src="assets-data-19.js"></script>
+<script src="assets-data-20.js"></script>
+<script src="assets-data-21.js"></script>
 <script>
 /* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
    Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
@@ -2701,7 +2706,7 @@ img{-webkit-user-drag:none}
         <span class="gb-tx">
           <span class="gb-tag">常設ガチャ</span>
           <span class="gb-title">フォトカードガチャ</span>
-          <span class="gb-sub">全90種 ・ R 84% ／ SR 13% ／ UR 3%<br>10連はSR以上1枚確定</span>
+          <span class="gb-sub">全111種 ・ R 84% ／ SR 13% ／ UR 3%<br>10連はSR以上1枚確定</span>
           <span class="gb-cost">1回 100コイン ／ 10連 1000コイン</span>
         </span>
       </button>
@@ -3450,6 +3455,20 @@ var CHARS=[
  {id:"nana",name:"神宮寺れい",catch:"人懐っこくて、常連さんに愛される",hair:"#6e3b1f",hair2:"#a86432",skin:"#ffd9c2",outfit:"#ff8a1e",bg1:"#ffedd8",bg2:"#ffc98a",attr:"ナチュラル",attrColor:"#ff8a1e",desc:"ルート制作中",skillUR:"みんなの太陽",base:[74,86,80],quotes:{R:"「わーい、今日も会えた！　ねえねえ、聞いて聞いて！」",SR:"「ステージの灯りってあったかいよね。みんなの顔が見えるからかな」",UR:"「私の笑顔は、みんなにもらったものなんだよ」"}},
  {id:"misa",name:"紅林さくら",catch:"ふんわりした雰囲気と、芯の強さ",hair:"#a04a72",hair2:"#cf7ba1",skin:"#ffe3d3",outfit:"#4a90d9",bg1:"#e0efff",bg2:"#a9cdf5",attr:"ピュア",attrColor:"#4a90d9",desc:"ルート制作中",skillUR:"桜色の約束",base:[85,72,78],quotes:{R:"「えへへ、今日もよろしくお願いします。……ふわふわしてても、芯はあるんですよ？」",SR:"「窓辺で考える時間、好きなんです。……隣、座りますか？」",UR:"「約束、覚えてますか。私はずっと、覚えてます」"}}
 ];
+/* ===== supporting cast : the story's side characters + the president.
+   They carry cards (built into CARDS below) but no story books, so they
+   stay out of CHARS / BOOKS / the home bookshelf. charOf, the collection
+   filters, the completion board and the formation candidates all read
+   ALLCHARS, so these six join every system automatically. ===== */
+var SUPCHARS=[
+ {id:"paradise",name:"中川パラダイス",catch:"なかよしパラダイス社長。場を回すのが天職の男",hair:"#20202a",hair2:"#3c3c50",skin:"#ffd9c2",outfit:"#d42427",bg1:"#ffe9c9",bg2:"#ffb35c",attr:"カリスマ",attrColor:"#d4a017",desc:"合同会社なかよしパラダイスの社長で、芸人・ウーマンラッシュアワー。事務所の全員をパラダイスに巻き込む。",skillUR:"パラダイス全開",base:[70,80,75],quotes:{R:"「ようこそ、なかよしパラダイスへ！　俺が社長の中川パラダイスだ」",SR:"「売れるかどうかは結局“人”だよ。……なんてね、ハッハッハ！」",UR:"「ここは夢を追う奴らの秘密基地だ。全員、ついて来い！」"},cards:{R:["事務所の朝","カウンターの社長","営業スマイル"],SR:["秘密基地の主","場を回す男"],UR:["伝説の社長"]}},
+ {id:"kenji",name:"ケンジ",catch:"撮影会の最前列に必ずいる、常連のトップファン",hair:"#2c3550",hair2:"#46538a",skin:"#ffd9c2",outfit:"#3a7ca5",bg1:"#dfe9ff",bg2:"#9db8e8",attr:"常連",attrColor:"#4a90d9",desc:"誰もが認める、ももかの一番の常連。礼儀正しく、差し入れも欠かさない。",skillUR:"最前列の視線",base:[60,55,70],quotes:{R:"「今日も最前列、取れました。……ももかさんの笑顔のためなら、なんだって」",SR:"「貢いだ額じゃないんです。通った回数と、守ってきた約束の数です」",UR:"「ずっと、見てますよ。……ずっとね」"},cards:{R:["最前列の常連","ペンライトの男"],SR:["トップヲタの誇り"]}},
+ {id:"saki",name:"サキ",catch:"ももかを推す女性ファン。同担の気持ちは同担にしか分からない",hair:"#7a4a2a",hair2:"#a8703f",skin:"#ffe0cc",outfit:"#e77fa2",bg1:"#fde8f3",bg2:"#f2a9c6",attr:"常連",attrColor:"#e77fa2",desc:"撮影会に通う女性ファン。ももかへの想いは誰にも負けない。",skillUR:"同担の絆",base:[58,66,62],quotes:{R:"「女の子ファンって珍しいですか？　私はただ、ももかちゃんが好きなだけです」",SR:"「同担の気持ちは、同担にしか分かんないんですよ」",UR:"「ももかちゃんの幸せが、私の幸せです」"},cards:{R:["スマホを握る常連","同担の女の子"],SR:["女子ファンの目線"]}},
+ {id:"yuna",name:"ユナ",catch:"意地悪なライバルグラドル。人気は奪い合うもの、が信条",hair:"#e75480",hair2:"#f78fb0",skin:"#ffe3d3",outfit:"#e75480",bg1:"#ffd7f2",bg2:"#f78fd0",attr:"ライバル",attrColor:"#e75480",desc:"ももかと枠を争うライバルグラドル。笑顔の裏で、いつも次の手を考えている。",skillUR:"奪う笑顔",base:[78,72,80],quotes:{R:"「あら、そっちの撮影会の子？　ふーん……まあ、頑張ってね」",SR:"「人気って、奪い合うものよ。優しい顔してたら、すぐに追い抜かれるんだから」",UR:"「私が一番になる。邪魔するなら、誰だって容赦しない」"},cards:{R:["ライバル登場","ピンクの挑戦者"],SR:["意地悪な笑顔"]}},
+ {id:"camera",name:"眼鏡スタッフ",catch:"撮影会スタッフ。眼鏡の奥の目は、いい瞬間を逃さない",hair:"#5c4433",hair2:"#7d5f47",skin:"#ffdfc9",outfit:"#6b7c59",bg1:"#e6f2e4",bg2:"#a8c69f",attr:"スタッフ",attrColor:"#6b7c59",desc:"撮影会の現場スタッフ。無口だが、シャッターの腕は確か。",skillUR:"決定的瞬間",base:[55,68,60],quotes:{R:"「い、いい瞬間でした……！　今の、撮れてます」",SR:"「ファインダー越しだと、嘘つけないんですよ。表情って」",UR:"「最高の一枚は、狙って撮れるものじゃないんです」"},cards:{R:["シャッターの向こう","撮影会スタッフ"],SR:["ベストショットを狙う目"]}},
+ {id:"staff",name:"スタッフ",catch:"Litと撮影会を裏で支える、名もなき現場の柱",hair:"#4a3220",hair2:"#6b4c30",skin:"#ffd9c2",outfit:"#3a3a44",bg1:"#ececf1",bg2:"#b9b9c9",attr:"スタッフ",attrColor:"#5a5a6e",desc:"受付、段取り、片付けまで。現場が回るのはこの人のおかげ。",skillUR:"縁の下の力",base:[62,70,58],quotes:{R:"「お疲れさまです！　ドリンク、冷たいのご用意してます」",SR:"「現場が回るなら、それでいいんです。僕の名前は要らないんで」",UR:"「みんなが笑って帰れる日は、僕も嬉しいんですよ」"},cards:{R:["Litのスタッフ","受付の笑顔"],SR:["縁の下の力持ち"]}}
+];
+var ALLCHARS=CHARS.concat(SUPCHARS);
 var BOOKS={
  momona:{title:"笑顔の裏側",sub:"サスペンス ― 誰が彼女を追い詰めるのか",vol:"第1巻 ・ ももか編",base:"撮影会とエンタメBAR Litの日常。枠が埋まるか、常連との距離、SNSの数字、給料、次の仕事。その積み重ねの先で、差出人不明の手紙とDMが少しずつ日常を侵食していく。犯人は、最後の最後まで分からない。"},
  akari:{title:"控え室の約束",sub:"努力家の彼女が見せない顔",vol:"第2巻 ・ ひかり編",base:"ルート制作中。本の発売（公開）をお待ちください。"},
@@ -3472,8 +3491,13 @@ CHARS.forEach(function(c){
   TITLES.UR.forEach(function(t,i){CARDS.push({id:c.id+"-UR"+i,char:c.id,rar:"UR",title:t});});
   CARDS.push({id:c.id+"-LTD",char:c.id,rar:"UR",title:"撮影会ピックアップ限定",limited:true});
 });
+SUPCHARS.forEach(function(c){
+  (c.cards.R||[]).forEach(function(t,i){CARDS.push({id:c.id+"-R"+i,char:c.id,rar:"R",title:t});});
+  (c.cards.SR||[]).forEach(function(t,i){CARDS.push({id:c.id+"-SR"+i,char:c.id,rar:"SR",title:t});});
+  (c.cards.UR||[]).forEach(function(t,i){CARDS.push({id:c.id+"-UR"+i,char:c.id,rar:"UR",title:t});});
+});
 var TOTAL=CARDS.length;
-function charOf(id){for(var i=0;i<CHARS.length;i++)if(CHARS[i].id===id)return CHARS[i];return CHARS[0];}
+function charOf(id){for(var i=0;i<ALLCHARS.length;i++)if(ALLCHARS[i].id===id)return ALLCHARS[i];return CHARS[0];}
 function hashCode(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return Math.abs(h);}
 function cardData(card){
   var c=charOf(card.char), h=hashCode(card.id);
@@ -3492,7 +3516,7 @@ function cardData(card){
 }
 /* per-character face anchor for full-frame use: tuned per illustration so the
    whole face (bangs to chin) stays inside wide banner crops */
-var FACEPOS={momona:"50% 13%",akari:"50% 17%",kaede:"50% 12%",nana:"50% 13%",misa:"50% 17%"};
+var FACEPOS={momona:"50% 13%",akari:"50% 17%",kaede:"50% 12%",nana:"50% 13%",misa:"50% 17%",paradise:"50% 14%",kenji:"50% 10%",saki:"50% 10%",yuna:"50% 10%",camera:"50% 10%",staff:"50% 10%"};
 function charArt(c,seed,full){
   var pos=["50% 3%","50% 11%","50% 0%","50% 17%","50% 7%","50% 21%"];
   var s=((seed%6)+6)%6;
@@ -3504,7 +3528,7 @@ function pipsHTML(card){
   var s=""; for(var i=0;i<n;i++)s+="◆";
   return '<div class="pips '+card.rar+'">'+s+(card.limited?' <span style="letter-spacing:.06em">限定</span>':"")+'</div>';
 }
-var CUTDIM={momona:[600,1715],akari:[600,1129],kaede:[600,1506],nana:[600,1616],misa:[600,1712]};
+var CUTDIM={momona:[600,1715],akari:[600,1129],kaede:[600,1506],nana:[600,1616],misa:[600,1712],paradise:[640,960],kenji:[640,960],saki:[640,960],yuna:[640,960],camera:[640,960],staff:[640,960]};
 function cutImg(c,cls){
   var d=CUTDIM[c.id]||[600,1600];
   return '<img class="'+cls+'" src="assets/full_'+c.id+'.webp" width="'+d[0]+'" height="'+d[1]+'" alt="'+c.name+'" decoding="async" onload="this.classList.add(\'ld\')" onerror="this.onerror=null;this.src=\'assets/char_'+c.id+'.webp\';this.classList.add(\'ld\')">';
@@ -3620,7 +3644,8 @@ window.renderStoryChrome=function(){
 };
 function openBook(id){
   if(id==="momona"){showView("story");if(window.startStory)window.startStory();}
-  else toast(BOOKS[id].vol+"は制作中です（試作版はももかルートのみ）");
+  else if(BOOKS[id])toast(BOOKS[id].vol+"は制作中です（試作版はももかルートのみ）");
+  else toast(charOf(id).name+"のストーリーはまだありません（カード専用キャラクターです）");
 }
 /* ===== backlog / gallery ===== */
 window.updateSkipBtn=function(){
@@ -3673,7 +3698,7 @@ var EX2=[
  {sp:"ももか",tx:"「こういう日があるから、がんばれるんだよね」――全員集合の休日、おしまい。"}];
 function renderComp(){
   var host=$("compBox"); if(!host)return;
-  var rows=CHARS.map(function(c){
+  var rows=ALLCHARS.map(function(c){
     var own=charOwned(c.id), tot=charCards(c.id).length, comp=own===tot;
     return '<div class="mission"><div class="mi"><b>'+c.name+' 図鑑</b><p>'+own+' / '+tot+' 種'+(comp?" ・ コンプリート！ 壁紙が解放されました":" ・ コンプリートで限定壁紙を解放")+'</p><div class="progress-line" style="margin:5px 0 0"><i style="width:'+(own/tot*100)+'%"></i></div></div>'
       +(comp?'<button class="btn gold" data-wp="'+c.id+'" style="flex:none">壁紙</button>':'<span class="comp-left">あと'+(tot-own)+'種</span>')+'</div>';
@@ -3703,7 +3728,7 @@ function renderComp(){
 }
 function renderFilters(){
   var host=$("collFilters"); if(!host)return;
-  var chars=[["all","全員"]].concat(CHARS.map(function(c){return [c.id,c.name];}));
+  var chars=[["all","全員"]].concat(ALLCHARS.map(function(c){return [c.id,c.name];}));
   var html=chars.map(function(p){return '<button type="button" data-fc="'+p[0]+'" class="'+(S.filterChar===p[0]?"on":"")+'">'+p[1]+'</button>';}).join("")
     +[["all","全レア"],["R","R"],["SR","SR"],["UR","UR"],["LTD","限定"]].map(function(p){return '<button type="button" data-fr="'+p[0]+'" class="'+(S.filterRar===p[0]?"on":"")+'">'+p[1]+'</button>';}).join("");
   host.innerHTML=html;
@@ -3872,7 +3897,7 @@ function setGachaSub(){
   var gs=$("gachaSub"); if(!gs)return;
   gs.innerHTML=(typeof G!=="undefined"&&G.type==="oshi")
     ?"姫宮ももかのカード全17種（R8種・SR6種・UR3種）<br>被りは素材ストックへ ― コレクションで合成（レベルアップ）か交換Pt変換（R=10pt／SR=50pt／UR=200pt）を選べます"
-    :"全"+TOTAL+"種（5人 × R8種・SR6種・UR3種＋撮影会限定1種）<br>被りは素材ストックへ ― コレクションで合成（レベルアップ）か交換Pt変換（R=10pt／SR=50pt／UR=200pt）を選べます";
+    :"全"+TOTAL+"種（5人 × R8種・SR6種・UR3種＋撮影会限定1種 ／ 中川パラダイス＆ストーリー脇役 "+(TOTAL-90)+"種）<br>被りは素材ストックへ ― コレクションで合成（レベルアップ）か交換Pt変換（R=10pt／SR=50pt／UR=200pt）を選べます";
 }
 function openGacha(type){
   if(S.gachaBusy)return;
@@ -5171,7 +5196,7 @@ var OnlineAPI={
     if(typeof d.losses==="number"&&d.losses!==S.obLosses){S.obLosses=d.losses;changed=true;}
     if(typeof d.draws==="number"&&d.draws!==S.obDraws){S.obDraws=d.draws;changed=true;}
     if(typeof d.streak==="number"&&d.streak!==S.obStreak){S.obStreak=d.streak;changed=true;}
-    if(d.oshi&&d.oshi!==S.oshi){for(var i=0;i<CHARS.length;i++)if(CHARS[i].id===d.oshi){S.oshi=d.oshi;changed=true;}}
+    if(d.oshi&&d.oshi!==S.oshi){for(var i=0;i<ALLCHARS.length;i++)if(ALLCHARS[i].id===d.oshi){S.oshi=d.oshi;changed=true;}}
     var ids=Array.isArray(d.deckIds)&&d.deckIds.length?d.deckIds:(Array.isArray(d.deck)?d.deck.map(function(x){return typeof x==="string"?x:(x&&x.id);}).filter(function(x){return !!x;}):[]);
     if(ids.length===3){S.deck=ids.slice(0,3);ensureDeck();changed=true;}
     return changed;
@@ -5765,17 +5790,20 @@ var VN_NAME2ID={"ももか":"momona","姫宮ももか":"momona","姫宮":"momona
   "スタッフ":"sup_staff","店員":"sup_staff",
   "眼鏡スタッフ":"sup_camera","カメラマン":"sup_camera",
   "ファンA":"sup_fanm","ファンB":"sup_fanf","男":"sup_fanm"};
-/* provisional stand-in art for supporting characters (SD sheet,
-   cut out per person). Keyed by character id so each can be swapped
-   for final art later by replacing just the file / this entry. */
+/* supporting characters on the story stage : photorealistic
+   portraits, the same files the gacha cards use (char_<id>.webp).
+   Keyed by story character id so each can be swapped by replacing
+   just the file / this entry. */
 var VN_SUPPORT={
-  "sup_staff":{img:"assets/cut_sup_staff.webp",name:"スタッフ"},
-  "sup_fanm":{img:"assets/cut_sup_fanm.webp",name:"男性ファン"},
-  "sup_fanf":{img:"assets/cut_sup_fanf.webp",name:"女性ファン"},
-  "sup_yuna":{img:"assets/cut_sup_yuna.webp",name:"ユナ"},
-  "sup_camera":{img:"assets/cut_sup_camera.webp",name:"カメラマン"}
+  "sup_staff":{img:"assets/char_staff.webp",name:"スタッフ"},
+  "sup_fanm":{img:"assets/char_kenji.webp",name:"男性ファン"},
+  "sup_fanf":{img:"assets/char_saki.webp",name:"女性ファン"},
+  "sup_yuna":{img:"assets/char_yuna.webp",name:"ユナ"},
+  "sup_camera":{img:"assets/char_camera.webp",name:"カメラマン"}
 };
-function vnIsSD(cid){return cid==="paradise"||!!VN_SUPPORT[cid];}
+/* nobody is SD-sized any more : the president and the supporting
+   cast stand at the same photo height as the talents */
+function vnIsSD(cid){return false;}
 var VN_CUES=[
   {keys:["手紙","封筒","便箋","封"],name:"手紙",cid:null},
   {keys:["DM","メッセージ"],name:"DM",cid:null},
@@ -5916,7 +5944,7 @@ function vnSlots(n){return n<=1?["c"]:n===2?["l","r"]:["l","c","r"];}
 function vnCharHTML(cid,slot,idx){
   var dl=' style="animation-delay:'+(idx*0.13).toFixed(2)+'s"';
   var img;
-  if(cid==="paradise")img='<img src="assets/sd_paradise.webp" alt="中川パラダイス" decoding="async"'+dl+'>';
+  if(cid==="paradise")img='<img src="assets/char_paradise.webp" alt="中川パラダイス" decoding="async"'+dl+'>';
   else if(VN_SUPPORT[cid])img='<img src="'+VN_SUPPORT[cid].img+'" alt="'+VN_SUPPORT[cid].name+'" decoding="async"'+dl+'>';
   else img='<img src="assets/cut_'+cid+'.webp" alt="'+vnEsc(charOf(cid).name)+'" decoding="async"'+dl+'>';
   return '<div class="vn-char slot-'+slot+(vnIsSD(cid)?" sd":"")+'" data-cid="'+cid+'" style="z-index:'+(2+idx)+'">'+img+'</div>';
@@ -12123,13 +12151,13 @@ else mpInject();
    ================================================================ */
 var FORM_SLOTS=[["back0","後列","fs-back0"],["back1","後列","fs-back1"],["center","中央・推し","fs-center"],["front0","前列","fs-front0"],["front1","前列","fs-front1"]];
 var FORM_KEYS=["center","back0","back1","front0","front1"];
-function formCharObj(id){for(var i=0;i<CHARS.length;i++)if(CHARS[i].id===id)return CHARS[i];return {id:id,name:id};}
+function formCharObj(id){for(var i=0;i<ALLCHARS.length;i++)if(ALLCHARS[i].id===id)return ALLCHARS[i];return {id:id,name:id};}
 function ownedChars(){
   var seen={},ids=[];
   CARDS.forEach(function(k){if(S.owned[k.id]&&!seen[k.char]){seen[k.char]=1;ids.push(k.char);}});
   var out=[];
-  CHARS.forEach(function(c){if(seen[c.id])out.push(c);});
-  ids.forEach(function(id){var f=false;CHARS.forEach(function(c){if(c.id===id)f=true;});if(!f)out.push({id:id,name:id});});
+  ALLCHARS.forEach(function(c){if(seen[c.id])out.push(c);});
+  ids.forEach(function(id){var f=false;ALLCHARS.forEach(function(c){if(c.id===id)f=true;});if(!f)out.push({id:id,name:id});});
   return out;
 }
 function renderFormation(){
