@@ -2671,23 +2671,6 @@ img{-webkit-user-drag:none}
     <p class="imprint">なかパラ文庫</p>
   </section>
 
-  <section>
-    <div class="sec-head"><h2>🎮 ミニゲーム</h2><p>カードで遊べる3つのゲーム</p></div>
-    <button type="button" class="mg-home" id="mgHomeBtn">
-      <span style="font-size:26px">🎮</span>
-      <span><b>ミニゲームで遊ぶ</b><p>⚔️ バトル ＆ 🃏 ポーカー ＆ 🎰 スロット ＆ 👾 レトロ5種 ― 勝てばコイン！</p></span>
-      <span class="mg-go">›</span>
-    </button>
-  </section>
-
-  <section>
-    <details class="fold newsfold"><summary>📢 お知らせ<span>3件</span></summary>
-    <div class="news">
-      <div><time>試作版</time><span>📖 ももかルート全141シーン収録！ 他4ルートは制作中</span></div>
-      <div><time>ガチャ</time><span>🎰 10連はSR以上1枚確定！</span></div>
-      <div><time>番外編</time><span>🔓 ももかUR所持で「休日の約束」解放</span></div>
-    </div></details>
-  </section>
 </div>
 
 <!-- ============ STORY ============ -->
@@ -3584,7 +3567,6 @@ function renderFeatured(){
   var html=others.map(function(c,idx){
     return '<button type="button" class="cutbtn cut-p'+idx+'" data-member="'+c.id+'" aria-label="'+c.name+'を推しにする">'+cutImg(c,"cimg")+'<span class="cut-name">'+c.name+'</span></button>';
   }).join("")
-  +'<div class="main-catch">'+main.catch+'</div><div class="main-vname">'+main.name+'</div>'
   +'<button type="button" class="cutbtn cut-main" data-member="'+main.id+'" aria-label="'+main.name+'の本を開く">'+cutImg(main,"cimg")+'<span class="cut-name">⭐ 推し ・ '+main.name+'</span></button>';
   host.innerHTML=html;
   var cimgs=host.querySelectorAll("img");for(var i=0;i<cimgs.length;i++){if(cimgs[i].complete&&cimgs[i].naturalWidth>0)cimgs[i].classList.add("ld");}
@@ -11078,6 +11060,31 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
   .cut-p3{bottom:98px}
   .cut-p0 .cut-name,.cut-p2 .cut-name{left:0;transform:none}
   .cut-p1 .cut-name,.cut-p3 .cut-name{left:auto;right:0;transform:none}
+}
+/* ---------- v80 : home declutter + bigger idols ----------
+   The vertical catch copy (it overlapped the lower-left member)
+   and the heroine's vertical name (it duplicated the ⭐推し pill)
+   are no longer rendered, and the minigame card + news fold under
+   the shelf are removed — the bottom tab carries minigames and
+   the stage ticker carries the news. The freed column goes to
+   the collage : the heroine steps from 56% to 66% of the stage,
+   the side members grow too, and the lower pair moves outward
+   into the lanes the lettering used to occupy. The upper pair's
+   height is capped by a calc so its name pill always ends above
+   the lower member's hair at any stage height, and the heroine's
+   cap still guarantees her head starts below the ticker — the
+   cast gets bigger, never cropped. */
+.cut-main{height:min(66%,calc(100% - 138px))}
+.cut-p0,.cut-p1{height:min(35%,calc(64% - 158px));top:44px}
+.cut-p0{left:8px}
+.cut-p1{right:8px}
+.cut-p2,.cut-p3{height:36%}
+.cut-p2{left:9%}
+.cut-p3{right:9%}
+@media (max-height:720px){
+  .cut-main{height:min(66%,calc(100% - 128px))}
+  .cut-p0,.cut-p1{height:min(33%,calc(65% - 148px))}
+  .cut-p2,.cut-p3{height:35%}
 }
 </style>
 <script>
