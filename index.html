@@ -2653,17 +2653,12 @@ img{-webkit-user-drag:none}
 <main class="wrap">
 <!-- ============ HOME : full-stage collage ============ -->
 <div class="view on" id="v-home">
-  <div class="stage-home">
+  <div class="stage-home pat-a">
     <img class="bgimg" src="assets/stage_bg.webp" alt="">
     <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></div>
     <div id="collage"></div>
+    <button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-sw" aria-hidden="true">⇄</span><span class="hm-b">全身</span></button>
   </div>
-
-  <section>
-    <div class="sec-head"><h2>📚 ストーリー本棚</h2><p>表紙をタップで開く</p></div>
-    <div class="books" id="homeBooks"></div>
-    <p class="imprint">なかパラ文庫</p>
-  </section>
 
 </div>
 
@@ -2809,6 +2804,7 @@ img{-webkit-user-drag:none}
   <section style="margin-top:14px">
     <div class="sec-head"><h2>🗂️ コレクション</h2><p id="collCount"></p></div>
     <p class="note" style="margin-bottom:10px;font-size:12.5px">👆 タップで拡大表示 ・ 🏆 全種コンプリートで特典解放！</p>
+    <div id="formBox"></div>
     <div class="filters" id="collFilters"></div>
     <div class="deck" id="collGrid" style="margin-top:4px"></div>
     <div id="compBox" style="margin-top:16px"></div><div id="extraBox" style="margin-top:14px"></div>
@@ -3511,7 +3507,7 @@ function pipsHTML(card){
 var CUTDIM={momona:[600,1715],akari:[600,1129],kaede:[600,1506],nana:[600,1616],misa:[600,1712]};
 function cutImg(c,cls){
   var d=CUTDIM[c.id]||[600,1600];
-  return '<img class="'+cls+'" src="assets/full_'+c.id+'.webp" width="'+d[0]+'" height="'+d[1]+'" alt="'+c.name+'" decoding="async" onload="this.classList.add(\'ld\')">';
+  return '<img class="'+cls+'" src="assets/full_'+c.id+'.webp" width="'+d[0]+'" height="'+d[1]+'" alt="'+c.name+'" decoding="async" onload="this.classList.add(\'ld\')" onerror="this.onerror=null;this.src=\'assets/char_'+c.id+'.webp\';this.classList.add(\'ld\')">';
 }
 function statBarsHTML(stats,labels){
   return '<div class="statbars">'+stats.map(function(v,i){return '<div><b>'+labels[i]+'</b><i><u style="width:'+v+'%"></u></i><em>'+v+'</em></div>';}).join("")+'</div>';
@@ -3530,7 +3526,7 @@ function cardHTML(card,owned,isNew){
 }
 /* ===== state (memory only) ===== */
 var S={coin:999999,pt:0,owned:{},endings:{},extraDone:false,extra2Done:false,scene:null,flags:{care:0,trust:0,info:0},extraScene:null,selected:null,started:false,filterChar:"all",filterRar:"all",bonusClaimed:false,missionsClaimed:{},shopOwned:{},gachaBusy:false,
-  oshi:"momona",readScenes:{},log:[],skipMode:false,pulls:0,cardViews:0,wallpapers:{},
+  oshi:"momona",form:{center:"momona",back0:"akari",back1:"kaede",front0:"nana",front1:"misa"},readScenes:{},log:[],skipMode:false,pulls:0,cardViews:0,wallpapers:{},
   lv:{},dupStock:{},deck:[],shots:[],btBusy:false};
 S.owned={}; S.owned["momona-R0"]=1; S.owned["momona-R1"]=1; S.owned["akari-R0"]=1;
 var $=function(id){return document.getElementById(id);};
@@ -3556,16 +3552,24 @@ function renderHeroOshi(){
 }
 function renderFeatured(){
   var host=$("collage"); if(!host)return;
-  var main=charOf(S.oshi);
-  var others=CHARS.filter(function(c){return c.id!==main.id;});
-  var html=others.map(function(c,idx){
-    return '<button type="button" class="cutbtn cut-p'+idx+'" data-member="'+c.id+'" aria-label="'+c.name+'を推しにする">'+cutImg(c,"cimg")+'<span class="cut-name">'+c.name+'</span></button>';
+  var slots=[["back0","cut-p0","lbl-p0"],["back1","cut-p1","lbl-p1"],["front0","cut-p2","lbl-p2"],["front1","cut-p3","lbl-p3"]];
+  var main=charOf(S.form.center);
+  var html=slots.map(function(s){
+    var c=charOf(S.form[s[0]]);
+    return '<button type="button" class="cutbtn '+s[1]+'" data-member="'+c.id+'" aria-label="'+c.name+'を推しにする">'+cutImg(c,"cimg")+'</button>';
   }).join("")
-  +'<button type="button" class="cutbtn cut-main" data-member="'+main.id+'" aria-label="'+main.name+'の本を開く">'+cutImg(main,"cimg")+'<span class="cut-name">⭐ 推し ・ '+main.name+'</span></button>';
+  +'<button type="button" class="cutbtn cut-main" data-member="'+main.id+'" aria-label="'+main.name+'の本を開く">'+cutImg(main,"cimg")+'</button>'
+  +slots.map(function(s){var c=charOf(S.form[s[0]]);return '<span class="cut-name lbl '+s[2]+'" aria-hidden="true">'+c.name+'</span>';}).join("")
+  +'<span class="cut-name lbl lbl-main" aria-hidden="true">⭐ 推し ・ '+main.name+'</span>';
   host.innerHTML=html;
   var cimgs=host.querySelectorAll("img");for(var i=0;i<cimgs.length;i++){if(cimgs[i].complete&&cimgs[i].naturalWidth>0)cimgs[i].classList.add("ld");}
 }
 function setOshi(id){
+  if(S.form.center!==id){
+    var ks=["back0","back1","front0","front1"];
+    for(var i=0;i<ks.length;i++){if(S.form[ks[i]]===id){S.form[ks[i]]=S.form.center;break;}}
+    S.form.center=id;
+  }
   S.oshi=id; renderAll();
   if(typeof OnlineAPI!=="undefined"&&OnlineAPI&&OnlineAPI.syncProfile)OnlineAPI.syncProfile();
   toast("推しを "+charOf(id).name+" に設定しました。ホームの顔になりました");
@@ -11129,6 +11133,80 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 .cut-p2 .cut-name{left:0;right:auto;transform:none;bottom:-25px}
 .cut-p3 .cut-name{left:auto;right:0;transform:none;bottom:-25px}
 </style>
+<style>
+/* ============================================================
+   v47 — HERO TWO PATTERNS + TOGGLE (user-approved layouts).
+   The home hero now fills the whole content area (the shelf
+   moved off home; the story tab + centre tap carry the route)
+   and shows the same five full-body cut-outs in two patterns,
+   switched by the pill button under the oshi pill :
+     pat-a アップ — the user's PSD layout, measured on the
+       780x1340 canvas (= 390x670 device) and applied here as
+       stage-relative % : big faces, figures bleed off the
+       bottom and side edges ON PURPOSE, no floor shadows.
+     pat-b 全身 — the user's screenshot layout : every member
+       head-to-toe on stage, heights as % of the stage
+       (oshi 86%, back row ~26/25%, front row 49%).
+   Layer order in BOTH patterns : back row < centre < front
+   row < labels. Name labels are stage-anchored elements (not
+   figure children), identical in both patterns : back pair
+   top corners above their heads (just under the ticker),
+   front pair bottom corners, oshi pill bottom centre — so a
+   label can never ride a bleeding figure off screen, and no
+   label ever touches a face. The choice lives in a class on
+   .stage-home only : in-memory, kept while the app is open,
+   defaulting to アップ.
+   ============================================================ */
+.cutbtn{transition:left .38s ease,right .38s ease,top .38s ease,bottom .38s ease,width .38s ease,height .38s ease}
+/* ---------- shared : stage-anchored labels ---------- */
+.cut-name.lbl{left:auto;right:auto;top:auto;bottom:auto;transform:none;z-index:7}
+.stage-home .lbl-p0{top:38px;left:10px}
+.stage-home .lbl-p1{top:38px;right:10px}
+.stage-home .lbl-p2{bottom:10px;left:10px}
+.stage-home .lbl-p3{bottom:10px;right:10px}
+.stage-home .lbl-main{bottom:10px;left:50%;transform:translateX(-50%);font-size:12px;padding:4px 13px;
+  background:linear-gradient(180deg,#3a2568,#1d0f38);border-color:#ffd97a;color:#ffe9a8}
+/* ---------- the toggle pill : bottom centre, just above the oshi pill ---------- */
+.hero-mode-btn{position:absolute;z-index:9;left:50%;transform:translateX(-50%);bottom:47px;
+  display:flex;align-items:center;gap:7px;min-height:34px;padding:6px 15px;border-radius:99px;
+  border:1px solid rgba(255,217,122,.8);background:rgba(13,6,24,.85);color:#a892d8;
+  font-family:"M PLUS Rounded 1c";font-size:12px;font-weight:800;letter-spacing:.05em;
+  box-shadow:0 6px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.16)}
+.hero-mode-btn .on{color:#ffe9a8}
+.hero-mode-btn .hm-sw{color:#ffd97a;font-size:13px}
+.hero-mode-btn:active{transform:translateX(-50%) scale(.95)}
+/* ---------- pattern A : アップ (PSD measured) ----------
+   Each button's BOX is a compact hit area over its figure's
+   body core (face / torso), sized so no box's centre is ever
+   covered by a higher layer's box ; the IMAGE is absolutely
+   positioned inside the box at the exact PSD geometry (stage-
+   relative left / top / width), overflowing the box and
+   painted until the stage edge clips it. The composition is
+   pixel-identical to the PSD layout — only the tap areas
+   changed. img left/width % are of the box width, img top %
+   of the box height (offsets precomputed from the two
+   geometries). */
+.stage-home.pat-a .cutbtn img{position:absolute;max-width:none;height:auto}
+.stage-home.pat-a .cut-main{left:30%;right:auto;top:14%;bottom:auto;width:44%;height:86%;transform:none;z-index:4}
+.stage-home.pat-a .cut-main img{left:-38.6%;top:0;width:168.2%}
+.stage-home.pat-a .cut-p0{left:0;right:auto;top:13%;bottom:auto;width:20%;height:26%;z-index:2}
+.stage-home.pat-a .cut-p0 img{left:-45%;top:3.8%;width:295%}
+.stage-home.pat-a .cut-p1{left:74%;right:auto;top:13%;bottom:auto;width:22%;height:26%;z-index:2}
+.stage-home.pat-a .cut-p1 img{left:-54.5%;top:3.8%;width:222.7%}
+.stage-home.pat-a .cut-p2{left:0;right:auto;top:49%;bottom:auto;width:30%;height:34%;z-index:6}
+.stage-home.pat-a .cut-p2 img{left:-36.7%;top:-2.9%;width:203.3%}
+.stage-home.pat-a .cut-p3{left:68%;right:auto;top:51%;bottom:auto;width:30%;height:34%;z-index:6}
+.stage-home.pat-a .cut-p3 img{left:-46.7%;top:-2.9%;width:160%}
+.stage-home.pat-a .cutbtn::after{display:none}
+/* ---------- pattern B : 全身 (screenshot measured) ---------- */
+.stage-home.pat-b .cut-main{left:50%;right:auto;top:auto;bottom:7%;width:auto;height:86%;transform:translateX(-50%);z-index:4}
+.stage-home.pat-b .cut-p0{left:4%;right:auto;top:13%;bottom:auto;width:auto;height:26%;z-index:2}
+.stage-home.pat-b .cut-p1{left:auto;right:4%;top:11%;bottom:auto;width:auto;height:25%;z-index:2}
+.stage-home.pat-b .cut-p2{left:3%;right:auto;top:auto;bottom:5%;width:auto;height:49%;z-index:6}
+.stage-home.pat-b .cut-p3{left:auto;right:3%;top:auto;bottom:4%;width:auto;height:49%;z-index:6}
+.stage-home.pat-b .cutbtn img{width:auto;height:100%}
+@media (prefers-reduced-motion: reduce){.cutbtn{transition:none}}
+</style>
 <script>
 /* Collection: fold the completion / extra-episode / photo-card boxes
    (rendered below the card grid) into one closed-by-default accordion,
@@ -11970,6 +12048,171 @@ function mpInject(){
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",mpInject);
 else mpInject();
 })();
+</script>
+<script>
+/* ================================================================
+   HERO PATTERN TOGGLE — アップ (pat-a, default) ⇄ 全身 (pat-b).
+   In-memory only : the choice is kept while the app stays open.
+   ================================================================ */
+(function(){
+  var btn=document.getElementById("heroModeBtn");
+  var stage=document.querySelector(".stage-home");
+  if(!btn||!stage)return;
+  btn.addEventListener("click",function(){
+    var toFull=stage.classList.contains("pat-a");
+    stage.classList.toggle("pat-a",!toFull);
+    stage.classList.toggle("pat-b",toFull);
+    btn.querySelector(".hm-a").classList.toggle("on",!toFull);
+    btn.querySelector(".hm-b").classList.toggle("on",toFull);
+    btn.setAttribute("aria-label",toFull?"全身表示中。タップでアップ表示に切り替え":"アップ表示中。タップで全身表示に切り替え");
+  });
+})();
+</script>
+<style>
+/* ============================================================
+   v48 — REGULAR-MEMBER FORMATION (collection screen).
+   Five slots mirroring the home collage (back pair / centre =
+   oshi / front pair) on a mini stage, rearranged by pointer-
+   follow drag & drop (no HTML5 drag, so it works by touch) :
+   slot <-> slot swaps, and owned-character chips dragged in
+   from the pool replace (or swap with) a slot's member. The
+   candidate pool is data-driven — every character who owns at
+   least one card — so members added later join automatically.
+   The formation itself is S.form, rendered by renderFeatured,
+   so home (both patterns) reflects it immediately.
+   ============================================================ */
+#formBox{flex:none;margin-bottom:10px}
+.form-box{background:var(--card);border:1px solid rgba(217,169,79,.5);border-radius:16px;padding:11px 12px 12px;box-shadow:var(--shadow)}
+.form-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.form-head b{font-family:"M PLUS Rounded 1c";font-size:14.5px}
+.form-head span{font-size:10.5px;font-weight:800;color:var(--ink2)}
+.form-map{position:relative;height:172px;margin-top:9px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,217,122,.45);
+  background:linear-gradient(180deg,rgba(10,3,22,.18),rgba(10,3,22,.45)),url(assets/stage_bg.webp) 50% 28%/cover}
+.form-slot{position:absolute;width:58px;padding:3px 3px 4px;border-radius:10px;background:rgba(13,6,24,.72);
+  border:1.5px solid rgba(255,217,122,.55);text-align:center;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;
+  transition:box-shadow .15s,border-color .15s}
+.form-slot img{width:100%;height:52px;object-fit:cover;object-position:50% 0;border-radius:7px;display:block;pointer-events:none}
+.form-slot .fs-tag{display:block;font-size:8px;font-weight:900;letter-spacing:.08em;color:#ffd97a;margin-bottom:2px}
+.form-slot .fs-name{display:block;font-size:9px;font-weight:900;color:#fff;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.form-slot.fs-center{width:78px;left:50%;transform:translateX(-50%);top:14px;border-color:#ffd97a;background:rgba(46,24,80,.85);z-index:2}
+.form-slot.fs-center img{height:70px}
+.form-slot.fs-back0{left:7px;top:9px}
+.form-slot.fs-back1{right:7px;top:9px}
+.form-slot.fs-front0{left:12px;bottom:7px}
+.form-slot.fs-front1{right:12px;bottom:7px}
+.form-slot.drop-on{border-color:#ffe98a;box-shadow:0 0 0 2px #ffd23f,0 0 18px rgba(255,210,63,.9)}
+.form-pool-h{font-size:10.5px;font-weight:900;color:var(--ink2);letter-spacing:.04em;margin:10px 0 6px}
+.form-pool{display:flex;gap:7px;flex-wrap:wrap}
+.form-chip{width:57px;text-align:center;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;position:relative}
+.form-chip img{width:57px;height:62px;object-fit:cover;object-position:50% 0;border-radius:9px;display:block;border:1.5px solid var(--line);pointer-events:none;background:#241243}
+.form-chip span{display:block;font-size:9px;font-weight:900;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.form-chip em{position:absolute;top:3px;right:3px;font-style:normal;font-size:7.5px;font-weight:900;color:#1d0f38;background:linear-gradient(180deg,#fff6d8,#ffd23f);border-radius:99px;padding:1.5px 6px}
+.form-chip.placed{opacity:.62}
+.form-note{font-size:10.5px;color:var(--ink2);line-height:1.65;margin:9px 0 0}
+.form-ghost{position:fixed;z-index:200;width:62px;transform:translate(-50%,-58%);pointer-events:none;text-align:center;
+  filter:drop-shadow(0 12px 18px rgba(0,0,0,.65))}
+.form-ghost img{width:62px;height:68px;object-fit:cover;object-position:50% 0;border-radius:10px;border:2px solid #ffd23f;display:block;background:#241243}
+.form-ghost span{display:inline-block;font-size:9.5px;font-weight:900;color:#ffe9a8;background:rgba(13,6,24,.88);
+  border:1px solid rgba(255,217,122,.7);border-radius:99px;padding:2px 8px;margin-top:3px;white-space:nowrap}
+</style>
+<script>
+/* ================================================================
+   FORMATION — render + pointer-follow drag & drop.
+   renderColl is wrapped (same pattern as renderAll elsewhere)
+   so the formation board re-renders with the collection.
+   ================================================================ */
+var FORM_SLOTS=[["back0","後列","fs-back0"],["back1","後列","fs-back1"],["center","中央・推し","fs-center"],["front0","前列","fs-front0"],["front1","前列","fs-front1"]];
+var FORM_KEYS=["center","back0","back1","front0","front1"];
+function formCharObj(id){for(var i=0;i<CHARS.length;i++)if(CHARS[i].id===id)return CHARS[i];return {id:id,name:id};}
+function ownedChars(){
+  var seen={},ids=[];
+  CARDS.forEach(function(k){if(S.owned[k.id]&&!seen[k.char]){seen[k.char]=1;ids.push(k.char);}});
+  var out=[];
+  CHARS.forEach(function(c){if(seen[c.id])out.push(c);});
+  ids.forEach(function(id){var f=false;CHARS.forEach(function(c){if(c.id===id)f=true;});if(!f)out.push({id:id,name:id});});
+  return out;
+}
+function renderFormation(){
+  var host=$("formBox"); if(!host)return;
+  var slots=FORM_SLOTS.map(function(s){
+    var c=formCharObj(S.form[s[0]]);
+    return '<div class="form-slot '+s[2]+'" data-slot="'+s[0]+'" data-char="'+c.id+'" role="button" aria-label="'+s[1]+'の枠：'+c.name+'（ドラッグで入れ替え）"><span class="fs-tag">'+s[1]+'</span><img src="assets/char_'+c.id+'.webp" alt="'+c.name+'" draggable="false" onerror="this.onerror=null;this.src=\'assets/full_'+c.id+'.webp\'"><span class="fs-name">'+c.name+'</span></div>';
+  }).join("");
+  var pool=ownedChars().map(function(c){
+    var placed=FORM_KEYS.some(function(k){return S.form[k]===c.id;});
+    return '<div class="form-chip'+(placed?" placed":"")+'" data-char="'+c.id+'" role="button" aria-label="'+c.name+'（ドラッグで枠へ差し替え）"><img src="assets/char_'+c.id+'.webp" alt="'+c.name+'" draggable="false" onerror="this.onerror=null;this.src=\'assets/full_'+c.id+'.webp\'"><span>'+c.name+'</span>'+(placed?'<em>配置中</em>':"")+'</div>';
+  }).join("");
+  host.innerHTML='<div class="form-box"><div class="form-head"><b>⭐ レギュラーメンバー編成</b><span>ホームの並び ・ 中央が推し</span></div>'
+    +'<div class="form-map">'+slots+'</div>'
+    +'<div class="form-pool-h">候補 ― 所持カードのあるメンバー（枠へドラッグで差し替え）</div>'
+    +'<div class="form-pool">'+(pool||'<p class="note">所持カードがまだありません</p>')+'</div>'
+    +'<p class="form-note">枠同士をドラッグしても並び替えできます。中央の枠に置いたメンバーが「推し」になり、ホーム中央に表示されます。</p></div>';
+}
+var _rcForm=renderColl;
+renderColl=function(){_rcForm(); try{renderFormation();}catch(e){}};
+try{renderFormation();}catch(e){}
+/* ----- pointer-follow drag : ghost tracks the finger, the
+   slot under it lights up, release to swap / replace ----- */
+var formDrag=null;
+function formDropApply(d,target){
+  if(d.slot){
+    if(d.slot===target)return;
+    var tmp=S.form[target]; S.form[target]=S.form[d.slot]; S.form[d.slot]=tmp;
+  }else{
+    var cur=null;
+    FORM_KEYS.forEach(function(k){if(S.form[k]===d.char)cur=k;});
+    if(cur===target)return;
+    if(cur){var t2=S.form[target]; S.form[target]=d.char; S.form[cur]=t2;}
+    else{S.form[target]=d.char;}
+  }
+  S.oshi=S.form.center;
+  renderAll();
+  toast("編成を変更しました ・ 推しは "+formCharObj(S.form.center).name);
+}
+document.addEventListener("pointerdown",function(e){
+  var box=$("formBox"); if(!box)return;
+  var t=e.target;
+  var el=(t&&t.closest)?t.closest(".form-slot,.form-chip"):null;
+  if(!el||!box.contains(el))return;
+  formDrag={slot:el.getAttribute("data-slot"),char:el.getAttribute("data-char"),
+    x0:e.clientX,y0:e.clientY,active:false,ghost:null,over:null};
+});
+document.addEventListener("pointermove",function(e){
+  if(!formDrag)return;
+  var d=formDrag;
+  if(!d.active){
+    if(Math.abs(e.clientX-d.x0)+Math.abs(e.clientY-d.y0)<8)return;
+    d.active=true;
+    var g=document.createElement("div");
+    g.className="form-ghost";
+    g.innerHTML='<img src="assets/char_'+d.char+'.webp" alt="" onerror="this.onerror=null;this.src=\'assets/full_'+d.char+'.webp\'"><span>'+formCharObj(d.char).name+'</span>';
+    document.body.appendChild(g);
+    d.ghost=g;
+  }
+  d.ghost.style.left=e.clientX+"px";
+  d.ghost.style.top=e.clientY+"px";
+  var el=document.elementFromPoint(e.clientX,e.clientY);
+  var slot=(el&&el.closest)?el.closest(".form-slot"):null;
+  var olds=document.querySelectorAll(".form-slot.drop-on");
+  for(var i=0;i<olds.length;i++)if(olds[i]!==slot)olds[i].classList.remove("drop-on");
+  if(slot)slot.classList.add("drop-on");
+  d.over=slot?slot.getAttribute("data-slot"):null;
+  if(e.cancelable)e.preventDefault();
+},{passive:false});
+document.addEventListener("pointerup",function(){
+  if(!formDrag)return;
+  var d=formDrag; formDrag=null;
+  if(d.ghost&&d.ghost.parentNode)d.ghost.parentNode.removeChild(d.ghost);
+  var olds=document.querySelectorAll(".form-slot.drop-on");
+  for(var i=0;i<olds.length;i++)olds[i].classList.remove("drop-on");
+  if(d.active&&d.over)formDropApply(d,d.over);
+});
+document.addEventListener("pointercancel",function(){
+  if(formDrag&&formDrag.ghost&&formDrag.ghost.parentNode)formDrag.ghost.parentNode.removeChild(formDrag.ghost);
+  formDrag=null;
+  var olds=document.querySelectorAll(".form-slot.drop-on");
+  for(var i=0;i<olds.length;i++)olds[i].classList.remove("drop-on");
+});
 </script>
 </body>
 </html>
