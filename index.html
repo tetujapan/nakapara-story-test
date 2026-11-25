@@ -4545,6 +4545,7 @@ function mgShow(which){
   if(bf)bf.style.display=which==="balloon"?"":"none";
   if(bm)bm.style.display=which==="bomber"?"":"none";
   if(sk)sk.style.display=which==="suika"?"":"none";
+  if(which==="suika"&&typeof skFit==="function")skFit();
   if(so)so.style.display=which==="solitaire"?"":"none";
   if(which!=="online"&&window.__obStop)window.__obStop();
   if(which==="online"&&window.__obHome)window.__obHome();
@@ -9345,7 +9346,7 @@ function bfSpawnEnemy(){
     if(ok){pick=order[k];break;}
   }
   var p=BF_PLATS[pick];
-  BF.enemies.push({x:p.x+p.w/2-11,y:p.y-30,w:22,h:30,vx:0,vy:0,state:"inflate",t:70+Math.random()*50,face:1,flapT:0,flapPh:Math.random()*3,restT:0,plat:pick});
+  BF.enemies.push({x:p.x+p.w/2-11,y:p.y-30,w:22,h:30,vx:0,vy:0,state:"inflate",t:70+Math.random()*50,face:1,flapT:0,flapPh:Math.random()*3,restT:0,plat:pick,passT:0});
 }
 function bfUpdate(){
   if(BF.state==="clear"){
@@ -9393,7 +9394,7 @@ function bfUpdate(){
     if(e.state==="gone")return;
     if(e.state==="inflate"){
       e.flapPh+=0.05;
-      if(--e.t<=0)e.state="fly";
+      if(--e.t<=0){e.state="fly";if(p.y>e.y+40)e.passT=100;}
       return;
     }
     if(e.state==="chute"){
@@ -9413,9 +9414,19 @@ function bfUpdate(){
     if(--e.flapT<=0){
       e.flapT=13+Math.random()*10;
       var dyT=(p.y+2)-e.y;
-      e.vy-=(dyT>8?1.55:dyT<-36?0.5:1.05)*BF.espd;
+      /* flap strength follows the altitude gap : the player BELOW
+         (dyT>8) means ease off and sink toward her, the player
+         ABOVE (dyT<-36) means flap hard and climb — the two ends
+         were swapped before, which pinned every crow to the
+         ceiling, hovering over the player but never descending.
+         A crow standing on a roost does not flap at all : the
+         little hop from each flap used to lift it just clear of
+         the platform, resetting its rest counter before the
+         42-tick rest could ever finish, so it skimmed the roost
+         forever instead of taking off again */
+      if(!e.roost)e.vy-=(dyT>8?0.5:dyT<-36?1.55:1.05)*BF.espd;
       e.flapPh+=0.9;
-      var want=(p.x>e.x?0.55:-0.55)*BF.espd;
+      var want=(p.x>e.x?0.7:-0.7)*BF.espd;
       e.vx+=(want-e.vx)*0.3;
     }
     e.flapPh+=0.3;
@@ -9427,11 +9438,19 @@ function bfUpdate(){
     });
     e.face=e.vx>=0?1:-1;
     e.x+=e.vx;e.y+=e.vy;
-    var sp2=bfStandPlat(e);
+    /* passT : just after taking off toward a player far below,
+       the crow ignores roosts for a stretch — otherwise it sinks
+       straight back onto the platform it launched from, rests,
+       hops and re-lands there forever, never reaching her */
+    if(e.passT>0)e.passT--;
+    var sp2=e.passT>0?null:bfStandPlat(e);
     if(sp2&&e.vy>0){
-      e.y=sp2.y-e.h;e.vy=0;
-      if(++e.restT>42){e.restT=0;e.vy=-2.3;e.y-=3;e.flapPh+=0.9;}
-    }else e.restT=0;
+      e.y=sp2.y-e.h;e.vy=0;e.roost=true;
+      if(++e.restT>42){e.restT=0;e.roost=false;e.flapPh+=0.9;
+        if(p.y>e.y+40){e.passT=130;e.vy=-0.7;e.y-=2;}
+        else{e.vy=-2.3;e.y-=3;}
+      }
+    }else{e.restT=0;e.roost=false;}
     if(e.x<0){e.x=0;e.vx=Math.abs(e.vx);}if(e.x+e.w>480){e.x=480-e.w;e.vx=-Math.abs(e.vx);}
     if(e.y<16){e.y=16;e.vy=0.4;}
     if(e.y+e.h>BF_WATER-2){e.y=BF_WATER-2-e.h;e.vy=-1.9;}
@@ -10424,7 +10443,26 @@ function skDrawBall(g,b){
   g.beginPath();g.arc(0,0,r-1.5,0,7);g.strokeStyle="rgba(255,255,255,.55)";g.lineWidth=2;g.stroke();
   g.restore();
 }
+function skFit(){
+  var cv=$("skCanvas");if(!cv)return;
+  var stage=$("skStage");if(!stage)return;
+  var hud=stage.querySelector(".rt-hud");
+  var availH=stage.clientHeight-(hud?hud.offsetHeight:0);
+  var w=cv.clientWidth;
+  if(w<=0||availH<=60)return;
+  if(skFit._w===w&&skFit._h===availH)return;
+  skFit._w=w;skFit._h=availH;
+  /* logical field height follows the box on screen at the same
+     unit scale as the width (420 units across), never below a
+     playable minimum; canvas CSS height is set from the same
+     numbers, so physics and pixels always agree */
+  var lh=Math.max(220,Math.round(SK_W*availH/w));
+  cv.style.height=Math.round(lh*w/SK_W)+"px";
+  if(lh!==SK_H){SK_H=lh;SK_FLOOR=SK_H-14;}
+  cv._lw=SK_W;cv._lh=SK_H;
+}
 function skDraw(){
+  skFit();
   var cv=$("skCanvas");if(!cv)return;var g=cv.getContext("2d");mgDPR(g,cv,3);g.imageSmoothingEnabled=true;g.imageSmoothingQuality="high";
   var bg=g.createLinearGradient(0,0,0,SK_H);bg.addColorStop(0,"#2a1454");bg.addColorStop(1,"#170a30");
   g.fillStyle=bg;g.fillRect(0,0,SK_W,SK_H);
@@ -10460,6 +10498,7 @@ function skDraw(){
 function skLoop(ts){if(!SK.on)return;mgFixed(SK,ts||0,function(){if(SK.state==="play")skStep();skFxStep();});skDraw();SK.raf=requestAnimationFrame(skLoop);}
 function skLoopStart(){if(SK.on)return;SK.on=true;SK._lt=0;SK._acc=0;SK.raf=requestAnimationFrame(skLoop);}
 function skStart(){
+  skFit();
   SK.balls=[];SK.fx=[];SK.score=0;SK.over=0;SK.chain=0;SK.chainT=0;SK.cool=0;SK.paid=false;
   SK.cur=skRandTier();SK.next=skRandTier();SK.dropX=SK_W/2;SK.state="play";
   $("skOverlay").hidden=true;
@@ -10819,7 +10858,7 @@ html,body{height:100%;overflow:hidden}
 body{overscroll-behavior:none}
 .device{height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
 .topbar{flex:none}
-main.wrap{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:74px}
+main.wrap{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:calc(74px + env(safe-area-inset-bottom))}
 footer{display:none}
 .view{display:none}
 .view.on{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
@@ -10872,7 +10911,7 @@ body:not(.vn-playing) #storyRoot{display:none!important}
 
 /* ---------- STORY player : ending card fits, no inner scroll ---------- */
 body.vn-playing #v-story>section:first-child{flex:1;min-height:0;display:flex;flex-direction:column}
-body.vn-playing #storyRoot{height:auto;flex:1;min-height:0}
+body.vn-playing #storyRoot{height:auto;flex:1;min-height:0;padding-bottom:8px}
 body.vn-playing #vnEnd:not(:empty){max-height:none;overflow:visible}
 body.vn-playing #vnEnd .endcard{margin-top:8px!important;padding:10px 12px 12px}
 body.vn-playing #vnEnd .endcard h3{font-size:16px;margin:3px 0 2px}
@@ -10918,6 +10957,37 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 #mgHub .mg-entry .mg-tx{padding:0 8px 7px}
 #mgHub .mg-entry .mg-tx h3{font-size:12px;line-height:1.3}
 #mgHub .mg-entry .mg-tx p{font-size:9px;line-height:1.4;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- SUIKA : the box takes whatever height the view
+   leaves — back link / head / evolution strip / note stay put,
+   the stage flexes to fill the rest, and skFit() rewrites the
+   canvas height AND the physics field (SK_H / SK_FLOOR) to the
+   box actually on screen, so the floor is never under the nav ---------- */
+#mgSuika{height:100%}
+#mgSuika>section{height:100%;display:flex;flex-direction:column}
+#mgSuika .mg-back,#mgSuika .sec-head,#mgSuika .sk-evo,#mgSuika>p.note{flex:none}
+#mgSuika .sk-stage{flex:1 1 auto;min-height:0;margin-top:8px}
+/* the how-to note gives its extra lines to the box on short
+   screens — the field, not the footnote, gets the height */
+#mgSuika>p.note{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- SLOT : on short screens the cabinet narrows until
+   the whole machine and its controls fit between the header
+   and the nav — slLayout() derives every inner size (reel
+   cells, drum, overlays) from the stage width, so the machine
+   scales as one piece. 0.6603 = the cabinet art's w/h ratio ---------- */
+#mgSlot .sl-stage{width:min(100%,calc((100dvh - 232px)*0.6603));margin-left:auto;margin-right:auto}
+
+/* ---------- SHUTTER : the start button used to sit under the
+   nav — banner compacts, the finder stage flexes into the
+   leftover height, and the model scales with the stage
+   instead of its fixed 308px ---------- */
+#mgShutter{height:100%}
+#mgShutter>section{height:100%;display:flex;flex-direction:column;overflow-y:auto}
+#mgShutter .mg-back,#mgShutter .sec-head,#mgShutter .kv-banner,#mgShutter .note,#mgShutter .sh-gauge,#mgShutter .sh-labels,#mgShutter .btnrow,#mgShutter .sh-film,#mgShutter #shResult{flex:none}
+#mgShutter .kv-banner{height:72px}
+#mgShutter .sh-stage{flex:1 1 auto;min-height:0}
+#mgShutter .sh-model{height:min(308px,94%)}
 
 /* ---------- HOME collage, refit for the shorter stage : the heroine
    keeps her scale (height % of the stage), side members sit fully
