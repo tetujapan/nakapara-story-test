@@ -16,6 +16,7 @@
 <script src="assets-data-13.js"></script>
 <script src="assets-data-14.js"></script>
 <script src="assets-data-15.js"></script>
+<script src="assets-data-16.js"></script>
 <script>
 /* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
    Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
@@ -139,7 +140,7 @@
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@600;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/capsule_big_normal.webp">
 <link rel="preload" as="image" href="assets/stage_bg.webp">
-<link rel="preload" as="image" href="assets/cut_momona.webp">
+<link rel="preload" as="image" href="assets/full_momona.webp">
 <style>
 :root{
   --bg:#fff6f8; --bg2:#fff; --ink:#2b1a22; --ink2:#725663; --line:#f0d3dd;
@@ -2656,14 +2657,7 @@ img{-webkit-user-drag:none}
     <img class="bgimg" src="assets/stage_bg.webp" alt="">
     <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></div>
     <div id="collage"></div>
-    <div class="badges">
-      <button type="button" class="badge-btn" id="badgePickup">撮影会<br>ピックアップ</button>
-      <button type="button" class="badge-btn gold" id="heroStart">▶ももかルートを<br>はじめる</button>
-      <button type="button" class="badge-btn" id="badgeDaily">デイリー<br>ボーナス</button>
-    </div>
   </div>
-  <p class="note" style="margin-top:10px;text-align:center;font-size:12.5px">👆 タップで推し交代 ・ 中央タップで本が開く ・ カード収集中 <b id="deckCount">0 / 90</b></p>
-  <div class="progress-line"><i id="deckBar" style="width:0%"></i></div>
 
   <section>
     <div class="sec-head"><h2>📚 ストーリー本棚</h2><p>表紙をタップで開く</p></div>
@@ -3514,10 +3508,10 @@ function pipsHTML(card){
   var s=""; for(var i=0;i<n;i++)s+="◆";
   return '<div class="pips '+card.rar+'">'+s+(card.limited?' <span style="letter-spacing:.06em">限定</span>':"")+'</div>';
 }
-var CUTDIM={momona:[502,960],akari:[541,960],kaede:[480,960],nana:[504,960],misa:[514,960]};
+var CUTDIM={momona:[600,1715],akari:[600,1129],kaede:[600,1506],nana:[600,1616],misa:[600,1712]};
 function cutImg(c,cls){
-  var d=CUTDIM[c.id]||[602,1152];
-  return '<img class="'+cls+'" src="assets/cut_'+c.id+'.webp" width="'+d[0]+'" height="'+d[1]+'" alt="'+c.name+'" decoding="async" onload="this.classList.add(\'ld\')">';
+  var d=CUTDIM[c.id]||[600,1600];
+  return '<img class="'+cls+'" src="assets/full_'+c.id+'.webp" width="'+d[0]+'" height="'+d[1]+'" alt="'+c.name+'" decoding="async" onload="this.classList.add(\'ld\')">';
 }
 function statBarsHTML(stats,labels){
   return '<div class="statbars">'+stats.map(function(v,i){return '<div><b>'+labels[i]+'</b><i><u style="width:'+v+'%"></u></i><em>'+v+'</em></div>';}).join("")+'</div>';
@@ -10989,6 +10983,7 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 .cut-p2{left:6px;bottom:106px;top:auto}
 .cut-p3{right:6px;bottom:106px;top:auto}
 .cut-p0 img,.cut-p1 img,.cut-p2 img,.cut-p3 img{width:auto;height:100%}
+.cut-main img{width:auto}
 .cut-name{font-size:8.5px;padding:2px 7px}
 .cut-main .cut-name{font-size:11px;padding:3px 11px}
 /* vertical lettering lives in the clear lanes between the centre
@@ -11086,6 +11081,53 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
   .cut-p0,.cut-p1{height:min(33%,calc(65% - 148px))}
   .cut-p2,.cut-p3{height:35%}
 }
+/* ---------- v46 : FULL-BODY THREE-TIER STAGE, BAND REMOVED ----------
+   The badge band under the stage (start plate + pickup / daily
+   badges) and the hint / progress lines are gone from the markup,
+   so the ~104px floor reservation the collage used to keep is
+   freed. Every member is now a true head-to-toe cut-out
+   (assets/full_*.webp — full-length generations in each member's
+   own costume), so no figure ends mid-body against the backdrop.
+   The five stand in three tiers on the stage photograph :
+     back row  (p0/p1) — smallest, on the raised rear tier :
+                         their feet line (41% from the top) ends
+                         just above the front row's heads, so
+                         their boots stay visible in the gap —
+                         a back foot that lands behind a front
+                         dress is a foot nobody can see, z 2,
+     centre    (oshi)  — largest, feet on the stage floor, z 4,
+     front row (p2/p3) — feet on the same floor line, z 6,
+                         overlapping the centre's skirt edges.
+   A soft shadow ellipse sits under every pair of feet so each
+   figure lands on the stage instead of floating. Name pills
+   never touch a body and can never be stretched or clipped :
+   every pill gets BOTH horizontal anchors set explicitly (the
+   old left:50% + right:0 combination squeezed the right-hand
+   pills to half width and spilled their text off screen). The
+   floor row's pills sit in the 26px strip below the feet — a
+   plate on the floor in front of them — and the back row's
+   pills ride just above their heads, under the ticker, on
+   clear backdrop : at their feet they would disappear behind
+   the front row's dresses, which own that whole band. Side
+   pills anchor to the screen-side edge of each figure so the
+   text always runs inward, never off the screen. */
+.cut-main{height:min(88%,calc(100% - 96px));bottom:26px;z-index:4}
+.cut-p0,.cut-p1{height:28%;bottom:auto;top:13%;width:auto;z-index:2}
+.cut-p2,.cut-p3{height:50%;bottom:26px;top:auto;width:auto;z-index:6}
+.cut-p0{left:4%}
+.cut-p1{right:4%;left:auto}
+.cut-p2{left:3%}
+.cut-p3{right:3%;left:auto}
+.cut-p0 img,.cut-p1 img,.cut-p2 img,.cut-p3 img{width:auto;height:100%}
+.cutbtn::after{content:"";position:absolute;z-index:0;left:16%;bottom:-5px;width:68%;height:13px;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.55) 0%,rgba(0,0,0,.28) 55%,transparent 72%);pointer-events:none}
+.cutbtn img{position:relative;z-index:1}
+.cut-name{z-index:6;white-space:nowrap}
+.cut-main .cut-name{left:50%;right:auto;transform:translateX(-50%);bottom:-25px}
+.cut-p0 .cut-name{left:0;right:auto;transform:none;bottom:auto;top:-18px}
+.cut-p1 .cut-name{left:auto;right:0;transform:none;bottom:auto;top:-18px}
+.cut-p2 .cut-name{left:0;right:auto;transform:none;bottom:-25px}
+.cut-p3 .cut-name{left:auto;right:0;transform:none;bottom:-25px}
 </style>
 <script>
 /* Collection: fold the completion / extra-episode / photo-card boxes
