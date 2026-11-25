@@ -3325,7 +3325,7 @@ img{-webkit-user-drag:none}
   </div>
   <!-- suika style : drop & merge physics -->
   <div id="mgSuika" style="display:none">
-    <section style="margin-top:8px">
+    <section style="margin-top:0">
       <button type="button" class="mg-back" id="skBack">‹ ミニゲーム一覧へ</button>
       <div class="sec-head"><h2>🍸 合体ドリンク</h2><p>落として合体 ― 目指せパラダイス！</p></div>
       <div class="sk-stage" id="skStage">
@@ -10448,20 +10448,11 @@ function skDrawBall(g,b){
 }
 function skFit(){
   var cv=$("skCanvas");if(!cv)return;
-  var stage=$("skStage");if(!stage)return;
-  var hud=stage.querySelector(".rt-hud");
-  var availH=stage.clientHeight-(hud?hud.offsetHeight:0);
-  var w=cv.clientWidth;
-  if(w<=0||availH<=60)return;
-  if(skFit._w===w&&skFit._h===availH)return;
-  skFit._w=w;skFit._h=availH;
-  /* logical field height follows the box on screen at the same
-     unit scale as the width (420 units across), never below a
-     playable minimum; canvas CSS height is set from the same
-     numbers, so physics and pixels always agree */
-  var lh=Math.max(220,Math.round(SK_W*availH/w));
-  cv.style.height=Math.round(lh*w/SK_W)+"px";
-  if(lh!==SK_H){SK_H=lh;SK_FLOOR=SK_H-14;}
+  /* the field is a fixed 420x640 portrait box : SK_H / SK_FLOOR
+     never change, and the canvas keeps its natural aspect
+     (CSS width:100% / height:auto) — the play field is NOT
+     resized to fit the screen; the rows around it are */
+  if(cv.style.height)cv.style.height="";
   cv._lw=SK_W;cv._lh=SK_H;
 }
 function skDraw(){
@@ -10961,18 +10952,17 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 #mgHub .mg-entry .mg-tx h3{font-size:12px;line-height:1.3}
 #mgHub .mg-entry .mg-tx p{font-size:9px;line-height:1.4;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
-/* ---------- SUIKA : the box takes whatever height the view
-   leaves — back link / head / evolution strip / note stay put,
-   the stage flexes to fill the rest, and skFit() rewrites the
-   canvas height AND the physics field (SK_H / SK_FLOOR) to the
-   box actually on screen, so the floor is never under the nav ---------- */
-#mgSuika{height:100%}
-#mgSuika>section{height:100%;display:flex;flex-direction:column}
-#mgSuika .mg-back,#mgSuika .sec-head,#mgSuika .sk-evo{flex:none}
-#mgSuika .sk-stage{flex:1 1 auto;min-height:0;margin-top:8px}
-/* evolution chart : one thin strip — the field below it keeps
-   every remaining pixel of height, tall and playable */
-#mgSuika .sk-evo{margin-top:6px;padding:5px 6px;border-radius:10px}
+/* ---------- SUIKA : the field is a fixed 420x640 portrait box
+   and is never resized to fit. Only the non-play rows around it
+   are compacted — back link, heading row, margins and the
+   evolution strip — so the whole screen, the field's gold frame
+   and floor included, ends above the bottom nav ---------- */
+#mgSuika .mg-back{min-height:24px;padding:2px 2px}
+#mgSuika .sec-head{margin-bottom:2px}
+#mgSuika .sec-head h2{font-size:15px}
+#mgSuika .sk-stage{margin-top:3px}
+/* evolution chart : one thin strip under the stage */
+#mgSuika .sk-evo{margin-top:4px;padding:4px 6px;border-radius:10px}
 #mgSuika .sk-evo .ev span{font-size:7.5px}
 #mgSuika .sk-evo .arr{padding-bottom:9px;font-size:8px}
 /* start / game-over overlay : KV + title + one short line +
