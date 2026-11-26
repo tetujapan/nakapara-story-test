@@ -670,6 +670,7 @@ body{background:#070313}
 .modal-sheet .bigart.wp .charart{height:auto;max-height:62vh;object-fit:contain;background:#120826}
 .stage-char{opacity:.94;width:158px;-webkit-mask-image:linear-gradient(180deg,#000 80%,transparent);mask-image:linear-gradient(180deg,#000 80%,transparent)}
 .stage-char .charart{border-radius:10px}
+.stage-char .charart.stagecut{border-radius:0;object-fit:contain;object-position:bottom center;filter:drop-shadow(0 8px 12px rgba(0,0,0,.4))}
 /* ---------- top bar ---------- */
 .topbar{background:rgba(19,8,38,.92);box-shadow:0 1px 0 rgba(217,169,79,.65),0 12px 26px rgba(0,0,0,.4)}
 .logo{color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.6);font-size:15px;white-space:nowrap;flex:none}
@@ -5733,11 +5734,16 @@ body.vn-playing #vnEnd:not(:empty){max-height:36%;overflow-y:auto}
 function bgSVG(){
   return '<img class="bg" src="assets/stage_bg.webp" alt="">';
 }
+/* story-stage standee: background-free cutout only (cut_<id>.webp,
+   full_<id>.webp as fallback) — never the rectangular char_ portrait */
+function stageCharArt(c){
+  return '<img class="charart stagecut" src="assets/cut_'+c.id+'.webp" alt="'+c.name+'" decoding="async" onerror="this.onerror=null;this.src=\'assets/full_'+c.id+'.webp\'">';
+}
 function stageHTML(tag,sp,tx,charId){
   var c=charOf(charId||"momona");
   return '<div class="stage"><div class="stage-bg">'+bgSVG()
    +'<span class="scene-tag">'+tag+'</span>'
-   +'<div class="stage-char">'+charArt(c,2,true)+'</div>'
+   +'<div class="stage-char">'+stageCharArt(c)+'</div>'
    +'<div class="textbox">'+(sp?'<span class="speaker">'+sp+'</span>':"")+'<p>'+tx+'</p><div class="choices" id="chBox"></div></div>'
    +'</div></div>';
 }
@@ -5796,16 +5802,20 @@ var VN_NAME2ID={"ももか":"momona","姫宮ももか":"momona","姫宮":"momona
   "スタッフ":"sup_staff","店員":"sup_staff",
   "眼鏡スタッフ":"sup_camera","カメラマン":"sup_camera",
   "ファンA":"sup_fanm","ファンB":"sup_fanf","男":"sup_fanm"};
-/* supporting characters on the story stage : photorealistic
-   portraits, the same files the gacha cards use (char_<id>.webp).
-   Keyed by story character id so each can be swapped by replacing
-   just the file / this entry. */
+/* supporting characters on the story stage : background-free
+   cutouts only (cut_<id>.webp, photorealistic, alpha) so the person
+   stands on the location photo. The rectangular portraits with
+   their own backgrounds (char_<id>.webp) are for gacha cards and
+   must never be used as story standees. fid is the real character
+   id, used for the full_<id>.webp fallback when a cut file is
+   missing. Keyed by story character id so each can be swapped by
+   replacing just the file / this entry. */
 var VN_SUPPORT={
-  "sup_staff":{img:"assets/char_staff.webp",name:"スタッフ"},
-  "sup_fanm":{img:"assets/char_kenji.webp",name:"男性ファン"},
-  "sup_fanf":{img:"assets/char_saki.webp",name:"女性ファン"},
-  "sup_yuna":{img:"assets/char_yuna.webp",name:"ユナ"},
-  "sup_camera":{img:"assets/char_camera.webp",name:"カメラマン"}
+  "sup_staff":{img:"assets/cut_staff.webp",fid:"staff",name:"スタッフ"},
+  "sup_fanm":{img:"assets/cut_kenji.webp",fid:"kenji",name:"男性ファン"},
+  "sup_fanf":{img:"assets/cut_saki.webp",fid:"saki",name:"女性ファン"},
+  "sup_yuna":{img:"assets/cut_yuna.webp",fid:"yuna",name:"ユナ"},
+  "sup_camera":{img:"assets/cut_camera.webp",fid:"camera",name:"カメラマン"}
 };
 /* nobody is SD-sized any more : the president and the supporting
    cast stand at the same photo height as the talents */
@@ -5950,9 +5960,9 @@ function vnSlots(n){return n<=1?["c"]:n===2?["l","r"]:["l","c","r"];}
 function vnCharHTML(cid,slot,idx){
   var dl=' style="animation-delay:'+(idx*0.13).toFixed(2)+'s"';
   var img;
-  if(cid==="paradise")img='<img src="assets/cut_paradise.webp" alt="中川パラダイス" decoding="async"'+dl+'>';
-  else if(VN_SUPPORT[cid])img='<img src="'+VN_SUPPORT[cid].img+'" alt="'+VN_SUPPORT[cid].name+'" decoding="async"'+dl+'>';
-  else img='<img src="assets/cut_'+cid+'.webp" alt="'+vnEsc(charOf(cid).name)+'" decoding="async"'+dl+'>';
+  if(cid==="paradise")img='<img src="assets/cut_paradise.webp" alt="中川パラダイス" decoding="async" onerror="this.onerror=null;this.src=\'assets/full_paradise.webp\'"'+dl+'>';
+  else if(VN_SUPPORT[cid])img='<img src="'+VN_SUPPORT[cid].img+'" alt="'+VN_SUPPORT[cid].name+'" decoding="async" onerror="this.onerror=null;this.src=\'assets/full_'+VN_SUPPORT[cid].fid+'.webp\'"'+dl+'>';
+  else img='<img src="assets/cut_'+cid+'.webp" alt="'+vnEsc(charOf(cid).name)+'" decoding="async" onerror="this.onerror=null;this.src=\'assets/full_'+cid+'.webp\'"'+dl+'>';
   return '<div class="vn-char slot-'+slot+(vnIsSD(cid)?" sd":"")+'" data-cid="'+cid+'" style="z-index:'+(2+idx)+'">'+img+'</div>';
 }
 function renderScene(){
@@ -6319,7 +6329,7 @@ function renderDetour(ph,id){
   S.mapVisited[ph.key+":"+id]=1;
   root.innerHTML='<div class="stage"><div class="stage-bg">'+bgSVG()
     +'<span class="scene-tag">移動フェイズ ・ '+L.name+'</span>'
-    +'<div class="stage-char">'+charArt(charOf("momona"),2,true)+'</div>'
+    +'<div class="stage-char">'+stageCharArt(charOf("momona"))+'</div>'
     +'<div class="textbox"><div class="txt">'+dlgHTML(L.lines)+'</div><div class="choices" id="chBox"></div></div>'
     +'</div></div>';
   var box=$("chBox");
@@ -6350,7 +6360,7 @@ function renderStudioEarly(ph,target){
   }
   root.innerHTML='<div class="stage"><div class="stage-bg">'+bgSVG()
     +'<span class="scene-tag">移動フェイズ ・ 撮影会スタジオ（誰もいない会場）</span>'
-    +'<div class="stage-char">'+charArt(charOf("momona"),2,true)+'</div>'
+    +'<div class="stage-char">'+stageCharArt(charOf("momona"))+'</div>'
     +'<div class="textbox"><div class="txt">'+dlgHTML(lines)+'</div><div class="choices" id="chBox"></div></div>'
     +'</div></div>';
   var box=$("chBox");
@@ -6418,7 +6428,7 @@ function renderClueScene(cfg){
   var root=$("storyRoot"); if(!root)return;
   root.innerHTML='<div class="stage"><div class="stage-bg">'+bgSVG()
     +'<span class="scene-tag">手がかり ・ '+CLUES[cfg.clue].name+'</span>'
-    +'<div class="stage-char">'+charArt(charOf("momona"),2,true)+'</div>'
+    +'<div class="stage-char">'+stageCharArt(charOf("momona"))+'</div>'
     +'<div class="textbox"><div class="txt">'+dlgHTML(cfg.lines)+'</div><div class="choices" id="chBox"></div></div>'
     +'</div></div>';
   var box=$("chBox");
