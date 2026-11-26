@@ -11183,7 +11183,7 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
    The home hero now fills the whole content area (the shelf
    moved off home; the story tab + centre tap carry the route)
    and shows the same five full-body cut-outs in two patterns,
-   switched by the pill button under the oshi pill :
+   switched by the pill button at the top, under the ticker :
      pat-a アップ — the user's PSD layout, measured on the
        780x1340 canvas (= 390x670 device) and applied here as
        stage-relative % : big faces, figures bleed off the
@@ -11210,14 +11210,18 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 .stage-home .lbl-p3{bottom:10px;right:10px}
 .stage-home .lbl-main{bottom:10px;left:50%;transform:translateX(-50%);font-size:12px;padding:4px 13px;
   background:linear-gradient(180deg,#3a2568,#1d0f38);border-color:#ffd97a;color:#ffe9a8}
-/* ---------- the toggle pill : bottom centre, just above the oshi pill ---------- */
-.hero-mode-btn{position:absolute;z-index:9;left:50%;transform:translateX(-50%);bottom:47px;
-  display:flex;align-items:center;gap:7px;min-height:34px;padding:6px 15px;border-radius:99px;
+/* ---------- the toggle pill : top centre, in the band under the ticker.
+   Slim profile on purpose : in pat-b the centre figure's crown
+   reaches ~7% of the stage height, so the pill (top:31px, ~22px
+   tall, bottom ~53px) must end above that line — a full-height
+   pill here would sit on her hair. ---------- */
+.hero-mode-btn{position:absolute;z-index:9;left:50%;transform:translateX(-50%);top:31px;
+  display:flex;align-items:center;gap:6px;min-height:21px;padding:2px 12px;border-radius:99px;
   border:1px solid rgba(255,217,122,.8);background:rgba(13,6,24,.85);color:#a892d8;
-  font-family:"M PLUS Rounded 1c";font-size:12px;font-weight:800;letter-spacing:.05em;
+  font-family:"M PLUS Rounded 1c";font-size:11px;font-weight:800;letter-spacing:.05em;
   box-shadow:0 6px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.16)}
 .hero-mode-btn .on{color:#ffe9a8}
-.hero-mode-btn .hm-sw{color:#ffd97a;font-size:13px}
+.hero-mode-btn .hm-sw{color:#ffd97a;font-size:12px}
 .hero-mode-btn:active{transform:translateX(-50%) scale(.95)}
 /* ---------- pattern A : アップ (PSD measured) ----------
    Each button's BOX is a compact hit area over its figure's
