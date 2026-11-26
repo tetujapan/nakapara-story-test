@@ -2662,9 +2662,12 @@ img{-webkit-user-drag:none}
 <!-- ============ HOME : full-stage collage ============ -->
 <div class="view on" id="v-home">
   <div class="stage-home pat-a">
-    <img class="bgimg" src="assets/stage_bg.webp" alt="">
-    <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx"><span class="tk-scroll">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></span><button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-b">全身</span></button></div>
-    <div id="collage"></div>
+    <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx"><span class="tk-scroll">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></span></div>
+    <div class="hero-mode-bar"><button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-b">全身</span></button></div>
+    <div class="hero-area">
+      <img class="bgimg" src="assets/stage_bg.webp" alt="">
+      <div id="collage"></div>
+    </div>
   </div>
 
 </div>
@@ -2805,6 +2808,7 @@ img{-webkit-user-drag:none}
   <button type="button" class="rv-skip" id="rvSkip">スキップ ≫</button>
   <div class="rv-flash" id="rvFlash"></div>
 </div>
+<button type="button" class="gacha-skip" id="gachaSkip" hidden>スキップ ≫</button>
 
 <!-- ============ COLLECTION ============ -->
 <div class="view" id="v-coll">
@@ -3960,7 +3964,7 @@ function doPull(n){
   var pickup=G.type==="pickup";
   var cost=n===1?100:1000;
   if(S.coin<cost){$("gachaMsg").textContent="コインが足りません。ストーリーのエンディング到達（+500）やデイリーミッションで貯められます。";return;}
-  S.gachaBusy=true; S.pulls++;
+  S.gachaBusy=true; SHOWSEQ++; S.pulls++;
   setPullBtns(true);
   $("gachaMsg").textContent=(pickup?"ピックアップガチャ！ ":G.type==="oshi"?"推しガチャ！ ":"")+"ガシャン…！ カプセルが出てきます";
   $("gachaResult").innerHTML="";
@@ -3989,6 +3993,10 @@ function doPull(n){
    FRONT outlet into the tray -> it WAITS there until the player taps ===== */
 var PEND=null;
 var PEND10=null;
+/* show generation : bumped on every pull and on every skip, so a
+   timer left over from a skipped machine show can never fire
+   into the state that replaced it */
+var SHOWSEQ=0;
 /* ===== v13 stage effects : flash / rays / particle-confetti field ===== */
 function spawnGachaParticles(n,colors,big,confetti){
   var host=$("gfxParticles"); if(!host)return;
@@ -4020,6 +4028,7 @@ function runMachineShow(res,news,gains){
   var best=res.some(function(x){return x.rar==="UR";})?"ur":res.some(function(x){return x.rar==="SR";})?"sr":"r";
   var m=$("machine"), crank=$("gcrank"), bulbs=$("gbulbs"), cap=$("gcap2"), fl=$("gflash"), st=$("gstage");
   PEND={res:res,news:news,gains:gains};
+  var seq=SHOWSEQ;
   if(cap){cap.className="gcap2"; cap.style.display="";}
   if(m)m.classList.add("cranking");
   if(crank){crank.classList.remove("turn"); void crank.offsetWidth; crank.classList.add("turn");}
@@ -4030,6 +4039,7 @@ function runMachineShow(res,news,gains){
   spawnGachaParticles(best==="r"?12:20,best==="r"?["#ffe9a8","#ffffff","#ffd9e9"]:best==="sr"?["#ffd23f","#fff3b0","#ffffff"]:["#ff5c9e","#ffd23f","#7ce7ff","#b49aff","#ffffff"],best==="ur",best!=="r");
   $("gachaMsg").textContent="ガリガリガリ…！ ハンドルが回る！";
   function dropCapsule(){
+    if(seq!==SHOWSEQ)return;
     if(st)st.classList.remove("fx-shake");
     if(m){m.classList.remove("agitate"); m.classList.remove("slam"); void m.offsetWidth; m.classList.add("slam");}
     gachaRays(best);
@@ -4047,12 +4057,14 @@ function runMachineShow(res,news,gains){
     if(best==="r"&&bulbs)bulbs.className="gbulbs";
     $("gachaMsg").textContent="コロンッ…！ 中身は――何が出る…？";
     setTimeout(function(){
+      if(seq!==SHOWSEQ)return;
       if(cap)cap.classList.add("waiting");
       if(m)m.classList.add("awaitcap");
       var gm=$("gachaMsg"); gm.textContent="👆 タップで開封！"; gm.classList.add("tap-big");
     },1080);
   }
   setTimeout(function(){
+    if(seq!==SHOWSEQ)return;
     if(m)m.classList.remove("cranking");
     if(best==="r"){dropCapsule();return;}
     /* SR+ : the build-up. The dome (machine) agitates, the whole stage
@@ -4064,6 +4076,7 @@ function runMachineShow(res,news,gains){
     gachaFlash(false);
     if(best==="ur"){
       setTimeout(function(){
+        if(seq!==SHOWSEQ)return;
         if(bulbs)bulbs.className="gbulbs on-ur";
         gachaRays("ur");
         gachaFlash(true);
@@ -12279,6 +12292,147 @@ document.addEventListener("pointercancel",function(){
   var olds=document.querySelectorAll(".form-slot.drop-on");
   for(var i=0;i<olds.length;i++)olds[i].classList.remove("drop-on");
 });
+</script>
+<style>
+/* ============================================================
+   v49 — FIVE REAL-DEVICE FIXES (one build)
+   1) hero pattern toggle : OUT of the ticker's right end into
+      its own full-width control bar directly under the ticker,
+      toggle centred and wide. The stage becomes a column —
+      ticker / bar / hero area — so the collage lives entirely
+      inside .hero-area (its % geometry now resolves against
+      that area) : the hero shrinks by exactly the bar's height,
+      its composition is unchanged, and nothing can ever overlap
+      a figure again.
+   2) VN non-speakers : a light step back only — opacity .88,
+      brightness .85, colour kept (no grayscale). Narration
+      dimming of the backdrop lightens too, so a character on a
+      narration step never fades into the scene.
+   3) minigame intro overlays fill their field : the key visual
+      flexes into the leftover height, titles and start buttons
+      grow — no dead bands above / below the panel.
+   4) gacha skip button (JS below) : fixed top-right, shown for
+      the whole show.
+   5) minigame hub : 2 columns, big cards, full titles and
+      descriptions, wrapping badges — and this one screen may
+      scroll (the user's explicit call).
+   ============================================================ */
+/* ---------- 1) hero toggle bar ---------- */
+.stage-home{display:flex;flex-direction:column}
+.stage-home .ticker{position:relative;flex:none}
+.hero-mode-bar{flex:none;position:relative;z-index:8;height:48px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#1d0f38,#120826);border-bottom:1px solid rgba(217,169,79,.55);
+  box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.hero-area{position:relative;flex:1 1 auto;min-height:0;overflow:hidden}
+.hero-mode-btn{width:min(62%,280px);margin:0;min-height:40px;padding:3px;align-self:center}
+.hero-mode-btn span{flex:1 1 0;min-width:0;padding:6px 10px;font-size:15px}
+.stage-home .lbl-p0,.stage-home .lbl-p1{top:6px}
+/* ---------- 2) VN non-speaker : a step back, never a ghost ---------- */
+.vn-char.ghost{opacity:.88;filter:brightness(.85) saturate(.95)}
+.vn-char.slot-c.ghost{transform:translateX(-50%) scale(.97)}
+.vn-char.slot-l.ghost,.vn-char.slot-r.ghost{transform:scale(.97)}
+.vn-stage.dim .vn-bg{filter:brightness(.6) saturate(.88)}
+/* ---------- 3) intro overlays fill the field ---------- */
+.rt-ov-in{justify-content:flex-start;gap:12px;padding:16px 14px 18px}
+.rt-ov-in>*:first-child{margin-top:0}
+.rt-ov-in>*:last-child{margin-bottom:0}
+.rt-ov-in>.kv-img{flex:1 1 0;min-height:96px;height:auto;width:100%;max-width:430px}
+.rt-ov-ttl{font-size:29px}
+.rt-ov-tx{font-size:13.5px}
+.rt-start{min-height:60px;font-size:18px;padding:13px 36px}
+#skOverlay .rt-ov-in{gap:14px;padding:18px 16px 20px;overflow:hidden;justify-content:flex-start}
+#skOverlay .kv-img{flex:1 1 0;min-height:150px;height:auto;width:100%;max-width:none}
+#skOverlay .rt-ov-ttl{font-size:34px}
+#skOverlay .rt-ov-tx{font-size:14.5px;line-height:1.8}
+#skOverlay .rt-start{min-height:64px;font-size:19px;padding:14px 40px;width:min(100%,340px)}
+/* ---------- 4) gacha skip : fixed top-right, always on during a show ---------- */
+.gacha-skip{position:fixed;top:calc(64px + env(safe-area-inset-top));right:max(12px,calc(50% - 203px));z-index:140;
+  display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 20px;
+  background:rgba(13,6,24,.88);border:2px solid rgba(255,217,122,.9);border-radius:99px;color:#ffe9a8;
+  font-family:"M PLUS Rounded 1c";font-size:15px;font-weight:900;letter-spacing:.05em;cursor:pointer;
+  box-shadow:0 6px 16px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.2);-webkit-tap-highlight-color:transparent}
+.gacha-skip:active{transform:scale(.95)}
+.gacha-skip[hidden]{display:none}
+/* ---------- 5) minigame hub : 2 big columns, scrollable ---------- */
+#v-game.on{overflow-y:auto;-webkit-overflow-scrolling:touch}
+#mgHub{height:auto;flex:none;width:100%}
+#mgHub>section{height:auto;grid-template-columns:repeat(2,1fr);grid-template-rows:auto;gap:10px;padding-bottom:14px}
+#mgHub .mg-entry{height:auto;aspect-ratio:4/4.4;margin:0;border-radius:16px}
+#mgHub .mg-entry .mg-badge{top:8px;left:8px;font-size:10px;line-height:1.35;padding:4px 9px;max-width:calc(100% - 16px);
+  white-space:normal;overflow:visible;text-overflow:clip;border-radius:10px}
+#mgHub .mg-entry .mg-tx{padding:10px 8px 11px}
+#mgHub .mg-entry .mg-tx h3{font-size:14px;line-height:1.3;white-space:nowrap;letter-spacing:-.01em}
+#mgHub .mg-entry .mg-tx p{font-size:10.5px;line-height:1.5;margin-top:2px;display:block;-webkit-line-clamp:unset;overflow:visible}
+</style>
+<script>
+/* ================================================================
+   v49 — GACHA SKIP. One fixed button for the WHOLE show (machine
+  演出〜 reveal), visible exactly while S.gachaBusy is true.
+   Results were committed at draw time in doPull, so skipping
+   never changes the cards, the NEW/dup accounting or the coin
+   cost — it only fast-forwards the presentation :
+   - 10-pull, capsules still dropping / piled : straight to the
+     result list (PEND10 is dropped, which also neutralises
+     every pending drop timer — they all check PEND10).
+   - single, capsule still in the machine show : straight to
+     the card itself (reveal opened and burst immediately).
+     SHOWSEQ is bumped so the machine show's own timers die.
+   - reveal charge phase, single : burst the card now.
+   - reveal, multi (or single card already shown) : the result
+     list, via the existing finishReveal().
+   ================================================================ */
+(function(){
+  var btn=document.getElementById("gachaSkip");
+  if(!btn)return;
+  function $(id){return document.getElementById(id);}
+  function cleanupMachineShow(){
+    var m=$("machine"), st=$("gstage"), cap=$("gcap2"), bulbs=$("gbulbs");
+    if(m)m.classList.remove("cranking","agitate","slam","jolt","awaitcap");
+    if(st)st.classList.remove("fx-shake");
+    if(cap){cap.className="gcap2"; cap.style.display="none";}
+    if(bulbs)bulbs.className="gbulbs";
+    var gw=$("gachaWrap"); if(gw)gw.classList.remove("ten");
+    var pile=$("capPile10"); if(pile){pile.style.display="none"; pile.classList.remove("ready"); pile.innerHTML="";}
+    var cn=$("capCount10"); if(cn){cn.style.display="none"; cn.classList.remove("full","pop");}
+    var field=$("dropField10"); if(field)field.innerHTML="";
+    var rb=$("renBang"); if(rb)rb.classList.remove("show");
+    var bn=$("gcapBang"); if(bn)bn.classList.remove("show");
+    var gm=$("gachaMsg"); if(gm)gm.classList.remove("tap-big");
+    if(typeof gachaRays==="function")gachaRays("");
+    var gp=$("gfxParticles"); if(gp)gp.innerHTML="";
+  }
+  btn.addEventListener("click",function(ev){
+    ev.stopPropagation();
+    if(typeof RV!=="undefined"&&RV.active){
+      if(RV.res.length===1&&RV.phase==="charge"){
+        rvClearTimers();
+        burstCard(RV.res[0],RV.news.indexOf(RV.res[0].id)>=0);
+      }else if(RV.phase!=="burst"){
+        finishReveal();
+      }
+      return;
+    }
+    if(typeof PEND10!=="undefined"&&PEND10){
+      var p=PEND10; PEND10=null; SHOWSEQ++;
+      cleanupMachineShow();
+      RV.res=p.res; RV.news=p.news; RV.gains=p.gains; RV.idx=0;
+      finishReveal();
+      return;
+    }
+    if(typeof PEND!=="undefined"&&PEND){
+      var p2=PEND; PEND=null; SHOWSEQ++;
+      cleanupMachineShow();
+      startReveal(p2.res,p2.news,p2.gains);
+      rvClearTimers();
+      burstCard(RV.res[0],RV.news.indexOf(RV.res[0].id)>=0);
+      return;
+    }
+  });
+  setInterval(function(){
+    var busy=(typeof S!=="undefined"&&!!S.gachaBusy);
+    if(btn.hidden===busy)btn.hidden=!busy;
+  },120);
+})();
 </script>
 </body>
 </html>
