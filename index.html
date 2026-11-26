@@ -2641,12 +2641,62 @@ img{-webkit-user-drag:none}
 .sl-strip{inset:0;top:0;will-change:auto;transform:none;background:#fdfaf0;overflow:hidden}
 .sl-strip.fast{filter:blur(1.4px) brightness(1.04)}
 .sl-cell{position:absolute;left:0;right:0;top:0}
+/* ===== splash (v93 fast boot) : the first thing painted, from the
+   first bytes of <body>, so the screen is never blank white while
+   the deferred SDKs and the app scripts load. Deep-purple field to
+   match the app, icon + logo + a live progress bar. Removed by the
+   boot script at the end of <body> once the home view is built. */
+#npSplash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 28%,#3d1150,#180a24 78%);color:#fff;font-family:"M PLUS Rounded 1c","Noto Sans JP",system-ui,sans-serif;transition:opacity .4s ease}
+#npSplash.np-out{opacity:0;pointer-events:none}
+.np-splash-icon{width:92px;height:92px;border-radius:22px;box-shadow:0 14px 34px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.18)}
+.np-splash-logo{margin-top:20px;font-weight:800;font-size:30px;letter-spacing:.04em;line-height:1.1}
+.np-splash-logo b{color:#ff5c9e}
+.np-splash-sub{margin-top:6px;font-size:10px;font-weight:700;letter-spacing:.22em;color:#d9b8e6}
+.np-splash-track{margin-top:30px;width:min(240px,64vw);height:8px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}
+.np-splash-track i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#ff5c9e,#ffb300);transition:width .18s ease}
+.np-splash-pct{margin-top:10px;font-size:12px;font-weight:700;color:#f3d9ec}
+@media (prefers-reduced-motion: reduce){#npSplash{transition:none}}
 </style>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- v93 fast boot: deferred so they no longer block first paint;
+     OnlineAPI.init() is likewise deferred until after the home
+     screen is up (see the boot script at the end of <body>). -->
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
+<!-- v93 fast boot splash: plain markup + one tiny inline script, so
+     it paints before any app script has run. The boot script at the
+     end of <body> completes the bar and removes it. -->
+<div id="npSplash" role="status" aria-label="読み込み中">
+  <img class="np-splash-icon" src="assets/app-icon.webp" alt="" width="92" height="92">
+  <div class="np-splash-logo">PARA <b>NOVEL</b></div>
+  <div class="np-splash-sub">MULTI-ENDING STORY GAME ・ 試作版</div>
+  <div class="np-splash-track"><i id="npSplashBar"></i></div>
+  <div class="np-splash-pct"><span id="npSplashPct">0%</span>　読み込み中…</div>
+</div>
+<script>
+(function(){
+  var bar=document.getElementById("npSplashBar"),pct=document.getElementById("npSplashPct"),p=0;
+  var t=setInterval(function(){
+    p=Math.min(92,p+Math.max(1,(92-p)*0.09));
+    if(bar)bar.style.width=p+"%";
+    if(pct)pct.textContent=Math.floor(p)+"%";
+    if(p>=92)clearInterval(t);
+  },90);
+  window.__npSplashDone=function(){
+    clearInterval(t);
+    if(bar)bar.style.width="100%";
+    if(pct)pct.textContent="100%";
+  };
+  /* failsafe: never trap the user behind the splash */
+  setTimeout(function(){
+    var s=document.getElementById("npSplash");
+    if(s&&window.__npHideSplash)window.__npHideSplash();
+    else if(s)s.style.display="none";
+  },8000);
+})();
+</script>
 <div class="device">
 <header class="topbar"><div class="topbar-in">
   <img class="app-icon" src="assets/app-icon.webp" alt="PARA NOVEL アイコン" width="38" height="38">
@@ -4512,7 +4562,25 @@ window.__npActions={
   modalClose:function(){closeModal();},
   playExtra:function(){startExtra();}
 };
-renderAll();
+/* ===== v93 fast boot : render ONLY the shell + home view here.
+   The other views' dynamic content (story shelf / endings /
+   gallery, collection grid, daily missions / shop) is built on
+   first open via window.__npLazyBuild (hooked into showView by
+   the boot script at the end of <body>), or by the first full
+   renderAll() from gameplay — whichever comes first. Every lazy
+   builder is idempotent, so a later renderAll() stays correct. */
+window.__npLazyDone={};
+window.__npLazyBuild=function(name){
+  if(window.__npLazyDone[name])return; window.__npLazyDone[name]=1;
+  try{
+    if(name==="story"){renderBooks(); renderEndings(); renderGallery();}
+    else if(name==="coll"){renderColl();}
+    else if(name==="idea"){renderMissions(); renderShop();}
+  }catch(e){}
+};
+try{renderStats();}catch(e){}
+try{renderHeroOshi();}catch(e){}
+try{renderFeatured();}catch(e){}
 
 </script>
 <script>/* ===== v20 : synthesis / HP card battle / shutter game ===== */
@@ -5349,7 +5417,13 @@ function obEditName(){
   });
   var inp=$("obNameInput"); if(inp){inp.focus(); try{inp.select();}catch(e){}}
 }
-OnlineAPI.init();
+/* v93 fast boot: Firebase auth + first sync are NOT run at parse
+   time. The boot script at the end of <body> calls
+   window.__npInitOnline shortly after the home screen is up (and
+   immediately when the game hub is opened). Until then _status is
+   "connecting", and every call site already falls back to the
+   offline/CPU path, so nothing blocks on the network at startup. */
+window.__npInitOnline=function(){try{OnlineAPI.init();}catch(e){}};
 /* ---------- online home : your rank, your deck, the table ---------- */
 function obDeckMinis(fighters){
   return fighters.map(function(f){
@@ -12432,6 +12506,51 @@ document.addEventListener("pointercancel",function(){
     var busy=(typeof S!=="undefined"&&!!S.gachaBusy);
     if(btn.hidden===busy)btn.hidden=!busy;
   },120);
+})();
+</script>
+<script>
+/* ================================================================
+   v93 — FAST BOOT. This block is the last script in the document,
+   so by the time it runs every app script above has executed and
+   the home view (the only view rendered at boot) is built.
+   1) Splash: complete the progress bar and fade the splash out on
+      the next painted frame — no blank-white gap at startup.
+   2) showView is wrapped so a view's dynamic content is built on
+      its first open (window.__npLazyBuild), and opening the game
+      hub kicks the deferred online init immediately.
+   3) Online init (Firebase auth + first sync) is scheduled just
+      after the home screen is up instead of blocking startup.
+   ================================================================ */
+(function(){
+  var splash=document.getElementById("npSplash");
+  function hideSplash(){
+    if(!splash||splash.__npGone)return;
+    if(splash)splash.__npGone=true;
+    if(window.__npSplashDone)window.__npSplashDone();
+    if(splash){
+      splash.classList.add("np-out");
+      setTimeout(function(){if(splash&&splash.parentNode)splash.parentNode.removeChild(splash);},480);
+    }
+  }
+  window.__npHideSplash=hideSplash;
+  requestAnimationFrame(function(){requestAnimationFrame(hideSplash);});
+  setTimeout(hideSplash,4000); /* failsafe */
+
+  var kicked=false;
+  window.__npKickOnline=function(){
+    if(kicked)return; kicked=true;
+    setTimeout(function(){if(window.__npInitOnline)window.__npInitOnline();},60);
+  };
+  setTimeout(window.__npKickOnline,1500);
+
+  if(typeof window.showView==="function"){
+    var _sv=window.showView;
+    window.showView=function(name){
+      if(window.__npLazyBuild)window.__npLazyBuild(name);
+      if(name==="game")window.__npKickOnline();
+      return _sv.apply(this,arguments);
+    };
+  }
 })();
 </script>
 </body>
