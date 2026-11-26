@@ -2663,7 +2663,7 @@ img{-webkit-user-drag:none}
 <div class="view on" id="v-home">
   <div class="stage-home pat-a">
     <img class="bgimg" src="assets/stage_bg.webp" alt="">
-    <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx"><span class="tk-scroll">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></span><button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-sw" aria-hidden="true">⇄</span><span class="hm-b">全身</span></button></div>
+    <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx"><span class="tk-scroll">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></span><button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-b">全身</span></button></div>
     <div id="collage"></div>
   </div>
 
@@ -11215,22 +11215,32 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 .stage-home .lbl-p3{bottom:10px;right:10px}
 .stage-home .lbl-main{bottom:10px;left:50%;transform:translateX(-50%);font-size:12px;padding:4px 13px;
   background:linear-gradient(180deg,#3a2568,#1d0f38);border-color:#ffd97a;color:#ffe9a8}
-/* ---------- the toggle chip : a fixed chip at the RIGHT END of
-   the ticker row, OUTSIDE the hero image entirely. It used to be
-   a pill floating over the stage under the ticker, but on the
-   real device's short viewport (~390x670) the hero compresses,
-   the centre figure's crown rises, and the pill landed on her
-   hair in pat-b. Inside the ticker row it can never touch any
-   figure at any viewport height. The ticker text scrolls in the
-   space to its left (.tk-tx / .tk-scroll). ---------- */
-.hero-mode-btn{position:relative;flex:none;align-self:center;margin:0 6px 0 2px;
-  display:flex;align-items:center;gap:6px;min-height:26px;padding:3px 12px;border-radius:99px;
-  border:1px solid rgba(255,217,122,.8);background:rgba(13,6,24,.85);color:#a892d8;
-  font-family:"M PLUS Rounded 1c";font-size:11px;font-weight:800;letter-spacing:.05em;
-  box-shadow:0 2px 6px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.16)}
-.hero-mode-btn .on{color:#ffe9a8}
-.hero-mode-btn .hm-sw{color:#ffd97a;font-size:12px}
-.hero-mode-btn:active{transform:scale(.95)}
+/* ---------- the pattern toggle : a two-segment switch at the
+   RIGHT END of the ticker row, OUTSIDE the hero image entirely.
+   It used to be a pill floating over the stage under the ticker,
+   but on the real device's short viewport (~390x670) the hero
+   compresses, the centre figure's crown rises, and the pill
+   landed on her hair in pat-b. Inside the ticker row it can
+   never touch any figure at any viewport height. The ticker
+   text scrolls in the space to its left (.tk-tx / .tk-scroll).
+   v48b : rebuilt from a small text chip ("アップ ⇄ 全身" in one
+   dim pill — users could not tell it was a button) into a real
+   segmented control : two side-by-side segments, the active one
+   filled with the gold gradient + dark heavy type, the inactive
+   one dark translucent + pale type, so the current pattern reads
+   at a glance. The JS still toggles .on on .hm-a / .hm-b. ----- */
+.hero-mode-btn{position:relative;flex:none;align-self:center;margin:0 6px 0 4px;
+  display:flex;align-items:stretch;gap:2px;min-height:36px;padding:3px;border-radius:99px;
+  border:2px solid rgba(255,217,122,.9);background:rgba(13,6,24,.88);
+  font-family:"M PLUS Rounded 1c";
+  box-shadow:0 3px 8px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16)}
+.hero-mode-btn span{display:flex;align-items:center;justify-content:center;min-width:56px;
+  padding:4px 12px;border-radius:99px;font-size:13.5px;font-weight:900;letter-spacing:.06em;
+  background:rgba(255,255,255,.05);color:#b7a6dd;transition:background .18s,color .18s}
+.hero-mode-btn span.on{background:linear-gradient(180deg,#ffe98a,#f5c542 55%,#d99a06);color:#3a2400;
+  box-shadow:0 2px 5px rgba(0,0,0,.4),inset 0 1px 0 #fffbe8,inset 0 -2px 0 rgba(120,70,0,.35);
+  text-shadow:0 1px 0 rgba(255,255,255,.55)}
+.hero-mode-btn:active{transform:scale(.96)}
 /* ---------- pattern A : アップ (PSD measured) ----------
    Each button's BOX is a compact hit area over its figure's
    body core (face / torso), sized so no box's centre is ever
