@@ -676,11 +676,12 @@ body{background:#070313}
 .topbar{background:rgba(19,8,38,.92);box-shadow:0 1px 0 rgba(217,169,79,.65),0 12px 26px rgba(0,0,0,.4)}
 .logo{color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.6);font-size:15px;white-space:nowrap;flex:none}
 .logo b{color:#ff6aa9}
-.logo small{color:#9d8ac4;font-size:8px;letter-spacing:.07em;white-space:nowrap}
-.topbar-in{gap:6px}
+.logo small{color:#9d8ac4;font-size:7.5px;letter-spacing:.02em;white-space:nowrap}
+.topbar-in{gap:5px;padding-left:10px;padding-right:10px}
+.stats{gap:4px;flex:none}
 .app-icon{width:38px;height:38px;border-radius:10px;flex:none;object-fit:cover;box-shadow:0 0 0 1px rgba(217,169,79,.65),0 4px 10px rgba(0,0,0,.45)}
-.stat{background:linear-gradient(180deg,#2e1a56,#1c0f36);border:1px solid rgba(217,169,79,.55);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 3px 7px rgba(0,0,0,.4);padding:4px 7px;font-size:10.5px}
-.stat span{color:#ffd97a;font-size:12px}
+.stat{background:linear-gradient(180deg,#2e1a56,#1c0f36);border:1px solid rgba(217,169,79,.55);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 3px 7px rgba(0,0,0,.4);padding:4px 5px;font-size:10px}
+.stat span{color:#ffd97a;font-size:11.5px}
 /* ---------- section heads / progress ---------- */
 .sec-head:before{background:linear-gradient(180deg,#ffe9a8,#d9a94f 55%,#8a5f00);box-shadow:0 2px 8px rgba(217,169,79,.5)}
 .progress-line{background:#0d0618;border-color:#3a2566;box-shadow:inset 0 2px 4px rgba(0,0,0,.7)}
@@ -3526,7 +3527,6 @@ img{-webkit-user-drag:none}
           <div class="rt-ov-in" id="cnOvIn"></div>
         </div>
       </div>
-      <p class="note" style="margin-top:8px">遊び方：お茶碗は斜め上から見下ろす構図。落とす位置はお茶碗をドラッグして狙い、高さはボタンの長押しで決めて、離すとサイコロが落ちます。高い・端っこほど大きく跳ねて、1つでもお茶碗の外に出たら「しょんべん（OB）」で負け役！<br>役の強さ：ピンゾロ（1・1・1）＞ ゾロ目 ＞ シゴロ（4・5・6）＞ 目（ペア＋残りの目、6が最強）。ヒフミ（1・2・3）・目なし・しょんべんは負け役。全員負け役ならポットは次ラウンドへ持ち越し。同点は該当者だけで決着ロール！</p>
     </section>
   </div>
   <!-- indian poker : online multiplayer -->
@@ -3550,13 +3550,13 @@ img{-webkit-user-drag:none}
           <div class="rt-ov-in">
             <img class="kv-img" src="assets/mg_indian.webp" alt="インディアンポーカー ― スポットライトに立つ1枚のカード" style="object-position:50% 50%">
             <p class="rt-ov-ttl">インディアンポーカー</p>
-            <p class="rt-ov-tx" id="ipOvTx">スマホを額に当てるゲーム！ 画面いっぱいの大きなカードは、周りの人に見せるためのもの。<br>自分だけが見えないまま、みんなの反応とベットで読み合おう。最後はタップでゆっくりめくって答え合わせ。</p>
+            <p class="rt-ov-tx" id="ipOvTx">スマホを額に当てるゲーム！ 画面いっぱいの大きなカードは、周りの人に見せるためのもの。<br>カードは裏向きで配られ、タップして3秒後にめくれる ― その間に額に当てよう。ショーダウンの答え合わせも同じ。</p>
             <div id="ipUe" hidden></div>
             <button type="button" class="btn gold rt-start" id="ipStartBtn">▶ 対戦をはじめる（1人だとCPU対戦）</button>
           </div>
         </div>
       </div>
-      <p class="note" style="margin-top:8px">遊び方：アンティ10コインで参加。スマホを額に当てて、画面いっぱいの自分のカードを周りの人に見せよう ― 相手のカードはこの画面には出ません（本物の相手の額／スマホを見て読むのがルール）。スマホを下ろした時は、下のボタンでフォールド（降りる）／コール（合わせる）／レイズ（+20／+50上乗せ）。カードはAが最強の単枚勝負、一番強いカードがポット総取り（同点は分け合い）。ショーダウンはカードをタップ → 約3秒かけてゆっくりめくれて、初めて自分のカードと勝敗が分かります。オンラインは上のパネルから ― 空き枠はCPUが入り、切断時はCPUが引き継ぎます。</p>
+      <p class="note" style="margin-top:8px">遊び方：アンティ10コインで参加。スマホを額に当てて、画面いっぱいの自分のカードを周りの人に見せよう ― 相手のカードはこの画面には出ません（本物の相手の額／スマホを見て読むのがルール）。スマホを下ろした時は、下のボタンでフォールド（降りる）／コール（合わせる）／レイズ（+20／+50上乗せ）。カードはAが最強の単枚勝負、一番強いカードがポット総取り（同点は分け合い）。カードは配られた時点では裏向きで、タップすると3秒後にめくれます（その間に額に当てる）。ショーダウンもカードをタップ → 3秒後にめくれて、初めて自分のカードと勝敗が分かります。オンラインは上のパネルから ― 空き枠はCPUが入り、切断時はCPUが引き継ぎます。</p>
     </section>
   </div>
 </div>
@@ -12708,12 +12708,13 @@ document.addEventListener("pointercancel",function(){
 .cn-bal.turn{border-color:#ffd23f;color:#ffe9a8;box-shadow:0 0 0 1.5px rgba(255,210,63,.5)}
 .cn-bal.win{border-color:#ffd23f;background:rgba(255,210,63,.16);color:#ffe9a8}
 .cn-bowlwrap{position:relative;width:min(94%,400px);margin:6px auto 0;touch-action:none;cursor:crosshair}
-#cnOverlay .rt-ov-in{gap:6px;padding:10px 12px;overflow:hidden}
-#cnOverlay .kv-img{height:88px}
-#cnOverlay .rt-ov-ttl{font-size:21px}
-#cnOverlay .rt-ov-tx{font-size:11.5px;line-height:1.5}
-#cnOverlay .rt-start{min-height:48px;padding:10px 24px;font-size:14.5px}
-#cnOverlay .cn-choice{min-height:44px;padding:6px 14px}
+#cnOverlay{top:0}
+#cnOverlay .rt-ov-in{gap:4px;padding:6px 10px;overflow:hidden;background:#0c0518}
+#cnOverlay .kv-img{height:44px}
+#cnOverlay .rt-ov-ttl{font-size:19px}
+#cnOverlay .rt-ov-tx{font-size:11.5px;line-height:1.45}
+#cnOverlay .rt-start{min-height:44px;padding:8px 22px;font-size:14.5px}
+#cnOverlay .cn-choice{min-height:38px;padding:4px 12px}
 .cn-bowl{display:block;width:100%;border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.55)}
 .cn-die{position:absolute;width:19%;z-index:3;pointer-events:none;filter:drop-shadow(0 6px 5px rgba(0,0,0,.45));will-change:left,top,transform}
 .cn-aim{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border:2.5px solid #ffd23f;border-radius:50%;z-index:4;pointer-events:none;box-shadow:0 0 0 2px rgba(0,0,0,.35),0 0 16px rgba(255,210,63,.75)}
@@ -12755,8 +12756,8 @@ document.addEventListener("pointercancel",function(){
 .ip-flip-in.showback{transform:rotateY(180deg)}
 .ip-flip-f{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .ip-flip-f.back{transform:rotateY(180deg)}
-.ip-flip.going .ip-flip-in{animation:ipReveal 3.2s cubic-bezier(.55,.02,.3,1) both}
-@keyframes ipReveal{0%{transform:rotateY(180deg) scale(1)}14%{transform:rotateY(171deg) scale(1.045)}27%{transform:rotateY(179deg) scale(1.05)}100%{transform:rotateY(360deg) scale(1)}}
+.ip-flip.going .ip-flip-in{animation:ipReveal .6s cubic-bezier(.4,.1,.3,1) both}
+@keyframes ipReveal{from{transform:rotateY(180deg)}to{transform:rotateY(360deg)}}
 .ip-hugecard{width:100%;height:100%;border-radius:16px;background:linear-gradient(165deg,#ffffff,#e9e6de);color:#1c1c22;box-shadow:0 18px 38px rgba(0,0,0,.55),inset 0 0 0 3px rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:"M PLUS Rounded 1c",sans-serif}
 .ip-hugecard .pr{font-size:100px;font-weight:900;line-height:.95}
 .ip-hugecard .ps{font-size:80px;line-height:1.05}
@@ -13442,7 +13443,7 @@ function cnSetupOv(){
   [10,50,100].forEach(function(a){ant+='<button type="button" class="cn-choice'+(CN.ante===a?" on":"")+'" data-cn-ante="'+a+'">'+a+'</button>';});
   cnOv('<img class="kv-img" src="assets/mg_chinchiro.webp" alt="チンチロ ― どんぶりと3つのサイコロ" style="object-position:50% 50%">'
     +'<p class="rt-ov-ttl">チンチロ</p>'
-    +'<p class="rt-ov-tx">スマホを回して全員で勝負！ 全員がアンティを出してポットを作り、順番に最大3回まで落として役を作ります。最強の役がポット総取り。<br>落とす位置はお茶碗をドラッグで狙い、高さはボタンの長押しで調整 ― 高い・端ほど跳ねて、外に出たら「しょんべん（OB）」！</p>'
+    +'<p class="rt-ov-tx">スマホを回して全員で勝負！順番に最大3回落として役を作り、最強の役がポット総取り。外に出たら「しょんべん（OB）」！</p>'
     +'<p class="rt-ov-tx" style="margin-top:2px">人数</p><div class="cn-choices">'+cnt+'</div>'
     +'<p class="rt-ov-tx" style="margin-top:2px">アンティ（1人あたり）</p><div class="cn-choices">'+ant+'</div>'
     +'<button type="button" class="btn gold rt-start" id="cnStartBtn">▶ ゲームスタート</button>');
@@ -13784,7 +13785,8 @@ window.__on("cnBack",function(){window.__cnStop();mgShow("hub");});
 /* ==================== INDIAN POKER : online multiplayer ==================== */
 var IP={mode:"off",state:null,slots:[],mySlot:-1,hand:0,dealer:0,lastSeq:-1,actSeq:0,
   accHand:-1,accInv:0,accPaid:false,confShown:false,aiT:0,waiting:false,lastActN:{},
-  flip:"idle",flipHand:-1,flipT:0,bigSig:""};
+  flip:"idle",flipHand:-1,flipT0:0,flipTimer:0,
+  dealFlip:"idle",dealHand:-1,dealFlipT0:0,dealFlipTimer:0,bigSig:""};
 function ipCharName(ch){try{var c=charOf(ch);if(c&&c.name)return c.name;}catch(e){}return ch;}
 function ipSlotsLocal(){
   var me=(typeof MP!=="undefined"&&MP&&MP.mySlot)?MP.mySlot():{uid:"me",name:"プレイヤー",char:"momona"};
@@ -13908,6 +13910,36 @@ function ipHugecardHTML(c){
   if(!c)return '<div class="ip-hugecard backd"></div>';
   return '<div class="ip-hugecard'+((c.s===1||c.s===2)?" red":"")+'"><span class="pr">'+pkRankTxt(c.r)+'</span><span class="ps">'+PK_SUITS[c.s]+'</span></div>';
 }
+/* Card reveal rule (deal & showdown, unified) : the card starts face-down.
+   Tap -> it STAYS face-down for 3 seconds (time to raise the phone to your
+   forehead) -> then flips over with a short animation. */
+function ipWaitSec(key){
+  if(IP[key]!=="wait")return 0;
+  var r=Math.ceil((3000-(Date.now()-IP[key+"T0"]))/1000);
+  return r<1?1:(r>3?3:r);
+}
+function ipFlipTick(key){
+  if(IP[key]==="going"){
+    if(Date.now()-IP[key+"T0"]>=650){IP[key]="done";ipRender();}
+    return;
+  }
+  if(IP[key]!=="wait")return;
+  var remain=3000-(Date.now()-IP[key+"T0"]);
+  if(remain<=0){
+    IP[key]="going";IP[key+"T0"]=Date.now();ipRender();
+    IP[key+"Timer"]=setTimeout(function(){ipFlipTick(key);},700);
+    return;
+  }
+  ipRender();
+  IP[key+"Timer"]=setTimeout(function(){ipFlipTick(key);},Math.min(1000,remain));
+}
+function ipFlipTap(key){
+  if(IP[key]!=="ready")return;
+  IP[key]="wait";IP[key+"T0"]=Date.now();
+  clearTimeout(IP[key+"Timer"]);
+  ipRender();
+  IP[key+"Timer"]=setTimeout(function(){ipFlipTick(key);},1000);
+}
 function ipRender(){
   var st=IP.state;
   var hh=$("ipHudHand");if(hh)hh.textContent=st?("HAND "+st.hand):"HAND ―";
@@ -13926,27 +13958,41 @@ function ipRender(){
     IP.accPaid=true;
     if(st.winners.indexOf(IP.mySlot)>=0&&st.share>0){S.coin+=st.share;renderStats();}
   }
-  /* ---- flip reveal state (local only : the forehead hides it in real life) ---- */
+  /* ---- flip reveal state (local only) : the card starts face-down both
+         when dealt and at showdown; tap -> 3s face-down -> quick flip ---- */
+  /* Promote timed states on every render too, so a throttled timer
+     (background tab / app switch) can never leave the card stuck. */
+  ["flip","dealFlip"].forEach(function(k){
+    if(IP[k]==="wait"&&Date.now()-IP[k+"T0"]>=3000){IP[k]="going";IP[k+"T0"]=Date.now();}
+    else if(IP[k]==="going"&&Date.now()-IP[k+"T0"]>=650){IP[k]="done";}
+  });
+  if(IP.dealHand!==st.hand){IP.dealHand=st.hand;IP.dealFlip="ready";clearTimeout(IP.dealFlipTimer);}
   if(st.phase==="show"){
-    if(IP.flipHand!==st.hand){IP.flipHand=st.hand;IP.flip="ready";}
-  }else{IP.flipHand=-1;IP.flip="idle";}
+    if(IP.flipHand!==st.hand){IP.flipHand=st.hand;IP.flip="ready";clearTimeout(IP.flipTimer);}
+  }else{IP.flipHand=-1;IP.flip="idle";clearTimeout(IP.flipTimer);}
   var revealed=st.phase!=="show"||IP.flip==="done";
   if(revealed&&st.phase==="show"&&st.winners.indexOf(IP.mySlot)>=0&&!IP.confShown){
     IP.confShown=true;pzConfetti($("ipConfetti"),26);
   }
   /* ---- big card : your own card fills the screen, for everyone else to read ---- */
   if(big&&mine){
-    var sig=st.hand+"|"+st.phase+"|"+IP.flip+"|"+mine.card.r+"-"+mine.card.s+"|"+mine.name+"|"+(mine.fold?1:0);
+    var fs=st.phase==="show"?IP.flip:IP.dealFlip;
+    var fkey=st.phase==="show"?"flip":"dealFlip";
+    var wsec=ipWaitSec(fkey);
+    var sig=st.hand+"|"+st.phase+"|"+fs+"|"+wsec+"|"+mine.card.r+"-"+mine.card.s+"|"+mine.name+"|"+(mine.fold?1:0);
     if(sig!==IP.bigSig){
       IP.bigSig=sig;
-      var innerCls=st.phase==="show"?(IP.flip==="ready"?" showback":""):"";
-      var flipCls=st.phase==="show"&&IP.flip==="going"?" going":"";
+      var innerCls=(fs==="ready"||fs==="wait")?" showback":"";
+      var flipCls=fs==="going"?" going":"";
       var hint="";
-      if(st.phase==="show"&&IP.flip==="ready")hint='<p class="ip-taphint">👆 タップして めくる</p>';
-      else if(st.phase==="show"&&IP.flip==="going")hint='<p class="ip-taphint">ドキドキ…</p>';
+      if(fs==="ready")hint=st.phase==="show"
+        ?'<p class="ip-taphint">👆 タップして めくる（3秒後に開く）</p>'
+        :'<p class="ip-taphint">👆 タップ → 3秒後にめくれる。その間に額に当てて！</p>';
+      else if(fs==="wait")hint='<p class="ip-taphint">'+(st.phase==="show"?("ドキドキ… あと "+wsec+" 秒"):("📱 額に当てて！ あと "+wsec+" 秒でめくれる"))+'</p>';
+      else if(fs==="going")hint='<p class="ip-taphint">ドキドキ…</p>';
       else if(st.phase==="bet")hint='<p class="ip-taphint" style="animation:none;font-size:12px;color:#c9b6ea">📱 額に当てて、周りの人に見せよう</p>';
       big.innerHTML='<p class="ip-bigname"><small>インディアンポーカー</small>'+esc(mine.name)+(mine.fold?' <span style="color:#ff9db0;font-size:16px">フォールド</span>':"")+'</p>'
-        +'<div class="ip-flip'+flipCls+'" id="ipFlip"><div class="ip-flip-in'+innerCls+'">'
+        +'<div class="ip-flip'+flipCls+'" id="ipFlip" role="button" aria-label="カードをめくる"><div class="ip-flip-in'+innerCls+'">'
         +'<div class="ip-flip-f face">'+ipHugecardHTML(mine.card)+'</div>'
         +'<div class="ip-flip-f back">'+ipHugecardHTML(null)+'</div>'
         +'</div></div>'+hint;
@@ -13987,7 +14033,7 @@ function ipRender(){
         if(S.coin>=need+50)html+='<button type="button" class="btn gold" data-ip-act="raise50">レイズ +50</button>';
       }
     }else if(st.phase==="show"){
-      if(!revealed)html='<span class="ip-wait">カードをタップして、ゆっくりめくろう</span>';
+      if(!revealed)html='<span class="ip-wait">カードをタップ → 3秒後にめくれます</span>';
       else if(IP.mode==="host"||IP.mode==="local")html='<button type="button" class="btn gold" data-ip-act="next">▶ 次のハンド</button>';
       else html='<span class="ip-wait">ホストが次のハンドを始めるのを待っています…</span>';
     }else if(st.phase==="bet"){
@@ -14122,17 +14168,17 @@ function ipHostFallbackLocal(){
   toast("ホストが切断しました ― CPU対戦で続行します");
 }
 window.__ipStop=function(){
-  clearTimeout(IP.aiT);clearTimeout(IP.flipT);
-  IP.mode="off";IP.state=null;IP.waiting=false;IP.flip="idle";IP.bigSig="";
+  clearTimeout(IP.aiT);clearTimeout(IP.flipTimer);clearTimeout(IP.dealFlipTimer);
+  IP.mode="off";IP.state=null;IP.waiting=false;IP.flip="idle";IP.dealFlip="idle";IP.bigSig="";
   if(typeof MP!=="undefined"&&MP&&MP.cur&&MP.cur.game==="indian")MP.detach("indian");
 };
 window.__ipReset=function(){
-  clearTimeout(IP.aiT);clearTimeout(IP.flipT);
+  clearTimeout(IP.aiT);clearTimeout(IP.flipTimer);clearTimeout(IP.dealFlipTimer);
   IP.mode="off";IP.state=null;IP.slots=[];IP.mySlot=-1;IP.lastSeq=-1;IP.accHand=-1;IP.waiting=false;
-  IP.flip="idle";IP.flipHand=-1;IP.bigSig="";
+  IP.flip="idle";IP.flipHand=-1;IP.dealFlip="idle";IP.dealHand=-1;IP.bigSig="";
   var ov=$("ipOverlay");if(!ov)return;
   ov.querySelector(".rt-ov-ttl").textContent="インディアンポーカー";
-  $("ipOvTx").innerHTML="スマホを額に当てるゲーム！ 画面いっぱいの大きなカードは、周りの人に見せるためのもの。<br>自分だけが見えないまま、みんなの反応とベットで読み合おう。最後はタップでゆっくりめくって答え合わせ。";
+  $("ipOvTx").innerHTML="スマホを額に当てるゲーム！ 画面いっぱいの大きなカードは、周りの人に見せるためのもの。<br>カードは裏向きで配られ、タップして3秒後にめくれる ― その間に額に当てよう。ショーダウンの答え合わせも同じ。";
   var ue=$("ipUe");if(ue){ue.hidden=true;ue.innerHTML="";}
   var cf=$("ipConfetti");if(cf)cf.innerHTML="";
   ov.hidden=false;
@@ -14146,17 +14192,14 @@ window.__ipReset=function(){
 window.__on("ipStartBtn",function(){ipStartSolo();});
 window.__on("ipBack",function(){window.__ipStop();mgShow("hub");});
 (function(){
-  /* showdown flip : tap once, ~3s slow turn, no result until it lands */
+  /* card flip : face-down at deal and at showdown alike.
+     Tap -> stays face-down 3s -> flips over (short animation). */
   var big=$("ipBig");
   if(big)big.addEventListener("click",function(){
     var st=IP.state;
-    if(!st||st.phase!=="show"||IP.flip!=="ready")return;
-    IP.flip="going";
-    ipRender();
-    clearTimeout(IP.flipT);
-    IP.flipT=setTimeout(function(){
-      if(IP.flip==="going"){IP.flip="done";ipRender();}
-    },3350);
+    if(!st)return;
+    if(st.phase==="bet"){ipFlipTap("dealFlip");ipRender();}
+    else if(st.phase==="show"){ipFlipTap("flip");ipRender();}
   });
   var acts=$("ipActions");
   if(acts)acts.addEventListener("click",function(ev){
