@@ -979,7 +979,13 @@ footer{color:#8d76b8}
 .stage-home .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .ticker{position:absolute;top:0;left:0;right:0;z-index:8;display:flex;align-items:stretch;box-shadow:0 4px 14px rgba(0,0,0,.45)}
 .tk-tag{flex:none;display:flex;align-items:center;background:linear-gradient(180deg,#8a1450,#4a0c2c);color:#ffe9a8;font-size:11px;font-weight:900;letter-spacing:.06em;padding:7px 10px;border-bottom:1px solid #d9a94f}
-.tk-tx{flex:1;display:flex;align-items:center;background:rgba(13,6,24,.82);color:#f2ecff;font-size:11.5px;font-weight:700;padding:7px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid rgba(217,169,79,.5)}
+.tk-tx{flex:1;min-width:0;display:flex;align-items:center;background:rgba(13,6,24,.82);color:#f2ecff;font-size:11.5px;font-weight:700;padding:7px 10px;white-space:nowrap;overflow:hidden;border-bottom:1px solid rgba(217,169,79,.5)}
+/* the notice text scrolls (marquee) inside the space left of the
+   fixed toggle chip at the ticker's right end — it can never run
+   underneath the chip or over the hero figures below */
+.tk-scroll{display:inline-block;white-space:nowrap;padding-left:100%;animation:tkScroll 18s linear infinite;will-change:transform}
+@keyframes tkScroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media (prefers-reduced-motion: reduce){.tk-scroll{animation:none;padding-left:0}}
 .cutbtn{position:absolute;background:none;border:none;padding:0;min-height:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cutbtn img{display:block;height:100%;max-width:none;object-fit:contain;filter:drop-shadow(0 14px 20px rgba(0,0,0,.55));pointer-events:none}
 .cutbtn:active img{filter:drop-shadow(0 14px 20px rgba(0,0,0,.55)) brightness(1.15)}
@@ -2657,9 +2663,8 @@ img{-webkit-user-drag:none}
 <div class="view on" id="v-home">
   <div class="stage-home pat-a">
     <img class="bgimg" src="assets/stage_bg.webp" alt="">
-    <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></div>
+    <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx"><span class="tk-scroll">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></span><button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-sw" aria-hidden="true">⇄</span><span class="hm-b">全身</span></button></div>
     <div id="collage"></div>
-    <button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-sw" aria-hidden="true">⇄</span><span class="hm-b">全身</span></button>
   </div>
 
 </div>
@@ -11210,19 +11215,22 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 .stage-home .lbl-p3{bottom:10px;right:10px}
 .stage-home .lbl-main{bottom:10px;left:50%;transform:translateX(-50%);font-size:12px;padding:4px 13px;
   background:linear-gradient(180deg,#3a2568,#1d0f38);border-color:#ffd97a;color:#ffe9a8}
-/* ---------- the toggle pill : top centre, in the band under the ticker.
-   Slim profile on purpose : in pat-b the centre figure's crown
-   reaches ~7% of the stage height, so the pill (top:31px, ~22px
-   tall, bottom ~53px) must end above that line — a full-height
-   pill here would sit on her hair. ---------- */
-.hero-mode-btn{position:absolute;z-index:9;left:50%;transform:translateX(-50%);top:31px;
-  display:flex;align-items:center;gap:6px;min-height:21px;padding:2px 12px;border-radius:99px;
+/* ---------- the toggle chip : a fixed chip at the RIGHT END of
+   the ticker row, OUTSIDE the hero image entirely. It used to be
+   a pill floating over the stage under the ticker, but on the
+   real device's short viewport (~390x670) the hero compresses,
+   the centre figure's crown rises, and the pill landed on her
+   hair in pat-b. Inside the ticker row it can never touch any
+   figure at any viewport height. The ticker text scrolls in the
+   space to its left (.tk-tx / .tk-scroll). ---------- */
+.hero-mode-btn{position:relative;flex:none;align-self:center;margin:0 6px 0 2px;
+  display:flex;align-items:center;gap:6px;min-height:26px;padding:3px 12px;border-radius:99px;
   border:1px solid rgba(255,217,122,.8);background:rgba(13,6,24,.85);color:#a892d8;
   font-family:"M PLUS Rounded 1c";font-size:11px;font-weight:800;letter-spacing:.05em;
-  box-shadow:0 6px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.16)}
+  box-shadow:0 2px 6px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.16)}
 .hero-mode-btn .on{color:#ffe9a8}
 .hero-mode-btn .hm-sw{color:#ffd97a;font-size:12px}
-.hero-mode-btn:active{transform:translateX(-50%) scale(.95)}
+.hero-mode-btn:active{transform:scale(.95)}
 /* ---------- pattern A : アップ (PSD measured) ----------
    Each button's BOX is a compact hit area over its figure's
    body core (face / torso), sized so no box's centre is ever
