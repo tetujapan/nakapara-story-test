@@ -18,6 +18,7 @@
 <script src="assets-data-15.js"></script>
 <script src="assets-data-16.js"></script>
 <script src="assets-data-17.js"></script>
+<script src="assets-data-18.js"></script>
 <script>
 /* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
    Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
@@ -2976,6 +2977,38 @@ img{-webkit-user-drag:none}
         <h3>🃏 ソリティア</h3>
         <p>クロンダイク ― タレントカードをAからKまで揃えよう！</p></span>
       </button>
+      <button type="button" class="mg-entry" id="mgToMatch3">
+        <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_match3.webp" alt="キラキラドリンク ― 宝石のように光るドリンクパネルの格子" style="object-position:50% 50%">
+        <span class="mg-shade"></span>
+        <span class="mg-badge">✨ スコア÷10コイン（最大500）</span>
+        <span class="mg-tx">
+        <h3>🍹 キラキラドリンク</h3>
+        <p>マッチ3 ― 90秒で3つ揃えて連鎖＆FEVER！</p></span>
+      </button>
+      <button type="button" class="mg-entry" id="mgToRensa">
+        <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_rensa.webp" alt="れんさカクテル ― ガラスの筒を落ちるカラフルなドリンク玉" style="object-position:50% 40%">
+        <span class="mg-shade"></span>
+        <span class="mg-badge">🍸 スコア÷8コイン（最大600）</span>
+        <span class="mg-tx">
+        <h3>🍸 れんさカクテル</h3>
+        <p>落ちもの連鎖 ― 同色4つで消して大連鎖！</p></span>
+      </button>
+      <button type="button" class="mg-entry" id="mgToChinchiro">
+        <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_chinchiro.webp" alt="チンチロ ― どんぶりの中で転がる3つのサイコロ" style="object-position:50% 50%">
+        <span class="mg-shade"></span>
+        <span class="mg-badge">🎲 2〜4人 ・ スマホを回して対戦</span>
+        <span class="mg-tx">
+        <h3>🎲 チンチロ</h3>
+        <p>1台を回してみんなで勝負 ― ポット総取り！</p></span>
+      </button>
+      <button type="button" class="mg-entry" id="mgToIndian">
+        <img loading="lazy" decoding="async" class="mg-bg" src="assets/mg_indian.webp" alt="インディアンポーカー ― スポットライトに立つ1枚のカードとコインの山" style="object-position:50% 50%">
+        <span class="mg-shade"></span>
+        <span class="mg-badge">🌐 オンライン対戦 ・ 最大4人</span>
+        <span class="mg-tx">
+        <h3>🃏 インディアンポーカー</h3>
+        <p>自分のカードだけ見えない ― 読み合いの勝負！</p></span>
+      </button>
     </section>
   </div>
   <!-- battle -->
@@ -3407,6 +3440,120 @@ img{-webkit-user-drag:none}
         </span>
       </div>
       <p class="note" style="margin-top:10px">遊び方：カードを1回タップするだけで、置ける場所へ自動で移動します（組札を優先、次に場札。ドラッグも移動先タップも不要）。動けないカードはタップすると軽く揺れます。山札タップで1枚めくり、空になったらタップで裏返して再利用。場札は赤（♥♦）と黒（♠♣）を交互に、Kから小さい順に重ねます。空いた列にはKだけ置けます。組札は同じマークでA→K。全部揃えばクリアで300コイン＋タイムボーナス！</p>
+    </section>
+  </div>
+  <!-- match-3 : kirakira drink -->
+  <div id="mgMatch3" style="display:none">
+    <section style="margin-top:0">
+      <button type="button" class="mg-back" id="m3Back">‹ ミニゲーム一覧へ</button>
+      <div class="sec-head"><h2>🍹 キラキラドリンク</h2><p>マッチ3 ・ 90秒スコアアタック</p></div>
+      <div class="m3-stage" id="m3Stage">
+        <div class="rt-hud"><span id="m3HudScore">SCORE 0</span><span id="m3HudFever">FEVERゲージ</span><span id="m3HudTime">⏱ 90</span></div>
+        <div class="m3-feverbar"><i id="m3FeverFill"></i><b id="m3FeverTx"></b></div>
+        <canvas id="m3Canvas" width="400" height="400"></canvas>
+        <div class="mg-confetti" id="m3Confetti"></div>
+        <div class="pz-bang" id="m3Bang" hidden></div>
+        <div class="sk-overlay" id="m3Overlay">
+          <div class="rt-ov-in">
+            <img class="kv-img" src="assets/mg_match3.webp" alt="キラキラドリンク ― 宝石のように光るドリンクパネル" style="object-position:50% 50%">
+            <p class="rt-ov-ttl">キラキラドリンク</p>
+            <p class="rt-ov-tx" id="m3OvTx">となり同士を入れ替えて、同じドリンクを3つ以上そろえよう！<br>連鎖で倍率アップ、ゲージ満タンでFEVER突入（スコア2倍）。</p>
+            <div id="m3Ue" hidden></div>
+            <button type="button" class="btn gold rt-start" id="m3StartBtn">▶ スタート</button>
+          </div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:8px">遊び方：パネルをタップ→となりのパネルをタップで入れ替え（なぞってスワイプでもOK）。3つ以上そろうと消えて上から補充、連続で消えると連鎖倍率が上がります。90秒のスコアでコイン報酬（スコア÷10、最大500）。</p>
+    </section>
+  </div>
+  <!-- falling chain : rensa cocktail -->
+  <div id="mgRensa" style="display:none">
+    <section style="margin-top:0">
+      <button type="button" class="mg-back" id="rnBack">‹ ミニゲーム一覧へ</button>
+      <div class="sec-head"><h2>🍸 れんさカクテル</h2><p>落ちもの連鎖パズル</p></div>
+      <div class="rn-stage" id="rnStage">
+        <div class="rt-hud"><span id="rnHudScore">SCORE 0</span><span id="rnHudChain">CHAIN 0</span><span id="rnHudBest">BEST 0</span></div>
+        <div class="rn-main">
+          <div class="rn-field"><canvas id="rnCanvas" width="300" height="600"></canvas></div>
+          <div class="rn-side">
+            <p class="rn-next-ttl">NEXT</p>
+            <div class="rn-next" id="rnNext"></div>
+            <p class="rn-side-note">同色4つ<br>つなげて<br>消そう！</p>
+          </div>
+        </div>
+        <div class="mg-confetti" id="rnConfetti"></div>
+        <div class="pz-bang" id="rnBang" hidden></div>
+        <div class="sk-overlay rn-ov" id="rnOverlay">
+          <div class="rt-ov-in">
+            <img class="kv-img" src="assets/mg_rensa.webp" alt="れんさカクテル ― 落ちてくるドリンク玉と連鎖の爆発" style="object-position:50% 40%">
+            <p class="rt-ov-ttl">れんさカクテル</p>
+            <p class="rt-ov-tx" id="rnOvTx">2個1組のドリンク玉を落として、同色4つ以上つなげて消そう！<br>落ちてまた消えると連鎖。てっぺんまで積み上がったらゲームオーバー。</p>
+            <div id="rnUe" hidden></div>
+            <button type="button" class="btn gold rt-start" id="rnStartBtn">▶ スタート</button>
+          </div>
+        </div>
+      </div>
+      <div class="rn-controls">
+        <button type="button" class="rn-btn" id="rnBtnL">◀</button>
+        <button type="button" class="rn-btn" id="rnBtnR">▶</button>
+        <button type="button" class="rn-btn rot" id="rnBtnRot">⟳ 回転</button>
+        <button type="button" class="rn-btn" id="rnBtnD">▼</button>
+      </div>
+    </section>
+  </div>
+  <!-- chinchiro : pass & play -->
+  <div id="mgChinchiro" style="display:none">
+    <section style="margin-top:0">
+      <button type="button" class="mg-back" id="cnBack">‹ ミニゲーム一覧へ</button>
+      <div class="sec-head"><h2>🎲 チンチロ</h2><p>スマホを回して 2〜4人対戦</p></div>
+      <div class="cn-stage" id="cnStage">
+        <div class="rt-hud"><span id="cnHudRound">ラウンド 1</span><span id="cnHudPot">POT 0</span><span id="cnHudTurn">―</span></div>
+        <div class="cn-balances" id="cnBalances"></div>
+        <div class="cn-bowlwrap" id="cnBowlWrap">
+          <img class="cn-bowl" src="assets/cn_bowl.webp" alt="チンチロのどんぶり">
+          <img class="cn-die d1" id="cnDie0" src="assets/cn_dice1.webp" alt="サイコロ">
+          <img class="cn-die d2" id="cnDie1" src="assets/cn_dice1.webp" alt="サイコロ">
+          <img class="cn-die d3" id="cnDie2" src="assets/cn_dice1.webp" alt="サイコロ">
+          <div class="cn-role" id="cnRole" hidden></div>
+        </div>
+        <p class="cn-msg" id="cnMsg">人数とアンティを選んでスタート！</p>
+        <div class="cn-actions" id="cnActions"></div>
+        <div class="mg-confetti" id="cnConfetti"></div>
+        <div class="sk-overlay cn-ov" id="cnOverlay">
+          <div class="rt-ov-in" id="cnOvIn"></div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:8px">役の強さ：ピンゾロ（1・1・1）＞ ゾロ目 ＞ シゴロ（4・5・6）＞ 目（ペア＋残りの目、6が最強）。ヒフミ（1・2・3）と目なしは負け役。全員負け役ならポットは次ラウンドへ持ち越し。同点は該当者だけで決着ロール！</p>
+    </section>
+  </div>
+  <!-- indian poker : online multiplayer -->
+  <div id="mgIndian" style="display:none">
+    <section style="margin-top:0">
+      <button type="button" class="mg-back" id="ipBack">‹ ミニゲーム一覧へ</button>
+      <div class="sec-head"><h2>🃏 インディアンポーカー</h2><p>オンライン対戦 ・ 自分のカードだけ見えない</p></div>
+      <div class="ip-stage" id="ipStage">
+        <div class="rt-hud"><span id="ipHudHand">HAND ―</span><span id="ipHudPot">POT 0</span><span id="ipHudBet">ベット ―</span></div>
+        <div class="ip-table" id="ipTable">
+          <div class="ip-foes" id="ipFoes"></div>
+          <div class="ip-center">
+            <p class="ip-msg" id="ipMsg">対戦相手を待っています</p>
+            <p class="ip-line" id="ipLine"></p>
+          </div>
+          <div class="ip-me" id="ipMe"></div>
+        </div>
+        <div class="ip-actions" id="ipActions"></div>
+        <div class="mg-confetti" id="ipConfetti"></div>
+        <div class="sk-overlay ip-ov" id="ipOverlay">
+          <div class="rt-ov-in">
+            <img class="kv-img" src="assets/mg_indian.webp" alt="インディアンポーカー ― スポットライトに立つ1枚のカード" style="object-position:50% 50%">
+            <p class="rt-ov-ttl">インディアンポーカー</p>
+            <p class="rt-ov-tx" id="ipOvTx">全員の額にカード1枚。みんなのカードは見えるのに、自分のだけ見えない！<br>相手のカードとベットの様子（ブラフも）を読み切って、ポットを取れ。</p>
+            <div id="ipUe" hidden></div>
+            <button type="button" class="btn gold rt-start" id="ipStartBtn">▶ 対戦をはじめる（1人だとCPU対戦）</button>
+          </div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:8px">遊び方：アンティ10コインで参加。自分の番にフォールド（降りる）／コール（合わせる）／レイズ（+20／+50上乗せ）。カードはAが最強の単枚勝負、ショーダウンで一番強いカードがポット総取り（同点は分け合い）。オンラインは上のパネルから ― 空き枠はCPUが入り、切断時はCPUが引き継ぎます。</p>
     </section>
   </div>
 </div>
@@ -12508,6 +12655,1389 @@ document.addEventListener("pointercancel",function(){
   },120);
 })();
 </script>
+<style>
+/* ============================================================
+   v94 — PUZZLE & PARTY PACK : match-3 / rensa / chinchiro /
+   indian poker. Stages follow the suika pattern (gold frame,
+   HUD bar, full-stage intro overlay), play screens never
+   scroll, and every loop stops on exit via __xxStop hooks.
+   ============================================================ */
+.pz-bang{position:absolute;left:0;right:0;top:34%;z-index:8;text-align:center;pointer-events:none;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:44px;line-height:1.15;letter-spacing:.02em;
+  color:#ffe98a;-webkit-text-stroke:2px rgba(122,52,0,.9);
+  text-shadow:0 3px 0 #b35c00,0 0 26px rgba(255,190,40,.85),0 6px 18px rgba(0,0,0,.6)}
+.pz-bang.show{animation:pzBangPop .9s cubic-bezier(.2,1.6,.4,1) both}
+.pz-bang.fever{color:#ff9de2;-webkit-text-stroke:2px rgba(120,0,70,.9);text-shadow:0 3px 0 #a1005e,0 0 30px rgba(255,80,190,.9),0 6px 18px rgba(0,0,0,.6)}
+@keyframes pzBangPop{0%{transform:scale(.3) rotate(-4deg);opacity:0}35%{transform:scale(1.18) rotate(1.5deg);opacity:1}60%{transform:scale(1)}100%{transform:scale(1.04);opacity:1}}
+/* ---------- MATCH-3 ---------- */
+#mgMatch3 .mg-back,#mgRensa .mg-back,#mgChinchiro .mg-back,#mgIndian .mg-back{min-height:24px;padding:2px 2px}
+#mgMatch3 .sec-head,#mgRensa .sec-head,#mgChinchiro .sec-head,#mgIndian .sec-head{margin-bottom:2px}
+#mgMatch3 .sec-head h2,#mgRensa .sec-head h2,#mgChinchiro .sec-head h2,#mgIndian .sec-head h2{font-size:15px}
+.m3-stage{position:relative;margin:3px auto 0;width:min(100%,calc(100dvh - 318px));border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:#150b28;box-shadow:0 16px 32px rgba(0,0,0,.5);-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.m3-stage canvas{display:block;width:100%;height:auto;touch-action:none;background:linear-gradient(180deg,#2a1454,#170a30)}
+.m3-feverbar{position:relative;height:12px;background:#0d0620;border-bottom:1px solid rgba(255,255,255,.08)}
+.m3-feverbar i{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#ff5ca8,#ffd23f);transition:width .18s ease}
+.m3-feverbar b{position:absolute;right:6px;top:-1px;font-size:9.5px;font-weight:900;color:#ffb3dd;letter-spacing:.08em}
+.m3-stage.fever-on{border-color:#ff5ca8;box-shadow:0 0 0 2px rgba(255,92,168,.45),0 16px 32px rgba(0,0,0,.5)}
+#m3Overlay .rt-ov-in,#rnOverlay .rt-ov-in{overflow:hidden}
+/* ---------- RENSA ---------- */
+.rn-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:#150b28;box-shadow:0 16px 32px rgba(0,0,0,.5);-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.rn-main{display:flex;justify-content:center;gap:10px;padding:8px 8px 10px;background:linear-gradient(180deg,#241147,#150a2c)}
+.rn-field{border:2px solid rgba(255,217,122,.55);border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#1d0c3e,#120826);line-height:0}
+.rn-field canvas{display:block;height:min(392px,calc(100dvh - 330px));width:auto;touch-action:none}
+.rn-side{width:64px;display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:2px}
+.rn-next-ttl{font-size:11px;font-weight:900;color:#ffe9a8;letter-spacing:.14em;margin:0}
+.rn-next{display:flex;flex-direction:column;gap:5px;align-items:center;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.16);border-radius:12px;padding:7px 6px}
+.rn-next .rn-ball{width:34px;height:34px;border-radius:50%;overflow:hidden;border:2.5px solid #fff3;box-shadow:0 3px 7px rgba(0,0,0,.5)}
+.rn-next .rn-ball img{width:100%;height:100%;object-fit:cover}
+.rn-side-note{font-size:10px;font-weight:800;color:var(--ink2);line-height:1.6;text-align:center;margin:2px 0 0}
+.rn-ov{top:31px}
+.rn-controls{display:flex;gap:9px;margin-top:9px}
+.rn-btn{flex:1;min-height:58px;border-radius:14px;border:1.5px solid rgba(255,217,122,.65);background:linear-gradient(180deg,#3a2070,#241147);color:#ffe9a8;font-size:21px;font-weight:900;font-family:inherit;box-shadow:0 6px 14px rgba(0,0,0,.45);cursor:pointer}
+.rn-btn.rot{font-size:16px}
+.rn-btn.on{background:linear-gradient(180deg,#ffd23f,#d99a06);color:#50350a}
+.rn-btn:active{transform:scale(.96)}
+/* ---------- CHINCHIRO ---------- */
+.cn-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:linear-gradient(180deg,#241147,#120826);box-shadow:0 16px 32px rgba(0,0,0,.5);padding-bottom:12px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.cn-balances{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px 0}
+.cn-bal{flex:1;min-width:70px;text-align:center;font-size:11px;font-weight:800;color:#c9b6ea;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:5px 4px}
+.cn-bal b{display:block;font-size:14px;color:#fff}
+.cn-bal.turn{border-color:#ffd23f;color:#ffe9a8;box-shadow:0 0 0 1.5px rgba(255,210,63,.5)}
+.cn-bal.win{border-color:#ffd23f;background:rgba(255,210,63,.16);color:#ffe9a8}
+.cn-bowlwrap{position:relative;width:min(82%,300px);margin:8px auto 0}
+#cnOverlay .rt-ov-in{gap:6px;padding:10px 12px;overflow:hidden}
+#cnOverlay .kv-img{height:88px}
+#cnOverlay .rt-ov-ttl{font-size:21px}
+#cnOverlay .rt-ov-tx{font-size:11.5px;line-height:1.5}
+#cnOverlay .rt-start{min-height:48px;padding:10px 24px;font-size:14.5px}
+#cnOverlay .cn-choice{min-height:44px;padding:6px 14px}
+.cn-bowl{display:block;width:100%;border-radius:50%;box-shadow:0 14px 30px rgba(0,0,0,.55)}
+.cn-die{position:absolute;width:23%;filter:drop-shadow(0 5px 6px rgba(0,0,0,.5));transition:transform .18s ease}
+.cn-die.d1{left:24%;top:34%}
+.cn-die.d2{left:52%;top:30%}
+.cn-die.d3{left:39%;top:55%}
+.cn-die.rolling{animation:cnShake .12s linear infinite}
+.cn-die.fly{animation:cnFly .55s ease-in forwards}
+@keyframes cnShake{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(3px,-4px) rotate(24deg)}50%{transform:translate(-3px,2px) rotate(-18deg)}75%{transform:translate(2px,3px) rotate(30deg)}100%{transform:translate(-2px,-3px) rotate(-24deg)}}
+@keyframes cnFly{to{transform:translate(150px,-190px) rotate(340deg) scale(.7);opacity:0}}
+.cn-role{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:5;white-space:nowrap;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:37px;color:#ffe98a;-webkit-text-stroke:2px rgba(122,52,0,.9);
+  text-shadow:0 3px 0 #b35c00,0 0 26px rgba(255,190,40,.9),0 6px 16px rgba(0,0,0,.65)}
+.cn-role.show{animation:pzBangPop .8s cubic-bezier(.2,1.6,.4,1) both}
+.cn-role.lose{color:#b9a8e8;-webkit-text-stroke:2px rgba(30,10,60,.9);text-shadow:0 3px 0 #241047,0 4px 12px rgba(0,0,0,.7)}
+.cn-role.mid{color:#aef3ff;-webkit-text-stroke:2px rgba(0,60,90,.9);text-shadow:0 3px 0 #065a77,0 0 22px rgba(90,200,255,.8),0 6px 16px rgba(0,0,0,.6)}
+.cn-msg{text-align:center;font-size:13.5px;font-weight:800;color:#f3eafd;margin:10px 12px 0;line-height:1.6;min-height:22px}
+.cn-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:10px 12px 0}
+.cn-actions .btn{min-height:52px;padding:10px 18px;font-size:14.5px}
+.cn-ov .rt-ov-in{gap:9px}
+.cn-ovname{font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:27px;color:#ffe98a;text-shadow:0 3px 0 rgba(140,60,0,.8),0 0 20px rgba(255,180,0,.55);margin:0;text-align:center;line-height:1.4}
+.cn-choices{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.cn-choice{min-width:64px;min-height:48px;padding:8px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07);color:#fff;font-weight:900;font-size:15px;font-family:inherit;cursor:pointer}
+.cn-choice.on{border-color:#ffd23f;background:linear-gradient(180deg,#ffd23f,#d99a06);color:#50350a}
+.cn-result{width:100%;max-width:300px;margin:0 auto}
+.cn-result .cn-bal{margin-top:5px;text-align:left;padding:7px 10px}
+.cn-result .cn-bal b{display:inline;font-size:12.5px}
+/* ---------- INDIAN POKER ---------- */
+.ip-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:radial-gradient(120% 100% at 50% 0%,#2c1656,#140a2c 75%);box-shadow:0 16px 32px rgba(0,0,0,.5);padding-bottom:11px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.ip-table{padding:10px 10px 0}
+.ip-foes{display:flex;gap:8px;justify-content:center;min-height:118px}
+.ip-seat{flex:1;max-width:112px;text-align:center;position:relative}
+.ip-face{position:relative;width:74px;height:88px;margin:12px auto 0;border-radius:12px;overflow:visible;border:1.5px solid rgba(255,255,255,.25);background:#1c0d3a}
+.ip-face img{width:100%;height:100%;object-fit:cover;object-position:50% 8%;border-radius:11px;display:block}
+.ip-face .ip-card{position:absolute;left:50%;top:-17px;transform:translateX(-50%) scale(.58);transform-origin:top center;z-index:3;filter:drop-shadow(0 4px 6px rgba(0,0,0,.55))}
+.ip-seat.folded .ip-face img{filter:grayscale(.8) brightness(.6)}
+.ip-seat.folded .ip-card{opacity:.45}
+.ip-seat.turn .ip-face{border-color:#ffd23f;box-shadow:0 0 0 2px rgba(255,210,63,.65),0 0 18px rgba(255,210,63,.4)}
+.ip-seat.winner .ip-face{border-color:#ffd23f;box-shadow:0 0 0 3px rgba(255,210,63,.8),0 0 26px rgba(255,210,63,.65)}
+.ip-name{font-size:11px;font-weight:900;color:#fff;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ip-stat{font-size:10px;font-weight:800;color:#c9b6ea;line-height:1.5;min-height:15px}
+.ip-stat b{color:#ffe9a8}
+.ip-say{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 2px);z-index:6;width:max-content;max-width:150px;background:#fff;color:#241047;font-size:10.5px;font-weight:800;line-height:1.45;border-radius:10px;padding:5px 8px;box-shadow:0 4px 10px rgba(0,0,0,.4)}
+.ip-say:after{content:"";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff;border-bottom:0}
+.ip-center{text-align:center;padding:9px 6px 2px}
+.ip-msg{font-size:13.5px;font-weight:900;color:#ffe9a8;margin:0;line-height:1.55}
+.ip-line{font-size:11.5px;font-weight:700;color:#c9b6ea;margin:3px 0 0;line-height:1.55;min-height:17px}
+.ip-me{display:flex;gap:11px;align-items:center;justify-content:center;margin-top:7px;min-height:104px}
+.ip-me .ip-face{width:88px;height:104px;margin-top:14px}
+.ip-meinfo{text-align:left}
+.ip-meinfo .ip-name{font-size:13.5px;margin-top:0}
+.ip-meinfo .ip-stat{font-size:11.5px}
+.ip-actions{display:flex;gap:8px;flex-wrap:wrap;padding:11px 11px 0;min-height:63px}
+.ip-actions .btn{flex:1;min-height:52px;font-size:14px;padding:9px 6px;white-space:nowrap}
+.ip-actions .ip-wait{flex:1;text-align:center;font-size:12.5px;font-weight:800;color:#c9b6ea;padding:12px 0}
+#ipOverlay .rt-ov-in{overflow-y:auto;gap:7px;padding:10px 12px}
+#ipOverlay .kv-img{height:96px}
+#ipOverlay .rt-ov-ttl{font-size:21px}
+#ipOverlay .rt-ov-tx{font-size:11.5px;line-height:1.55}
+@media (prefers-reduced-motion: reduce){
+  .pz-bang.show,.cn-role.show,.cn-die.rolling,.cn-die.fly{animation:none}
+}
+</style>
+
+<script>
+/* ================================================================
+   v94 — PUZZLE & PARTY PACK
+   - MATCH-3 "キラキラドリンク" : 8x8, 90 second score attack,
+     chains multiply, FEVER at full gauge doubles the score.
+   - RENSA "れんさカクテル" : falling pairs, 4+ connected pops,
+     chain reactions, game over at the ceiling.
+   - CHINCHIRO : pass & play on one phone, 2-4 players, antes
+     into a pot, strongest role takes all, ties re-roll.
+   - INDIAN POKER : online via the MP room base (quick match /
+     4-digit code), host authoritative, CPU fills empty slots
+     and takes over dropouts. Your own forehead card is never
+     rendered on your client until the showdown.
+   All four follow the house rules : full-stage intro overlay,
+   one screen with no scroll, __xxStop/__xxReset hooks so
+   leaving a screen stops and resets the game completely.
+   ================================================================ */
+(function(){
+"use strict";
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function pzConfetti(host,n){
+  if(!host)return;
+  host.innerHTML="";
+  var cols=["#ffd23f","#ff5c9e","#59c2ff","#2fbf71","#ff9f1e","#e9dcff"];
+  for(var i=0;i<n;i++){
+    var e=document.createElement("i");
+    e.style.left=(Math.random()*100)+"%";
+    e.style.background=cols[i%cols.length];
+    e.style.animationDelay=(Math.random()*0.7)+"s";
+    e.style.transform="rotate("+(Math.random()*160-80)+"deg)";
+    host.appendChild(e);
+  }
+  setTimeout(function(){if(host)host.innerHTML="";},3400);
+}
+function pzBang(el,txt,cls){
+  if(!el)return;
+  el.textContent=txt;
+  el.className="pz-bang"+(cls?" "+cls:"");
+  el.hidden=false;
+  void el.offsetWidth;
+  el.classList.add("show");
+  clearTimeout(el._t);
+  el._t=setTimeout(function(){el.hidden=true;},1250);
+}
+
+/* ==================== MATCH-3 : kirakira drink ==================== */
+var M3={on:false,raf:0,_lt:0,_acc:0,state:"ready",grid:[],sel:null,busy:false,score:0,time:90,
+  chain:0,fever:0,feverOn:0,fx:[],paid:false,swp:null,ptr:null};
+var M3_N=8,M3_CELL=50,M3_TYPES=6;
+var M3_IMGS=[];
+(function(){for(var i=0;i<M3_TYPES;i++){var im=new Image();im.src="assets/m3_p"+i+".webp";M3_IMGS.push(im);}})();
+function m3Tile(t){return {t:t,ox:0,oy:0,sc:1,dead:false};}
+function m3RandT(){return Math.floor(Math.random()*M3_TYPES);}
+function m3NewBoard(){
+  var r,c,tries;
+  for(r=0;r<M3_N;r++){M3.grid.push([]);for(c=0;c<M3_N;c++){
+    do{tries=m3RandT();}
+    while((c>=2&&M3.grid[r][c-1].t===tries&&M3.grid[r][c-2].t===tries)||
+          (r>=2&&M3.grid[r-1][c].t===tries&&M3.grid[r-2][c].t===tries));
+    M3.grid[r].push(m3Tile(tries));
+  }}
+  if(!m3HasMove()){M3.grid=[];m3NewBoard();}
+}
+function m3Matches(){
+  var hit={},r,c,k;
+  for(r=0;r<M3_N;r++){c=0;while(c<M3_N){
+    var t=M3.grid[r][c].t;k=c;while(k<M3_N&&M3.grid[r][k].t===t)k++;
+    if(k-c>=3)for(var j=c;j<k;j++)hit[r+","+j]=1;
+    c=k;
+  }}
+  for(c=0;c<M3_N;c++){r=0;while(r<M3_N){
+    var t2=M3.grid[r][c].t;k=r;while(k<M3_N&&M3.grid[k][c].t===t2)k++;
+    if(k-r>=3)for(var j2=r;j2<k;j2++)hit[j2+","+c]=1;
+    r=k;
+  }}
+  return hit;
+}
+function m3HasMove(){
+  var r,c;
+  function swapT(a,b,d,e){var x=M3.grid[a][b].t;M3.grid[a][b].t=M3.grid[d][e].t;M3.grid[d][e].t=x;}
+  for(r=0;r<M3_N;r++)for(c=0;c<M3_N;c++){
+    if(c+1<M3_N){swapT(r,c,r,c+1);var h=m3Matches();swapT(r,c,r,c+1);if(Object.keys(h).length)return true;}
+    if(r+1<M3_N){swapT(r,c,r+1,c);var h2=m3Matches();swapT(r,c,r+1,c);if(Object.keys(h2).length)return true;}
+  }
+  return false;
+}
+function m3Hud(){
+  var s=$("m3HudScore");if(s)s.textContent="SCORE "+M3.score;
+  var t=$("m3HudTime");if(t)t.textContent="⏱ "+Math.max(0,Math.ceil(M3.time));
+  var f=$("m3HudFever");if(f)f.textContent=M3.feverOn>0?("🔥 FEVER "+Math.ceil(M3.feverOn)+"秒"):"FEVERゲージ";
+  var fill=$("m3FeverFill");if(fill)fill.style.width=(M3.feverOn>0?Math.min(100,M3.feverOn*10):M3.fever)+"%";
+  var ft=$("m3FeverTx");if(ft)ft.textContent=M3.feverOn>0?"FEVER!! スコア2倍":"";
+  var st=$("m3Stage");if(st)st.classList.toggle("fever-on",M3.feverOn>0);
+}
+function m3Swap(a,b){
+  /* a,b : [r,c] */
+  var t1=M3.grid[a[0]][a[1]],t2=M3.grid[b[0]][b[1]];
+  M3.grid[a[0]][a[1]]=t2;M3.grid[b[0]][b[1]]=t1;
+  t1.ox=(b[1]-a[1])*M3_CELL;t1.oy=(b[0]-a[0])*M3_CELL;
+  t2.ox=(a[1]-b[1])*M3_CELL;t2.oy=(a[0]-b[0])*M3_CELL;
+  M3.busy=true;M3.swp={a:a,b:b,t:9};
+  M3.sel=null;
+}
+function m3AfterSwap(){
+  var hit=m3Matches();
+  if(Object.keys(hit).length){M3.chain=0;m3Pop(hit);}
+  else{
+    var s=M3.swp;
+    var t1=M3.grid[s.b[0]][s.b[1]],t2=M3.grid[s.a[0]][s.a[1]];
+    M3.grid[s.a[0]][s.a[1]]=t1;M3.grid[s.b[0]][s.b[1]]=t2;
+    t1.ox=(s.a[1]-s.b[1])*M3_CELL;t1.oy=(s.a[0]-s.b[0])*M3_CELL;
+    t2.ox=(s.b[1]-s.a[1])*M3_CELL;t2.oy=(s.b[0]-s.a[0])*M3_CELL;
+    M3.swp=null;M3.busy=true;
+    setTimeout(function(){M3.busy=false;},170);
+  }
+  M3.swp=null;
+}
+function m3Pop(hit){
+  M3.chain++;
+  var keys=Object.keys(hit),n=keys.length,cx=0,cy=0,i;
+  for(i=0;i<keys.length;i++){
+    var p=keys[i].split(","),r=+p[0],c=+p[1];
+    M3.grid[r][c].dead=true;
+    cx+=c;cy+=r;
+  }
+  var mult=M3.chain*(M3.feverOn>0?2:1);
+  var pts=n*10*mult;
+  M3.score+=pts;
+  M3.fx.push({x:(cx/n+0.5)*M3_CELL,y:(cy/n+0.5)*M3_CELL,txt:"+"+pts,life:50,max:50,col:M3.chain>=2?"#ffd23f":"#ffffff",size:M3.chain>=2?30:22});
+  if(M3.chain>=2)pzBang($("m3Bang"),M3.chain+"連鎖！","show");
+  if(M3.feverOn<=0){
+    M3.fever=Math.min(100,M3.fever+n*4+M3.chain*3);
+    if(M3.fever>=100){M3.feverOn=10;pzBang($("m3Bang"),"🔥 FEVER突入！","fever");}
+  }
+  M3.busy=true;
+  m3Hud();
+}
+function m3Collapse(){
+  var r,c;
+  for(c=0;c<M3_N;c++){
+    var write=M3_N-1;
+    for(r=M3_N-1;r>=0;r--){
+      var tl=M3.grid[r][c];
+      if(tl&&!tl.dead){
+        if(write!==r){M3.grid[write][c]=tl;tl.oy=(r-write)*M3_CELL;M3.grid[r][c]=null;}
+        write--;
+      }else if(tl){M3.grid[r][c]=null;}
+    }
+    var spawn=0;
+    for(r=write;r>=0;r--){
+      var nt=m3Tile(m3RandT());
+      nt.oy=-(write-r+1+spawn)*M3_CELL*0+(-( (write+1) - r ))*M3_CELL - (spawn)*0;
+      nt.oy=-(write+1-r)*M3_CELL;
+      M3.grid[r][c]=nt;spawn++;
+    }
+  }
+}
+function m3Settled(){
+  for(var r=0;r<M3_N;r++)for(var c=0;c<M3_N;c++){
+    var tl=M3.grid[r][c];
+    if(!tl)return false;
+    if(Math.abs(tl.ox)>2.5||Math.abs(tl.oy)>2.5)return false;
+    if(tl.dead&&tl.sc>0.06)return false;
+  }
+  return true;
+}
+function m3Step(){
+  var r,c;
+  for(r=0;r<M3_N;r++)for(c=0;c<M3_N;c++){
+    var tl=M3.grid[r][c];if(!tl)continue;
+    var sp=620/60;
+    if(tl.ox>0)tl.ox=Math.max(0,tl.ox-sp);else if(tl.ox<0)tl.ox=Math.min(0,tl.ox+sp);
+    if(tl.oy>0)tl.oy=Math.max(0,tl.oy-sp);else if(tl.oy<0)tl.oy=Math.min(0,tl.oy+sp);
+    if(tl.dead&&tl.sc>0)tl.sc=Math.max(0,tl.sc-0.09);
+  }
+  for(var i=M3.fx.length-1;i>=0;i--){M3.fx[i].life--;M3.fx[i].y-=0.7;if(M3.fx[i].life<=0)M3.fx.splice(i,1);}
+  if(M3.state!=="play")return;
+  if(M3.feverOn>0){M3.feverOn-=1/60;if(M3.feverOn<=0){M3.feverOn=0;M3.fever=0;}}
+  M3.time-=1/60;
+  if(M3.time<=0){M3.time=0;m3Hud();m3Finish();return;}
+  if(M3.swp){M3.swp.t--;if(M3.swp.t<=0)m3AfterSwap();}
+  else if(M3.busy&&m3Settled()){
+    var anyDead=false;
+    for(r=0;r<M3_N;r++)for(c=0;c<M3_N;c++)if(M3.grid[r][c]&&M3.grid[r][c].dead)anyDead=true;
+    if(anyDead){m3Collapse();}
+    else{
+      var hit=m3Matches();
+      if(Object.keys(hit).length){m3Pop(hit);}
+      else{
+        M3.busy=false;M3.chain=0;
+        if(!m3HasMove()){
+          pzBang($("m3Bang"),"シャッフル！","");
+          var vals=[];
+          for(r=0;r<M3_N;r++)for(c=0;c<M3_N;c++)vals.push(M3.grid[r][c].t);
+          do{
+            for(var k=vals.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var tmp=vals[k];vals[k]=vals[j];vals[j]=tmp;}
+            var idx=0;for(r=0;r<M3_N;r++)for(c=0;c<M3_N;c++)M3.grid[r][c].t=vals[idx++];
+          }while(Object.keys(m3Matches()).length||!m3HasMove());
+        }
+      }
+    }
+  }
+  if((M3._h=(M3._h||0)+1)%12===0)m3Hud();
+}
+function m3Draw(){
+  var cv=$("m3Canvas");if(!cv)return;
+  var g=cv.getContext("2d");mgDPR(g,cv,2);
+  var bg=g.createLinearGradient(0,0,0,400);
+  if(M3.feverOn>0){bg.addColorStop(0,"#4a1450");bg.addColorStop(1,"#2a0a38");}
+  else{bg.addColorStop(0,"#2a1454");bg.addColorStop(1,"#170a30");}
+  g.fillStyle=bg;g.fillRect(0,0,400,400);
+  g.fillStyle="rgba(255,255,255,.045)";
+  for(var r=0;r<M3_N;r++)for(var c=0;c<M3_N;c++)if((r+c)%2===0)g.fillRect(c*M3_CELL,r*M3_CELL,M3_CELL,M3_CELL);
+  for(r=0;r<M3_N;r++)for(c=0;c<M3_N;c++){
+    var tl=M3.grid[r][c];if(!tl)continue;
+    var x=c*M3_CELL+tl.ox,y=r*M3_CELL+tl.oy;
+    var sc=tl.sc;
+    var w=M3_CELL*sc,h=M3_CELL*sc,ix=x+(M3_CELL-w)/2+2,iy=y+(M3_CELL-h)/2+2;
+    var img=M3_IMGS[tl.t];
+    if(img&&img.complete&&img.naturalWidth)g.drawImage(img,ix,iy,w-4,h-4);
+    else{g.fillStyle="#3a2470";g.fillRect(ix,iy,w-4,h-4);}
+    if(M3.sel&&M3.sel[0]===r&&M3.sel[1]===c){
+      g.strokeStyle="#ffd23f";g.lineWidth=3.5;
+      g.strokeRect(x+2.5,y+2.5,M3_CELL-5,M3_CELL-5);
+    }
+  }
+  for(var i=0;i<M3.fx.length;i++){
+    var f=M3.fx[i],al=Math.max(0,f.life/f.max);
+    g.save();g.globalAlpha=al;g.font="900 "+f.size+"px 'M PLUS Rounded 1c',sans-serif";
+    g.textAlign="center";g.textBaseline="middle";
+    g.lineWidth=5;g.strokeStyle="rgba(80,30,0,.85)";g.strokeText(f.txt,f.x,f.y);
+    g.fillStyle=f.col;g.fillText(f.txt,f.x,f.y);g.restore();
+  }
+}
+function m3Loop(ts){if(!M3.on)return;mgFixed(M3,ts||0,m3Step);m3Draw();M3.raf=requestAnimationFrame(m3Loop);}
+function m3LoopStart(){if(M3.on)return;M3.on=true;M3._lt=0;M3._acc=0;M3.raf=requestAnimationFrame(m3Loop);}
+function m3Start(){
+  M3.grid=[];m3NewBoard();
+  M3.score=0;M3.time=90;M3.chain=0;M3.fever=0;M3.feverOn=0;M3.fx=[];M3.sel=null;M3.busy=false;M3.swp=null;M3.paid=false;
+  M3.state="play";
+  $("m3Overlay").hidden=true;
+  var ue=$("m3Ue");ue.hidden=true;ue.innerHTML="";
+  $("m3Confetti").innerHTML="";
+  m3Hud();m3LoopStart();
+}
+function m3Finish(){
+  if(M3.state!=="play")return;
+  M3.state="over";M3.busy=false;
+  var reward=Math.max(0,Math.min(500,Math.floor(M3.score/10)));
+  var ov=$("m3Overlay");
+  ov.querySelector(".rt-ov-ttl").textContent="⏱ タイムアップ！";
+  $("m3OvTx").innerHTML="SCORE <b>"+M3.score+"</b><br>報酬 <b>"+reward+"コイン</b>";
+  $("m3StartBtn").textContent="▶ もう一度";
+  ov.hidden=false;
+  if(M3.score>=1500)pzConfetti($("m3Confetti"),26);
+  if(reward>0&&!M3.paid){
+    M3.paid=true;
+    setTimeout(function(){ueStack($("m3Ue"),ueChunks(reward),{onChunk:function(a){S.coin+=a;renderStats();}});},450);
+  }
+}
+window.__m3Stop=function(){M3.on=false;M3._lt=0;M3._acc=0;if(M3.raf)cancelAnimationFrame(M3.raf);};
+window.__m3Reset=function(){
+  M3.state="ready";M3.grid=[];m3NewBoard();M3.score=0;M3.time=90;M3.chain=0;M3.fever=0;M3.feverOn=0;M3.fx=[];M3.sel=null;M3.busy=false;M3.swp=null;M3.paid=false;
+  var ov=$("m3Overlay");if(!ov)return;
+  ov.querySelector(".rt-ov-ttl").textContent="キラキラドリンク";
+  $("m3OvTx").innerHTML="となり同士を入れ替えて、同じドリンクを3つ以上そろえよう！<br>連鎖で倍率アップ、ゲージ満タンでFEVER突入（スコア2倍）。";
+  $("m3StartBtn").textContent="▶ スタート";
+  var ue=$("m3Ue");ue.hidden=true;ue.innerHTML="";
+  $("m3Confetti").innerHTML="";
+  ov.hidden=false;
+  m3Hud();try{m3Draw();}catch(e){}
+};
+window.__on("m3StartBtn",m3Start);
+window.__on("m3Back",function(){window.__m3Stop();mgShow("hub");});
+(function(){
+  var cv=$("m3Canvas");if(!cv)return;
+  function cellOf(e){
+    var r=cv.getBoundingClientRect();
+    var x=(e.clientX-r.left)*400/r.width,y=(e.clientY-r.top)*400/r.height;
+    var c=Math.floor(x/M3_CELL),rr=Math.floor(y/M3_CELL);
+    if(rr<0||rr>=M3_N||c<0||c>=M3_N)return null;
+    return [rr,c];
+  }
+  cv.addEventListener("pointerdown",function(e){
+    if(M3.state!=="play"||M3.busy)return;
+    var cl=cellOf(e);if(!cl)return;
+    M3.ptr={cell:cl,x:e.clientX,y:e.clientY,dragged:false};
+    if(M3.sel){
+      var d=Math.abs(M3.sel[0]-cl[0])+Math.abs(M3.sel[1]-cl[1]);
+      if(d===1){m3Swap(M3.sel,cl);M3.ptr=null;return;}
+    }
+    M3.sel=cl;
+  });
+  cv.addEventListener("pointermove",function(e){
+    if(!M3.ptr||M3.state!=="play"||M3.busy)return;
+    var dx=e.clientX-M3.ptr.x,dy=e.clientY-M3.ptr.y;
+    if(Math.abs(dx)<24&&Math.abs(dy)<24)return;
+    var dir=Math.abs(dx)>Math.abs(dy)?[0,dx>0?1:-1]:[dy>0?1:-1,0];
+    var t=[M3.ptr.cell[0]+dir[0],M3.ptr.cell[1]+dir[1]];
+    M3.ptr.dragged=true;M3.ptr=null;
+    if(t[0]>=0&&t[0]<M3_N&&t[1]>=0&&t[1]<M3_N)m3Swap(M3.sel||cellOf(e)||t,t);
+  });
+  cv.addEventListener("pointerup",function(){M3.ptr=null;});
+  cv.addEventListener("pointercancel",function(){M3.ptr=null;});
+})();
+
+/* ==================== RENSA : falling chain puzzle ==================== */
+var RN={on:false,raf:0,_lt:0,_acc:0,state:"ready",grid:[],pair:null,nextA:1,nextB:2,score:0,best:0,
+  maxChain:0,chain:0,fallT:0,popSet:null,popT:0,paid:false,soft:false,repT:{}};
+var RN_C=6,RN_R=12,RN_CELL=50;
+var RN_TYPES=[
+  {img:"assets/sk_drink_shot.webp",col:"#59c2ff"},
+  {img:"assets/sk_drink_lemon.webp",col:"#ffd23f"},
+  {img:"assets/sk_drink_wine.webp",col:"#ff5c7a"},
+  {img:"assets/sk_drink_beer.webp",col:"#ff9f1e"},
+  {img:"assets/sk_drink_champagne.webp",col:"#2fbf71"}
+];
+var RN_IMGS=[];
+(function(){for(var i=0;i<RN_TYPES.length;i++){var im=new Image();im.src=RN_TYPES[i].img;RN_IMGS.push(im);}})();
+var RN_MULT=[0,1,3,6,10,15,21,28];
+function rnRandT(){return 1+Math.floor(Math.random()*RN_TYPES.length);}
+function rnEmptyGrid(){var g=[],r;for(r=0;r<RN_R;r++)g.push([0,0,0,0,0,0]);return g;}
+function rnHud(){
+  var s=$("rnHudScore");if(s)s.textContent="SCORE "+RN.score;
+  var c=$("rnHudChain");if(c)c.textContent="MAX CHAIN "+RN.maxChain;
+  var b=$("rnHudBest");if(b)b.textContent="BEST "+RN.best;
+  var nx=$("rnNext");if(nx){
+    nx.innerHTML='<div class="rn-ball" style="border-color:'+RN_TYPES[RN.nextA-1].col+'"><img src="'+RN_TYPES[RN.nextA-1].img+'" alt="次の玉"></div>'
+      +'<div class="rn-ball" style="border-color:'+RN_TYPES[RN.nextB-1].col+'"><img src="'+RN_TYPES[RN.nextB-1].img+'" alt="次の玉"></div>';
+  }
+}
+function rnSpawn(){
+  var a=RN.nextA,b=RN.nextB;
+  RN.nextA=rnRandT();RN.nextB=rnRandT();
+  if(RN.grid[0][2]||RN.grid[1][2]){rnGameOver();return;}
+  RN.pair={x:2,y:1,rot:0,a:a,b:b};
+  RN.fallT=0;
+  rnHud();
+}
+function rnChildPos(p){
+  if(p.rot===0)return [p.x,p.y-1];
+  if(p.rot===1)return [p.x+1,p.y];
+  if(p.rot===2)return [p.x,p.y+1];
+  return [p.x-1,p.y];
+}
+function rnCan(x,y){return x>=0&&x<RN_C&&y<RN_R&&!(y>=0&&RN.grid[y][x]);}
+function rnTryMove(dx){
+  var p=RN.pair;if(!p)return;
+  var cp=rnChildPos(p);
+  if(rnCan(p.x+dx,p.y)&&rnCan(cp[0]+dx,cp[1]))p.x+=dx;
+}
+function rnRotate(){
+  var p=RN.pair;if(!p)return;
+  var nr=(p.rot+1)%4;
+  var offs=[[0,0],[-1,0],[1,0],[0,-1]];
+  for(var i=0;i<offs.length;i++){
+    var nx=p.x+offs[i][0],ny=p.y+offs[i][1];
+    var q={x:nx,y:ny,rot:nr};
+    var cp=rnChildPos(q);
+    if(rnCan(nx,ny)&&rnCan(cp[0],cp[1])){p.x=nx;p.y=ny;p.rot=nr;return;}
+  }
+}
+function rnLock(){
+  var p=RN.pair;if(!p)return;
+  var cp=rnChildPos(p);
+  if(p.y<0||cp[1]<0){rnGameOver();return;}
+  RN.grid[p.y][p.x]=p.a;
+  if(cp[1]>=0)RN.grid[cp[1]][cp[0]]=p.b;
+  RN.pair=null;
+  RN.chain=0;
+  rnResolve();
+}
+function rnGroups(){
+  var seen={},groups=[],r,c;
+  for(r=0;r<RN_R;r++)for(c=0;c<RN_C;c++){
+    var v=RN.grid[r][c];
+    if(!v||seen[r+","+c])continue;
+    var stack=[[r,c]],cells=[];
+    seen[r+","+c]=1;
+    while(stack.length){
+      var cur=stack.pop();cells.push(cur);
+      var dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+      for(var i=0;i<4;i++){
+        var nr=cur[0]+dirs[i][0],nc=cur[1]+dirs[i][1];
+        if(nr<0||nr>=RN_R||nc<0||nc>=RN_C)continue;
+        if(RN.grid[nr][nc]!==v||seen[nr+","+nc])continue;
+        seen[nr+","+nc]=1;stack.push([nr,nc]);
+      }
+    }
+    if(cells.length>=4)groups.push(cells);
+  }
+  return groups;
+}
+function rnResolve(){
+  var groups=rnGroups();
+  if(!groups.length){
+    if(RN.state==="play")rnSpawn();
+    return;
+  }
+  RN.chain++;
+  if(RN.chain>RN.maxChain)RN.maxChain=RN.chain;
+  var n=0,i,j;
+  RN.popSet={};
+  for(i=0;i<groups.length;i++)for(j=0;j<groups[i].length;j++){RN.popSet[groups[i][j][0]+","+groups[i][j][1]]=1;n++;}
+  var mult=RN_MULT[Math.min(RN.chain,RN_MULT.length-1)];
+  RN.score+=n*10*mult;
+  if(RN.chain>=2)pzBang($("rnBang"),RN.chain+"連鎖！！","");
+  RN.popT=16;
+  rnHud();
+}
+function rnGravity(){
+  var c,r;
+  for(c=0;c<RN_C;c++){
+    var write=RN_R-1;
+    for(r=RN_R-1;r>=0;r--){
+      if(RN.grid[r][c]){
+        var v=RN.grid[r][c];
+        RN.grid[r][c]=0;RN.grid[write][c]=v;write--;
+      }
+    }
+  }
+}
+function rnStep(){
+  if(RN.popT>0){
+    RN.popT--;
+    if(RN.popT===0){
+      for(var k in RN.popSet){var p=k.split(",");RN.grid[+p[0]][+p[1]]=0;}
+      RN.popSet=null;
+      rnGravity();
+      rnResolve();
+    }
+    return;
+  }
+  if(RN.state!=="play"||!RN.pair)return;
+  RN.fallT++;
+  var interval=RN.soft?3:46;
+  if(RN.fallT>=interval){
+    RN.fallT=0;
+    var p=RN.pair,cp=rnChildPos(p);
+    if(rnCan(p.x,p.y+1)&&rnCan(cp[0],cp[1]+1))p.y++;
+    else rnLock();
+  }
+}
+function rnDrawBall(g,x,y,t,scale){
+  var cx=x+RN_CELL/2,cy=y+RN_CELL/2,rad=RN_CELL/2-3;
+  if(scale)rad*=scale;
+  g.save();
+  g.beginPath();g.arc(cx,cy,rad,0,7);g.clip();
+  var img=RN_IMGS[t-1];
+  if(img&&img.complete&&img.naturalWidth)g.drawImage(img,cx-rad,cy-rad,rad*2,rad*2);
+  else{g.fillStyle=RN_TYPES[t-1].col;g.fillRect(cx-rad,cy-rad,rad*2,rad*2);}
+  g.restore();
+  g.beginPath();g.arc(cx,cy,rad,0,7);
+  g.strokeStyle=RN_TYPES[t-1].col;g.lineWidth=3;g.stroke();
+  g.beginPath();g.arc(cx-rad*0.35,cy-rad*0.4,rad*0.22,0,7);
+  g.fillStyle="rgba(255,255,255,.5)";g.fill();
+}
+function rnDraw(){
+  var cv=$("rnCanvas");if(!cv)return;
+  var g=cv.getContext("2d");mgDPR(g,cv,2);
+  var bg=g.createLinearGradient(0,0,0,600);bg.addColorStop(0,"#1d0c3e");bg.addColorStop(1,"#120826");
+  g.fillStyle=bg;g.fillRect(0,0,300,600);
+  g.fillStyle="rgba(255,255,255,.05)";
+  for(var r=0;r<RN_R;r++)for(var c=0;c<RN_C;c++)if((r+c)%2===0)g.fillRect(c*RN_CELL,r*RN_CELL,RN_CELL,RN_CELL);
+  g.strokeStyle="rgba(255,90,90,.55)";g.setLineDash([6,6]);g.lineWidth=2;
+  g.beginPath();g.moveTo(0,RN_CELL*2);g.lineTo(300,RN_CELL*2);g.stroke();g.setLineDash([]);
+  for(r=0;r<RN_R;r++)for(c=0;c<RN_C;c++){
+    var v=RN.grid[r][c];if(!v)continue;
+    var key=r+","+c;
+    if(RN.popSet&&RN.popSet[key]){
+      var pr=RN.popT/16;
+      rnDrawBall(g,c*RN_CELL,r*RN_CELL,v,0.4+0.6*pr);
+      g.save();g.globalAlpha=0.55*(1-pr);g.fillStyle="#fff";
+      g.beginPath();g.arc(c*RN_CELL+RN_CELL/2,r*RN_CELL+RN_CELL/2,RN_CELL/2-3,0,7);g.fill();g.restore();
+    }else rnDrawBall(g,c*RN_CELL,r*RN_CELL,v,1);
+  }
+  if(RN.pair&&RN.state==="play"){
+    var p=RN.pair,cp=rnChildPos(p);
+    if(cp[1]>=0)rnDrawBall(g,cp[0]*RN_CELL,cp[1]*RN_CELL,p.b,1);
+    rnDrawBall(g,p.x*RN_CELL,p.y*RN_CELL,p.a,1);
+    g.strokeStyle="rgba(255,255,255,.75)";g.lineWidth=2;
+    g.beginPath();g.arc(p.x*RN_CELL+RN_CELL/2,p.y*RN_CELL+RN_CELL/2,RN_CELL/2-1,0,7);g.stroke();
+  }
+}
+function rnLoop(ts){if(!RN.on)return;mgFixed(RN,ts||0,rnStep);rnDraw();RN.raf=requestAnimationFrame(rnLoop);}
+function rnLoopStart(){if(RN.on)return;RN.on=true;RN._lt=0;RN._acc=0;RN.raf=requestAnimationFrame(rnLoop);}
+function rnStart(){
+  RN.grid=rnEmptyGrid();RN.score=0;RN.maxChain=0;RN.chain=0;RN.popSet=null;RN.popT=0;RN.paid=false;RN.soft=false;
+  RN.nextA=rnRandT();RN.nextB=rnRandT();
+  RN.state="play";
+  $("rnOverlay").hidden=true;
+  var ue=$("rnUe");ue.hidden=true;ue.innerHTML="";
+  $("rnConfetti").innerHTML="";
+  rnHud();
+  rnSpawn();
+  rnLoopStart();
+}
+function rnGameOver(){
+  if(RN.state!=="play")return;
+  RN.state="over";RN.pair=null;
+  if(RN.score>RN.best)RN.best=RN.score;
+  var reward=Math.max(0,Math.min(600,Math.floor(RN.score/8)));
+  var ov=$("rnOverlay");
+  ov.querySelector(".rt-ov-ttl").textContent="ゲームオーバー";
+  $("rnOvTx").innerHTML="SCORE <b>"+RN.score+"</b>（BEST "+RN.best+"）<br>最大 <b>"+RN.maxChain+"連鎖</b> ・ 報酬 <b>"+reward+"コイン</b>";
+  $("rnStartBtn").textContent="▶ もう一度";
+  ov.hidden=false;
+  rnHud();
+  if(RN.maxChain>=3||RN.score>=2000)pzConfetti($("rnConfetti"),26);
+  if(reward>0&&!RN.paid){
+    RN.paid=true;
+    setTimeout(function(){ueStack($("rnUe"),ueChunks(reward),{onChunk:function(a){S.coin+=a;renderStats();}});},450);
+  }
+}
+window.__rnStop=function(){RN.on=false;RN._lt=0;RN._acc=0;if(RN.raf)cancelAnimationFrame(RN.raf);RN.soft=false;for(var k in RN.repT){clearInterval(RN.repT[k]);}RN.repT={};};
+window.__rnReset=function(){
+  RN.state="ready";RN.grid=rnEmptyGrid();RN.pair=null;RN.score=0;RN.chain=0;RN.maxChain=0;RN.popSet=null;RN.popT=0;RN.paid=false;
+  RN.nextA=rnRandT();RN.nextB=rnRandT();
+  var ov=$("rnOverlay");if(!ov)return;
+  ov.querySelector(".rt-ov-ttl").textContent="れんさカクテル";
+  $("rnOvTx").innerHTML="2個1組のドリンク玉を落として、同色4つ以上つなげて消そう！<br>落ちてまた消えると連鎖。てっぺんまで積み上がったらゲームオーバー。";
+  $("rnStartBtn").textContent="▶ スタート";
+  var ue=$("rnUe");ue.hidden=true;ue.innerHTML="";
+  $("rnConfetti").innerHTML="";
+  ov.hidden=false;
+  rnHud();try{rnDraw();}catch(e){}
+};
+window.__on("rnStartBtn",rnStart);
+window.__on("rnBack",function(){window.__rnStop();mgShow("hub");});
+(function(){
+  function press(id,down,up){
+    var el=$(id);if(!el)return;
+    el.addEventListener("pointerdown",function(e){
+      if(e.cancelable)e.preventDefault();
+      el.classList.add("on");down();
+      clearInterval(RN.repT[id]);
+      RN.repT[id]=setInterval(down,120);
+    });
+    var end=function(){el.classList.remove("on");clearInterval(RN.repT[id]);if(up)up();};
+    el.addEventListener("pointerup",end);
+    el.addEventListener("pointerleave",end);
+    el.addEventListener("pointercancel",end);
+    el.addEventListener("contextmenu",function(e){e.preventDefault();});
+  }
+  press("rnBtnL",function(){if(RN.state==="play"&&!RN.popT)rnTryMove(-1);});
+  press("rnBtnR",function(){if(RN.state==="play"&&!RN.popT)rnTryMove(1);});
+  press("rnBtnRot",function(){if(RN.state==="play"&&!RN.popT)rnRotate();});
+  press("rnBtnD",function(){RN.soft=true;},function(){RN.soft=false;});
+  var cv=$("rnCanvas");
+  if(cv){
+    var sx=0,sy=0;
+    cv.addEventListener("pointerdown",function(e){sx=e.clientX;sy=e.clientY;});
+    cv.addEventListener("pointerup",function(e){
+      if(RN.state!=="play"||RN.popT)return;
+      var dx=e.clientX-sx,dy=e.clientY-sy;
+      if(Math.abs(dx)<18&&Math.abs(dy)<18){rnRotate();return;}
+      if(Math.abs(dx)>Math.abs(dy))rnTryMove(dx>0?1:-1);
+    });
+  }
+})();
+
+/* ==================== CHINCHIRO : pass & play ==================== */
+var CN={state:"setup",count:2,ante:50,bal:[],pot:0,carry:0,round:1,turn:0,rolls:0,results:[],
+  playoff:null,playoffRound:0,rolling:false,timers:[],iv:0,dice:[1,1,1]};
+function cnLater(fn,ms){var t=setTimeout(fn,ms);CN.timers.push(t);return t;}
+function cnClearTimers(){CN.timers.forEach(function(t){clearTimeout(t);});CN.timers=[];if(CN.iv){clearInterval(CN.iv);CN.iv=0;}}
+function cnRoleOf(d){
+  var s=d.slice().sort(function(a,b){return a-b;});
+  if(s[0]===1&&s[1]===1&&s[2]===1)return {cat:6,val:0,name:"ピンゾロ",cls:""};
+  if(s[0]===s[1]&&s[1]===s[2])return {cat:5,val:s[0],name:s[0]+"のゾロ目",cls:""};
+  if(s[0]===4&&s[1]===5&&s[2]===6)return {cat:4,val:0,name:"シゴロ",cls:"mid"};
+  if(s[0]===1&&s[1]===2&&s[2]===3)return {cat:1,val:0,name:"ヒフミ",cls:"lose"};
+  if(s[0]===s[1])return {cat:3,val:s[2],name:"目 "+s[2],cls:"mid"};
+  if(s[1]===s[2])return {cat:3,val:s[0],name:"目 "+s[0],cls:"mid"};
+  return {cat:0,val:0,name:"目なし",cls:"lose"};
+}
+function cnDiceShow(){
+  for(var i=0;i<3;i++){
+    var el=$("cnDie"+i);if(!el)continue;
+    el.src="assets/cn_dice"+CN.dice[i]+".webp";
+    el.classList.remove("rolling","fly");
+    el.style.visibility="";
+  }
+  var r=$("cnRole");if(r)r.hidden=true;
+}
+function cnHud(){
+  var rd=$("cnHudRound");if(rd)rd.textContent=(CN.playoff?"決着ロール":"ラウンド "+CN.round);
+  var pt=$("cnHudPot");if(pt)pt.textContent="POT "+CN.pot;
+  var tn=$("cnHudTurn");if(tn)tn.textContent=CN.state==="play"?("プレイヤー"+(CN.turn+1)+"の番"):"―";
+  var bb=$("cnBalances");if(!bb)return;
+  var html="";
+  for(var i=0;i<CN.count;i++){
+    var res=CN.results[i];
+    html+='<div class="cn-bal'+(CN.state==="play"&&CN.turn===i?" turn":"")+(CN.winner===i?" win":"")+'">プレイヤー'+(i+1)+'<b>'+(CN.bal[i]||0)+' チップ</b>'
+      +(res?('<span style="font-size:10px">'+esc(res.name)+'</span>'):"")+'</div>';
+  }
+  bb.innerHTML=html;
+}
+function cnMsg(t){var m=$("cnMsg");if(m)m.textContent=t;}
+function cnActions(html){var a=$("cnActions");if(a)a.innerHTML=html;}
+function cnOv(html){var o=$("cnOverlay"),inn=$("cnOvIn");if(!o||!inn)return;inn.innerHTML=html;o.hidden=false;}
+function cnOvHide(){var o=$("cnOverlay");if(o)o.hidden=true;}
+function cnSetupOv(){
+  CN.state="setup";
+  var cnt="",ant="",i;
+  for(i=2;i<=4;i++)cnt+='<button type="button" class="cn-choice'+(CN.count===i?" on":"")+'" data-cn-count="'+i+'">'+i+'人</button>';
+  [10,50,100].forEach(function(a){ant+='<button type="button" class="cn-choice'+(CN.ante===a?" on":"")+'" data-cn-ante="'+a+'">'+a+'</button>';});
+  cnOv('<img class="kv-img" src="assets/mg_chinchiro.webp" alt="チンチロ ― どんぶりと3つのサイコロ" style="object-position:50% 50%">'
+    +'<p class="rt-ov-ttl">チンチロ</p>'
+    +'<p class="rt-ov-tx">スマホを回して全員で勝負！ 全員がアンティを出してポットを作り、順番に最大3回まで振って役を作ります。最強の役がポット総取り。</p>'
+    +'<p class="rt-ov-tx" style="margin-top:2px">人数</p><div class="cn-choices">'+cnt+'</div>'
+    +'<p class="rt-ov-tx" style="margin-top:2px">アンティ（1人あたり）</p><div class="cn-choices">'+ant+'</div>'
+    +'<button type="button" class="btn gold rt-start" id="cnStartBtn">▶ ゲームスタート</button>');
+  cnMsg("人数とアンティを選んでスタート！");
+  cnActions("");
+  cnHud();
+}
+function cnStartGame(){
+  CN.bal=[];CN.results=[];
+  for(var i=0;i<CN.count;i++){CN.bal.push(1000);CN.results.push(null);}
+  CN.carry=0;CN.round=1;CN.playoff=null;CN.winner=-1;
+  cnStartRound();
+}
+function cnStartRound(){
+  CN.playoff=null;CN.winner=-1;CN.results=[];
+  for(var i=0;i<CN.count;i++){
+    CN.results.push(null);
+    if(CN.bal[i]<CN.ante){CN.bal[i]=1000;}
+    CN.bal[i]-=CN.ante;
+  }
+  CN.pot=CN.ante*CN.count+CN.carry;CN.carry=0;
+  CN.turn=0;
+  cnNextTurn();
+}
+function cnNextTurn(){
+  while(CN.turn<CN.count&&CN.results[CN.turn])CN.turn++;
+  if(CN.turn>=CN.count){cnJudge();return;}
+  CN.state="handover";CN.rolls=0;
+  cnDiceShow();
+  cnOv('<p class="rt-ov-tx">スマホを渡してね</p>'
+    +'<p class="cn-ovname">プレイヤー'+(CN.turn+1)+' さんの番です</p>'
+    +'<p class="rt-ov-tx">POT '+CN.pot+' チップ ― あなたの持ちチップ '+CN.bal[CN.turn]+'<br>準備ができたらタップして開始</p>'
+    +'<button type="button" class="btn gold rt-start" id="cnGoBtn">▶ 振る準備OK</button>');
+  cnMsg("プレイヤー"+(CN.turn+1)+"さんへスマホを渡してください");
+  cnActions("");
+  cnHud();
+}
+function cnBeginRoll(){
+  cnOvHide();
+  CN.state="play";
+  cnMsg("プレイヤー"+(CN.turn+1)+"さん、あと"+(3-CN.rolls)+"回振れます ― タップで振ろう！");
+  cnActions('<button type="button" class="btn gold" id="cnRollBtn">🎲 サイコロを振る（'+(CN.rolls+1)+'回目）</button>');
+  cnHud();
+}
+function cnRoll(){
+  if(CN.rolling||CN.state!=="play")return;
+  if(CN.results[CN.turn])return;
+  CN.rolling=true;CN.rolls++;
+  cnActions("");
+  cnMsg("コロコロ…");
+  var els=[$("cnDie0"),$("cnDie1"),$("cnDie2")];
+  els.forEach(function(el){if(el){el.classList.remove("fly");el.classList.add("rolling");}});
+  var shunpin=Math.random()<0.06;
+  CN.iv=setInterval(function(){
+    els.forEach(function(el){if(el)el.src="assets/cn_dice"+(1+Math.floor(Math.random()*6))+".webp";});
+  },85);
+  cnLater(function(){
+    clearInterval(CN.iv);CN.iv=0;
+    CN.dice=[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)];
+    els.forEach(function(el,i){
+      if(!el)return;
+      el.classList.remove("rolling");
+      el.src="assets/cn_dice"+CN.dice[i]+".webp";
+    });
+    CN.rolling=false;
+    if(shunpin){
+      var flyEl=els[Math.floor(Math.random()*3)];
+      if(flyEl)flyEl.classList.add("fly");
+      cnShowRole({cat:0,val:0,name:"シュンピン！",cls:"lose"},true);
+      return;
+    }
+    var role=cnRoleOf(CN.dice);
+    if(role.cat===0&&CN.rolls<3){
+      cnMsg("目なし… もう一度振れます（あと"+(3-CN.rolls)+"回）");
+      cnActions('<button type="button" class="btn gold" id="cnRollBtn">🎲 もう一度振る（'+(CN.rolls+1)+'回目）</button>');
+      cnHud();
+      return;
+    }
+    cnShowRole(role,false);
+  },680);
+}
+function cnShowRole(role,shunpin){
+  CN.results[CN.turn]={cat:role.cat,val:role.val,name:shunpin?"シュンピン":role.name,dice:CN.dice.slice()};
+  var r=$("cnRole");
+  if(r){
+    r.textContent=role.name;
+    r.className="cn-role "+role.cls;
+    r.hidden=false;
+    void r.offsetWidth;
+    r.classList.add("show");
+  }
+  if(role.cat>=5)pzConfetti($("cnConfetti"),22);
+  cnMsg("プレイヤー"+(CN.turn+1)+"さん ― 「"+(shunpin?"シュンピン":role.name)+"」で確定！");
+  var last=CN.results.filter(Boolean).length>=CN.count;
+  cnActions('<button type="button" class="btn gold" id="cnNextBtn">'+(last?"結果を見る":"次の人へ渡す")+'</button>');
+  cnHud();
+}
+function cnJudge(){
+  CN.state="judge";
+  var best=-1,bestKey=-1,i;
+  for(i=0;i<CN.count;i++){
+    var r=CN.results[i];if(!r)continue;
+    var key=r.cat*10+r.val;
+    if(key>bestKey){bestKey=key;best=i;}
+  }
+  var tied=[];
+  for(i=0;i<CN.count;i++){var r2=CN.results[i];if(r2&&r2.cat*10+r2.val===bestKey)tied.push(i);}
+  var bestCat=CN.results[best].cat;
+  if(tied.length>1&&CN.playoffRound<3){
+    CN.playoff=tied;CN.playoffRound++;
+    var names=tied.map(function(x){return "プレイヤー"+(x+1);}).join(" と ");
+    cnOv('<p class="cn-ovname">同点！</p>'
+      +'<p class="rt-ov-tx">'+names+' が「'+CN.results[best].name+'」で並びました。<br>該当者だけで決着ロール ― もう一度振り合います。</p>'
+      +'<button type="button" class="btn gold rt-start" id="cnPlayoffBtn">▶ 決着ロールへ</button>');
+    cnMsg("同点 ― 決着ロールで決めます");
+    cnActions("");
+    cnHud();
+    return;
+  }
+  if(bestCat<=1){
+    CN.carry=CN.pot;
+    cnOv('<p class="cn-ovname">全員、負け役…</p>'
+      +'<p class="rt-ov-tx">勝者なし ― POT '+CN.pot+' チップは次ラウンドへ持ち越し！</p>'
+      +'<div class="cn-result">'+cnResultList(-1)+'</div>'
+      +'<button type="button" class="btn gold rt-start" id="cnNextRoundBtn">▶ 次のラウンド（持ち越し '+CN.pot+'）</button>'
+      +'<button type="button" class="btn ghost" id="cnReSetupBtn">人数・アンティを変える</button>');
+    CN.pot=0;
+    cnMsg("全員負け役 ― ポットは持ち越しです");
+    cnActions("");
+    cnHud();
+    return;
+  }
+  var winners=tied;
+  var share=Math.floor(CN.pot/winners.length);
+  winners.forEach(function(w){CN.bal[w]+=share;});
+  CN.winner=winners[0];
+  var wnames=winners.map(function(x){return "プレイヤー"+(x+1);}).join("・");
+  cnOv('<p class="cn-ovname">🏆 '+wnames+' の勝ち！</p>'
+    +'<p class="rt-ov-tx">「'+CN.results[best].name+'」で POT '+CN.pot+' チップ'+(winners.length>1?"を分け合い":"総取り")+'！</p>'
+    +'<div class="cn-result">'+cnResultList(winners)+'</div>'
+    +'<button type="button" class="btn gold rt-start" id="cnNextRoundBtn">▶ 次のラウンド</button>'
+    +'<button type="button" class="btn ghost" id="cnReSetupBtn">人数・アンティを変える</button>');
+  CN.pot=0;CN.round++;
+  pzConfetti($("cnConfetti"),30);
+  cnMsg(wnames+"さんがポットを獲得！");
+  cnActions("");
+  cnHud();
+}
+function cnResultList(winners){
+  var html="";
+  for(var i=0;i<CN.count;i++){
+    var r=CN.results[i];
+    var isW=Array.isArray(winners)?winners.indexOf(i)>=0:winners===i;
+    html+='<div class="cn-bal'+(isW?" win":"")+'">プレイヤー'+(i+1)+' ― <b>'+(r?esc(r.name):"―")+'</b>（持ちチップ '+CN.bal[i]+'）</div>';
+  }
+  return html;
+}
+function cnStartPlayoff(){
+  var tied=CN.playoff;
+  CN.results=[];
+  for(var i=0;i<CN.count;i++)CN.results.push(tied.indexOf(i)>=0?null:{cat:-1,val:-1,name:"（決着の対象外）",skip:true});
+  CN.turn=0;
+  cnNextTurn();
+}
+window.__cnStop=function(){cnClearTimers();CN.rolling=false;};
+window.__cnReset=function(){
+  cnClearTimers();
+  CN.state="setup";CN.rolling=false;CN.pot=0;CN.carry=0;CN.round=1;CN.playoff=null;CN.playoffRound=0;CN.winner=-1;
+  CN.bal=[];CN.results=[];
+  for(var i=0;i<CN.count;i++){CN.bal.push(1000);CN.results.push(null);}
+  CN.dice=[1,1,1];
+  cnDiceShow();
+  cnSetupOv();
+};
+(function(){
+  var wrap=$("cnStage");if(!wrap)return;
+  wrap.addEventListener("click",function(ev){
+    var el=ev.target;
+    while(el&&el!==wrap){
+      if(el.getAttribute){
+        if(el.getAttribute("data-cn-count")){CN.count=+el.getAttribute("data-cn-count");cnSetupOv();return;}
+        if(el.getAttribute("data-cn-ante")){CN.ante=+el.getAttribute("data-cn-ante");cnSetupOv();return;}
+      }
+      if(el.id==="cnStartBtn"){cnOvHide();CN.round=1;cnStartGame();return;}
+      if(el.id==="cnGoBtn"){cnBeginRoll();return;}
+      if(el.id==="cnRollBtn"){cnRoll();return;}
+      if(el.id==="cnNextBtn"){
+        var r=$("cnRole");if(r)r.hidden=true;
+        CN.turn++;
+        if(CN.playoff){ /* playoff turns skip non-tied players inside cnNextTurn via results */ }
+        cnNextTurn();return;
+      }
+      if(el.id==="cnPlayoffBtn"){cnOvHide();cnStartPlayoff();return;}
+      if(el.id==="cnNextRoundBtn"){cnOvHide();CN.playoffRound=0;cnStartRound();return;}
+      if(el.id==="cnReSetupBtn"){cnOvHide();cnSetupOv();return;}
+      el=el.parentNode;
+    }
+  });
+  var bowl=$("cnBowlWrap");
+  if(bowl)bowl.addEventListener("click",function(){if(CN.state==="play"&&!CN.rolling)cnRoll();});
+})();
+window.__on("cnBack",function(){window.__cnStop();mgShow("hub");});
+
+/* ==================== INDIAN POKER : online multiplayer ==================== */
+var IP={mode:"off",state:null,slots:[],mySlot:-1,hand:0,dealer:0,lastSeq:-1,actSeq:0,
+  accHand:-1,accInv:0,accPaid:false,confShown:false,aiT:0,waiting:false,lastActN:{}};
+function ipCharName(ch){try{var c=charOf(ch);if(c&&c.name)return c.name;}catch(e){}return ch;}
+function ipSlotsLocal(){
+  var me=(typeof MP!=="undefined"&&MP&&MP.mySlot)?MP.mySlot():{uid:"me",name:"プレイヤー",char:"momona"};
+  return [
+    {uid:me.uid||"me",name:me.name||"プレイヤー",char:me.char||"momona"},
+    {uid:null,name:"CPU パラダイス",char:"paradise",cpu:true},
+    {uid:null,name:"CPU "+ipCharName("momona"),char:"momona",cpu:true},
+    {uid:null,name:"CPU "+ipCharName("akari"),char:"akari",cpu:true}
+  ];
+}
+function ipSnap(){return JSON.parse(JSON.stringify(IP.state));}
+function ipPublish(){
+  if(IP.mode!=="host")return;
+  var cur=(typeof MP!=="undefined")?MP.cur:null;
+  if(!cur||!cur.ref||!IP.state)return;
+  cur.ref.update({state:ipSnap(),stateSeq:IP.state.seq,hostSeen:Date.now()}).catch(function(){});
+}
+function ipDeal(){
+  var slots=IP.slots,n=slots.length;
+  IP.hand++;
+  if(IP.hand>1)IP.dealer=(IP.dealer+1)%n;
+  var deck=pkShuffled();
+  var players=slots.map(function(s,i){
+    return {name:s.name||("P"+(i+1)),char:s.char||"momona",uid:s.uid||null,cpu:!!s.cpu,
+      card:deck[i],inv:10,fold:false,acted:false,line:""};
+  });
+  IP.state={seq:(IP.state?IP.state.seq:0)+1,hand:IP.hand,phase:"bet",pot:10*n,curBet:10,
+    turn:(IP.dealer+1)%n,dealer:IP.dealer,msg:"ハンド"+IP.hand+" ― アンティ10で全員参加。ベット開始！",
+    reveal:false,winners:[],share:0,players:players};
+  ipAfterChange();
+}
+function ipCardKey(c){return c.r*100+(3-c.s);}
+function ipAfterChange(){
+  IP.state.seq++;
+  ipRender();
+  ipPublish();
+  ipMaybeAI();
+}
+function ipMaybeAI(){
+  clearTimeout(IP.aiT);
+  if(IP.mode!=="host"&&IP.mode!=="local")return;
+  var st=IP.state;
+  if(!st||st.phase!=="bet")return;
+  var p=st.players[st.turn];
+  if(p&&p.cpu&&!p.fold){
+    IP.aiT=setTimeout(function(){ipCpuAct(st.turn);},950);
+  }
+}
+function ipAdvance(){
+  var st=IP.state,n=st.players.length,i,idx;
+  var active=[];
+  for(i=0;i<n;i++)if(!st.players[i].fold)active.push(i);
+  if(active.length===1){ipFinish(active,false);return;}
+  for(var step=1;step<=n;step++){
+    idx=(st.turn+step)%n;
+    var p=st.players[idx];
+    if(!p.fold&&(!p.acted||p.inv<st.curBet)){st.turn=idx;ipAfterChange();return;}
+  }
+  ipFinish(active,true);
+}
+function ipFinish(active,showdown){
+  var st=IP.state;
+  st.phase="show";st.reveal=showdown;
+  var best=-1,i;
+  for(i=0;i<active.length;i++){var k=ipCardKey(st.players[active[i]].card);if(k>best)best=k;}
+  st.winners=active.filter(function(i){return ipCardKey(st.players[i].card)===best;});
+  st.share=Math.floor(st.pot/st.winners.length);
+  var wn=st.winners.map(function(i){return st.players[i].name;}).join("・");
+  st.msg=showdown?("ショーダウン！ "+wn+" の勝ち ― ポット "+st.pot+"コイン")
+    :("全員フォールド ― "+wn+" がポット "+st.pot+"コインを獲得");
+  ipAfterChange();
+}
+function ipApplyAction(slot,act,amt){
+  var st=IP.state;
+  if(!st||st.phase!=="bet"||st.turn!==slot)return false;
+  var p=st.players[slot];
+  if(p.fold)return false;
+  if(act==="fold"){
+    p.fold=true;
+    st.msg=p.name+" はフォールド";
+  }else if(act==="call"){
+    var need=st.curBet-p.inv;
+    p.inv+=need;st.pot+=need;p.acted=true;
+    st.msg=p.name+(need>0?(" はコール（+"+need+"）"):" はチェック");
+  }else if(act==="raise"){
+    var add=(amt===50)?50:20;
+    st.curBet+=add;
+    var need2=st.curBet-p.inv;
+    p.inv+=need2;st.pot+=need2;p.acted=true;
+    st.msg=p.name+" はレイズ！ ベットは "+st.curBet+" に";
+  }else return false;
+  ipAdvance();
+  return true;
+}
+var IP_LINES={
+  raise:["ふっ、強気に行くよ","そのカード、弱そうだね","ベット！ 逃げるなら今だよ","読めてるよ、全部ね"],
+  call:["合わせるよ","ほう、乗った","まだ降りないよ","様子見だね"],
+  fold:["ここは引く…","むむ、今日はツイてない","パス！ 次で勝つ","その顔、強いのバレてるよ"],
+  check:["チェックで回そう","様子見、様子見","焦らない焦らない"]
+};
+function ipCpuAct(slot){
+  var st=IP.state;
+  if(!st||st.phase!=="bet"||st.turn!==slot)return;
+  var p=st.players[slot];
+  if(!p||p.fold)return;
+  var vis=[],i;
+  for(i=0;i<st.players.length;i++)if(i!==slot&&!st.players[i].fold)vis.push(st.players[i].card.r);
+  var maxVis=vis.length?Math.max.apply(null,vis):0;
+  var need=st.curBet-p.inv;
+  var rnd=Math.random(),act;
+  if(need===0)act=(maxVis<=10&&rnd<0.35)?"raise":"call";
+  else if(maxVis>=13)act=need>=50?(rnd<0.55?"fold":"call"):(rnd<0.82?"call":"fold");
+  else if(maxVis<=10)act=rnd<0.45?"raise":(rnd<0.92?"call":"fold");
+  else act=rnd<0.68?"call":(rnd<0.86?"raise":"fold");
+  var key=act==="raise"?"raise":act==="fold"?"fold":(need===0?"check":"call");
+  var lines=IP_LINES[key]||IP_LINES.call;
+  p.line=lines[Math.floor(Math.random()*lines.length)];
+  ipApplyAction(slot,act,Math.random()<0.5?20:50);
+}
+function ipSeatHTML(st,i,isMe){
+  var p=st.players[i];
+  var cardHtml;
+  if(isMe)cardHtml=st.reveal?pkCardHTML(p.card):pkCardHTML(null,false,true);
+  else cardHtml=pkCardHTML(p.card);
+  var cls="ip-seat"+(p.fold?" folded":"")+((st.phase==="bet"&&st.turn===i)?" turn":"")+((st.phase==="show"&&st.winners.indexOf(i)>=0)?" winner":"");
+  var stat=p.fold?'<span style="color:#ff9db0">フォールド</span>'
+    :("ベット <b>"+p.inv+"</b>"+(st.phase==="show"&&st.reveal?(" ・ "+pkRankTxt(p.card.r)+PK_SUITS[p.card.s]):""));
+  return '<div class="'+cls+'">'
+    +(p.line&&st.phase==="bet"?'<div class="ip-say">'+esc(p.line)+'</div>':"")
+    +'<div class="ip-face"><img src="assets/char_'+esc(p.char)+'.webp" alt="'+esc(p.name)+'"><span class="ip-card">'+cardHtml+'</span></div>'
+    +'<p class="ip-name">'+esc(p.name)+(p.cpu?' <span style="color:#9d8ac4">CPU</span>':"")+(isMe?' <span style="color:#ffd23f">あなた</span>':"")+'</p>'
+    +'<p class="ip-stat">'+stat+'</p></div>';
+}
+function ipRender(){
+  var st=IP.state;
+  var hh=$("ipHudHand");if(hh)hh.textContent=st?("HAND "+st.hand):"HAND ―";
+  var hp=$("ipHudPot");if(hp)hp.textContent="POT "+(st?st.pot:0);
+  var hb=$("ipHudBet");if(hb)hb.textContent=st?("ベット "+st.curBet):"ベット ―";
+  var foes=$("ipFoes"),me=$("ipMe"),msg=$("ipMsg"),line=$("ipLine"),acts=$("ipActions");
+  if(!st){if(foes)foes.innerHTML="";if(me)me.innerHTML="";if(acts)acts.innerHTML="";return;}
+  /* ---- coin accounting (per client, from the authoritative state) ---- */
+  if(st.hand!==IP.accHand){
+    IP.accHand=st.hand;IP.accInv=0;IP.accPaid=false;IP.confShown=false;
+    if(typeof S!=="undefined"&&S.coin<200){S.coin+=500;renderStats();toast("デモ用コイン補充 +500");}
+  }
+  var mine=st.players[IP.mySlot];
+  if(mine&&mine.inv>IP.accInv){S.coin=Math.max(0,S.coin-(mine.inv-IP.accInv));IP.accInv=mine.inv;renderStats();}
+  if(st.phase==="show"&&!IP.accPaid){
+    IP.accPaid=true;
+    if(st.winners.indexOf(IP.mySlot)>=0&&st.share>0){S.coin+=st.share;renderStats();}
+  }
+  if(st.phase==="show"&&st.winners.indexOf(IP.mySlot)>=0&&!IP.confShown){
+    IP.confShown=true;pzConfetti($("ipConfetti"),26);
+  }
+  /* ---- seats ---- */
+  var fh="";
+  for(var i=0;i<st.players.length;i++)if(i!==IP.mySlot)fh+=ipSeatHTML(st,i,false);
+  if(foes)foes.innerHTML=fh;
+  if(me&&mine){
+    me.innerHTML='<div class="ip-seat'+(mine.fold?" folded":"")+((st.phase==="bet"&&st.turn===IP.mySlot)?" turn":"")+((st.phase==="show"&&st.winners.indexOf(IP.mySlot)>=0)?" winner":"")+'" style="max-width:none;flex:none">'
+      +'<div class="ip-face"><img src="assets/char_'+esc(mine.char)+'.webp" alt="'+esc(mine.name)+'"><span class="ip-card">'+(st.reveal?pkCardHTML(mine.card):pkCardHTML(null,false,true))+'</span></div></div>'
+      +'<div class="ip-meinfo"><p class="ip-name">'+esc(mine.name)+' <span style="color:#ffd23f">あなた</span></p>'
+      +'<p class="ip-stat">ベット <b>'+mine.inv+'</b> ／ 所持コイン <b>'+S.coin+'</b><br>'
+      +(st.reveal?("あなたのカードは "+pkRankTxt(mine.card.r)+PK_SUITS[mine.card.s]+" でした"):"自分のカードは見えません ― 相手を読もう")+'</p></div>';
+  }
+  if(msg)msg.textContent=st.msg||"";
+  if(line){
+    if(st.phase==="bet")line.textContent=st.turn===IP.mySlot?"👉 あなたの番です！":(st.players[st.turn].name+" の番です…");
+    else line.textContent=st.winners.indexOf(IP.mySlot)>=0?("🎉 ポットから +"+st.share+"コイン！"):"";
+  }
+  /* ---- actions ---- */
+  if(acts){
+    var html="";
+    if(st.phase==="bet"&&st.turn===IP.mySlot&&!mine.fold){
+      if(IP.waiting)html='<span class="ip-wait">送信中…</span>';
+      else{
+        var need=st.curBet-mine.inv;
+        html+='<button type="button" class="btn ghost" data-ip-act="fold">フォールド</button>';
+        if(need<=0)html+='<button type="button" class="btn gold" data-ip-act="call">チェック</button>';
+        else if(S.coin>=need)html+='<button type="button" class="btn gold" data-ip-act="call">コール +'+need+'</button>';
+        if(S.coin>=need+20)html+='<button type="button" class="btn gold" data-ip-act="raise20">レイズ +20</button>';
+        if(S.coin>=need+50)html+='<button type="button" class="btn gold" data-ip-act="raise50">レイズ +50</button>';
+      }
+    }else if(st.phase==="show"){
+      if(IP.mode==="host"||IP.mode==="local")html='<button type="button" class="btn gold" data-ip-act="next">▶ 次のハンド</button>';
+      else html='<span class="ip-wait">ホストが次のハンドを始めるのを待っています…</span>';
+    }else if(st.phase==="bet"){
+      html='<span class="ip-wait">'+esc(st.players[st.turn].name)+' の番です…</span>';
+    }
+    acts.innerHTML=html;
+  }
+}
+function ipMyAction(act,amt){
+  if(IP.mode==="guest"){
+    var cur=(typeof MP!=="undefined")?MP.cur:null;
+    if(!cur||!cur.ref)return;
+    IP.waiting=true;ipRender();
+    var upd={};var payload={a:act,amt:amt||0,n:++IP.actSeq};
+    upd["inputs."+MP.uid()]=payload;
+    cur.ref.update(upd).catch(function(){IP.waiting=false;ipRender();});
+    setTimeout(function(){if(IP.waiting){IP.waiting=false;ipRender();}},4000);
+    return;
+  }
+  ipApplyAction(IP.mySlot,act,amt);
+}
+function ipStartSolo(){
+  IP.slots=ipSlotsLocal();
+  IP.mode="local";IP.mySlot=0;IP.hand=0;IP.dealer=Math.floor(Math.random()*IP.slots.length);
+  IP.lastSeq=-1;IP.accHand=-1;
+  var ov=$("ipOverlay");if(ov)ov.hidden=true;
+  var ue=$("ipUe");if(ue){ue.hidden=true;ue.innerHTML="";}
+  ipDeal();
+}
+function ipStartHost(){
+  var cur=MP.cur;
+  if(!cur||cur.started||cur.role!=="host")return;
+  if(cur.autoT){clearTimeout(cur.autoT);cur.autoT=0;}
+  var slots=((cur.data&&cur.data.slots)||cur.slots||[]).slice();
+  var used={};
+  slots.forEach(function(s){if(s&&s.char)used[s.char]=1;});
+  var pool=["paradise","momona","akari","kaede","nana","misa"];
+  for(var i=0;i<cur.max;i++){
+    if(!slots[i]){
+      var ch=pool.filter(function(c){return !used[c];})[0]||"paradise";
+      used[ch]=1;
+      slots[i]={uid:null,name:"CPU",char:ch,cpu:true};
+    }
+  }
+  cur.slots=slots;cur.started=true;
+  IP.slots=slots.map(function(s){
+    return {uid:s.uid||null,char:s.char||"momona",cpu:!!s.cpu,
+      name:s.cpu?("CPU "+ipCharName(s.char)):(s.name||"プレイヤー")};
+  });
+  IP.mode="host";IP.mySlot=0;IP.hand=0;IP.dealer=Math.floor(Math.random()*IP.slots.length);
+  IP.lastSeq=-1;IP.accHand=-1;IP.lastActN={};
+  var ov=$("ipOverlay");if(ov)ov.hidden=true;
+  cur.ref.update({slots:slots,status:"playing",hostSeen:Date.now()}).catch(function(){});
+  ipDeal();
+  var p=MP.panel("indian");if(p){var lb=p.querySelector("[data-mp-lobby]");if(lb)lb.hidden=true;}
+  MP.setStatus("indian","対戦中！");
+  toast("🌐 オンライン対戦スタート！");
+}
+function ipStartGuest(d){
+  var cur=MP.cur;
+  if(!cur||cur.started||cur.role!=="guest")return;
+  cur.slots=d.slots;cur.started=true;
+  var idx=-1;
+  for(var i=0;i<d.slots.length;i++)if(d.slots[i]&&d.slots[i].uid===MP.uid())idx=i;
+  if(idx<0){MP.leave();return;}
+  IP.mySlot=idx;
+  IP.slots=d.slots.map(function(s){
+    return {uid:s.uid||null,char:s.char||"momona",cpu:!!s.cpu,
+      name:s.cpu?("CPU "+ipCharName(s.char)):(s.name||"プレイヤー")};
+  });
+  IP.mode="guest";IP.lastSeq=-1;IP.accHand=-1;IP.waiting=false;
+  var ov=$("ipOverlay");if(ov)ov.hidden=true;
+  if(d.state){IP.state=d.state;IP.lastSeq=d.state.seq||0;}
+  ipRender();
+  var p=MP.panel("indian");if(p){var lb=p.querySelector("[data-mp-lobby]");if(lb)lb.hidden=true;}
+  MP.setStatus("indian","対戦中！");
+  toast("🌐 オンライン対戦スタート！");
+}
+function ipOnData(d){
+  var cur=MP.cur;if(!cur||!d)return;
+  if(!cur.started){
+    MP.renderLobby();
+    if(cur.role==="host"){
+      var humans=(d.slots||[]).filter(function(s){return s&&s.uid;}).length;
+      if(humans>=cur.max){MP.startHost();return;}
+    }
+    if(cur.role==="guest"&&d.status==="playing"&&d.state)ipStartGuest(d);
+    return;
+  }
+  if(cur.role==="host"){
+    if(d.inputs&&IP.state){
+      for(var uid in d.inputs){
+        var slot=-1;
+        for(var i=0;i<cur.slots.length;i++)if(cur.slots[i]&&cur.slots[i].uid===uid)slot=i;
+        if(slot<0)continue;
+        var inp=d.inputs[uid];
+        if(inp&&typeof inp.n==="number"&&inp.n>(IP.lastActN[uid]||0)){
+          IP.lastActN[uid]=inp.n;
+          if(IP.state.phase==="bet"&&IP.state.turn===slot)ipApplyAction(slot,inp.a,inp.amt);
+        }
+      }
+    }
+    return;
+  }
+  /* guest */
+  if(d.state){
+    if(typeof d.state.seq!=="number"||d.state.seq>IP.lastSeq){
+      IP.lastSeq=(typeof d.state.seq==="number")?d.state.seq:IP.lastSeq;
+      IP.state=d.state;IP.waiting=false;
+      ipRender();
+    }
+  }
+  if(d.status==="done"&&!cur.finished&&IP.state&&IP.state.phase==="bet"){
+    MP.hostFallback();
+  }
+}
+function ipTakeover(i){
+  if(IP.state&&IP.state.players[i]&&!IP.state.players[i].cpu){
+    IP.state.players[i].cpu=true;
+    toast("相手が切断 ― CPUが引き継ぎます");
+    ipAfterChange();
+  }
+}
+function ipHostFallbackLocal(){
+  IP.mode="local";
+  var st=IP.state;
+  if(st){
+    for(var i=0;i<st.players.length;i++)if(i!==IP.mySlot)st.players[i].cpu=true;
+    ipRender();
+    ipMaybeAI();
+  }
+  toast("ホストが切断しました ― CPU対戦で続行します");
+}
+window.__ipStop=function(){
+  clearTimeout(IP.aiT);
+  IP.mode="off";IP.state=null;IP.waiting=false;
+  if(typeof MP!=="undefined"&&MP&&MP.cur&&MP.cur.game==="indian")MP.detach("indian");
+};
+window.__ipReset=function(){
+  clearTimeout(IP.aiT);
+  IP.mode="off";IP.state=null;IP.slots=[];IP.mySlot=-1;IP.lastSeq=-1;IP.accHand=-1;IP.waiting=false;
+  var ov=$("ipOverlay");if(!ov)return;
+  ov.querySelector(".rt-ov-ttl").textContent="インディアンポーカー";
+  $("ipOvTx").innerHTML="全員の額にカード1枚。みんなのカードは見えるのに、自分のだけ見えない！<br>相手のカードとベットの様子（ブラフも）を読み切って、ポットを取れ。";
+  var ue=$("ipUe");if(ue){ue.hidden=true;ue.innerHTML="";}
+  var cf=$("ipConfetti");if(cf)cf.innerHTML="";
+  ov.hidden=false;
+  ipRender();
+  var hh=$("ipHudHand");if(hh)hh.textContent="HAND ―";
+  var hp=$("ipHudPot");if(hp)hp.textContent="POT 0";
+  var hb=$("ipHudBet");if(hb)hb.textContent="ベット ―";
+  var mg=$("ipMsg");if(mg)mg.textContent="対戦相手を待っています";
+  var ln=$("ipLine");if(ln)ln.textContent="";
+};
+window.__on("ipStartBtn",function(){ipStartSolo();});
+window.__on("ipBack",function(){window.__ipStop();mgShow("hub");});
+(function(){
+  var acts=$("ipActions");
+  if(acts)acts.addEventListener("click",function(ev){
+    var b=ev.target;
+    while(b&&b!==acts&&!b.getAttribute("data-ip-act"))b=b.parentNode;
+    if(!b||b===acts)return;
+    var a=b.getAttribute("data-ip-act");
+    if(a==="fold")ipMyAction("fold",0);
+    else if(a==="call")ipMyAction("call",0);
+    else if(a==="raise20")ipMyAction("raise",20);
+    else if(a==="raise50")ipMyAction("raise",50);
+    else if(a==="next"){if(IP.mode==="host"||IP.mode==="local")ipDeal();}
+  });
+})();
+/* ---------- MP wiring : register "indian" with the room base ---------- */
+(function(){
+  if(typeof MP==="undefined"||!MP)return;
+  MP.cfg.indian={max:4,title:"インディアンポーカー",ov:"ipOverlay",startBtn:"ipStartBtn"};
+  var _solo=MP.soloStart;
+  MP.soloStart=function(game){if(game==="indian"){ipStartSolo();return;}_solo.call(MP,game);};
+  var _sh=MP.startHost;
+  MP.startHost=function(){if(MP.cur&&MP.cur.game==="indian"){ipStartHost();return;}_sh.call(MP);};
+  var _sg=MP.startGuest;
+  MP.startGuest=function(d){if(MP.cur&&MP.cur.game==="indian"){ipStartGuest(d);return;}_sg.call(MP,d);};
+  var _od=MP.onData;
+  MP.onData=function(d){if(MP.cur&&MP.cur.game==="indian"){ipOnData(d);return;}_od.call(MP,d);};
+  var _to=MP.takeover;
+  MP.takeover=function(i){if(MP.cur&&MP.cur.game==="indian"){ipTakeover(i);return;}_to.call(MP,i);};
+  var _hf=MP.hostFallback;
+  MP.hostFallback=function(){
+    if(MP.cur&&MP.cur.game==="indian"){MP.leave();ipHostFallbackLocal();return;}
+    _hf.call(MP);
+  };
+  /* panel : same markup / routing as mpInject, for this game only
+     (mpInject itself ran before this game existed) */
+  var ov=$("ipOverlay");
+  if(ov){
+    var host=ov.querySelector(".rt-ov-in");
+    if(host&&!host.querySelector('.mp-panel[data-game="indian"]')){
+      var div=document.createElement("div");
+      div.className="mp-panel";div.setAttribute("data-game","indian");
+      div.innerHTML='<div class="mp-ttl">🌐 オンライン対戦（最大4人）</div>'
+        +'<div class="mp-sub">クイックマッチ or 合言葉ルーム。自分のカードだけ見えない読み合い ― 空き枠はCPUが入って必ず始まります。</div>'
+        +'<div class="mp-row"><button type="button" class="btn gold" data-mp="quick">⚡ クイックマッチ</button></div>'
+        +'<div class="mp-row"><button type="button" class="btn ghost" data-mp="create">🔑 合言葉ルームを作る</button></div>'
+        +'<div class="mp-row"><input class="mp-codein" data-mp-code type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="4桁の合言葉">'
+        +'<button type="button" class="btn ghost" data-mp="join">合言葉で入室</button></div>'
+        +'<div class="mp-status" data-mp-status>1人用と並んで選べます。相手が見つからなければCPUが入って必ず始まります。</div>'
+        +'<div class="mp-lobby" data-mp-lobby hidden>'
+        +'<div class="mp-code" data-mp-bigcode hidden></div>'
+        +'<div data-mp-members></div>'
+        +'<div class="mp-row"><button type="button" class="btn gold" data-mp="startnow" hidden>▶ このメンバーで開始（残りCPU）</button></div>'
+        +'<div class="mp-row"><button type="button" class="btn ghost" data-mp="cancel">ルームを出る</button></div>'
+        +'</div>';
+      host.appendChild(div);
+      div.addEventListener("click",function(ev){
+        var b=ev.target;
+        while(b&&b!==div&&!b.getAttribute("data-mp"))b=b.parentNode;
+        if(!b||b===div)return;
+        var act=b.getAttribute("data-mp");
+        if(act==="quick")MP.enter("indian","quick");
+        else if(act==="create")MP.enter("indian","create");
+        else if(act==="join"){
+          var inp=div.querySelector("[data-mp-code]");
+          var code=(inp&&inp.value||"").replace(/[^0-9]/g,"");
+          if(code.length!==4){toast("4桁の合言葉を入力してください");return;}
+          MP.enter("indian","join",code);
+        }
+        else if(act==="startnow"){if(MP.cur&&MP.cur.game==="indian")MP.startHost();}
+        else if(act==="cancel"){if(MP.cur&&MP.cur.game==="indian")MP.leave();}
+      });
+      var sb=$("ipStartBtn");
+      if(sb)sb.addEventListener("click",function(){if(MP.cur&&MP.cur.game==="indian")MP.leave();},true);
+    }
+  }
+})();
+
+/* ---------- hub navigation for the four new games ---------- */
+var PZ_VIEWS={match3:"mgMatch3",rensa:"mgRensa",chinchiro:"mgChinchiro",indian:"mgIndian"};
+var _mgShow=window.mgShow;
+window.mgShow=function(which){
+  _mgShow(which);
+  for(var k in PZ_VIEWS){var el=$(PZ_VIEWS[k]);if(el)el.style.display=(which===k)?"":"none";}
+  if(which!=="match3"&&window.__m3Stop){window.__m3Stop();if(window.__m3Reset)window.__m3Reset();}
+  if(which!=="rensa"&&window.__rnStop){window.__rnStop();if(window.__rnReset)window.__rnReset();}
+  if(which!=="chinchiro"&&window.__cnStop){window.__cnStop();if(window.__cnReset)window.__cnReset();}
+  if(which!=="indian"&&window.__ipStop){window.__ipStop();if(window.__ipReset)window.__ipReset();}
+  if(which==="match3"&&window.__m3Reset)window.__m3Reset();
+  if(which==="rensa"&&window.__rnReset)window.__rnReset();
+  if(which==="chinchiro"&&window.__cnReset)window.__cnReset();
+  if(which==="indian"&&window.__ipReset)window.__ipReset();
+};
+var _mgStopAll=window.mgStopAll;
+window.mgStopAll=function(){
+  _mgStopAll();
+  if(window.__m3Stop){window.__m3Stop();if(window.__m3Reset)window.__m3Reset();}
+  if(window.__rnStop){window.__rnStop();if(window.__rnReset)window.__rnReset();}
+  if(window.__cnStop){window.__cnStop();if(window.__cnReset)window.__cnReset();}
+  if(window.__ipStop){window.__ipStop();if(window.__ipReset)window.__ipReset();}
+};
+window.__on("mgToMatch3",function(){mgShow("match3");});
+window.__on("mgToRensa",function(){mgShow("rensa");});
+window.__on("mgToChinchiro",function(){mgShow("chinchiro");});
+window.__on("mgToIndian",function(){mgShow("indian");});
+})();
+</script>
+
 <script>
 /* ================================================================
    v93 — FAST BOOT. This block is the last script in the document,
