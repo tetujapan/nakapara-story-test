@@ -22,6 +22,9 @@
 <script src="assets-data-19.js"></script>
 <script src="assets-data-20.js"></script>
 <script src="assets-data-21.js"></script>
+<script src="assets-data-22.js"></script>
+<script src="assets-data-23.js"></script>
+<script src="assets-data-24.js"></script>
 <script>
 /* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
    Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
@@ -3517,18 +3520,22 @@ function cardData(card){
 /* per-character face anchor for full-frame use: tuned per illustration so the
    whole face (bangs to chin) stays inside wide banner crops */
 var FACEPOS={momona:"50% 13%",akari:"50% 17%",kaede:"50% 12%",nana:"50% 13%",misa:"50% 17%",paradise:"50% 14%",kenji:"50% 10%",saki:"50% 10%",yuna:"50% 10%",camera:"50% 10%",staff:"50% 10%"};
-function charArt(c,seed,full){
+/* per-card art overrides: 中川パラダイス cards each use a different
+   real studio photo (本人写真・ポーズ別) instead of one shared portrait */
+var CARDART={"paradise-R0":"assets/card_paradise_r0.webp","paradise-R1":"assets/card_paradise_r1.webp","paradise-R2":"assets/card_paradise_r2.webp","paradise-SR0":"assets/card_paradise_sr0.webp","paradise-SR1":"assets/card_paradise_sr1.webp","paradise-UR0":"assets/card_paradise_ur0.webp"};
+function charArt(c,seed,full,cardId){
   var pos=["50% 3%","50% 11%","50% 0%","50% 17%","50% 7%","50% 21%"];
   var s=((seed%6)+6)%6;
   var st='object-position:'+(full?(FACEPOS[c.id]||"50% 14%"):pos[s]);
-  return '<img class="charart" src="assets/char_'+c.id+'.webp" alt="'+c.name+'の写真" loading="lazy" style="'+st+'">';
+  var src=(cardId&&CARDART[cardId])?CARDART[cardId]:'assets/char_'+c.id+'.webp';
+  return '<img class="charart" src="'+src+'" alt="'+c.name+'の写真" loading="lazy" style="'+st+'">';
 }
 function pipsHTML(card){
   var n=card.rar==="UR"?3:card.rar==="SR"?2:1;
   var s=""; for(var i=0;i<n;i++)s+="◆";
   return '<div class="pips '+card.rar+'">'+s+(card.limited?' <span style="letter-spacing:.06em">限定</span>':"")+'</div>';
 }
-var CUTDIM={momona:[600,1715],akari:[600,1129],kaede:[600,1506],nana:[600,1616],misa:[600,1712],paradise:[640,960],kenji:[640,960],saki:[640,960],yuna:[640,960],camera:[640,960],staff:[640,960]};
+var CUTDIM={momona:[600,1715],akari:[600,1129],kaede:[600,1506],nana:[600,1616],misa:[600,1712],paradise:[600,1694],kenji:[600,1833],saki:[600,1939],yuna:[600,1366],camera:[600,1879],staff:[600,1869]};
 function cutImg(c,cls){
   var d=CUTDIM[c.id]||[600,1600];
   return '<img class="'+cls+'" src="assets/full_'+c.id+'.webp" width="'+d[0]+'" height="'+d[1]+'" alt="'+c.name+'" decoding="async" onload="this.classList.add(\'ld\')" onerror="this.onerror=null;this.src=\'assets/char_'+c.id+'.webp\';this.classList.add(\'ld\')">';
@@ -3545,7 +3552,7 @@ function cardHTML(card,owned,isNew){
     +'<span class="rar '+card.rar+'">'+(card.limited?"限定":card.rar)+'</span>'+(isNew?'<span class="newtag">NEW</span>':"")
     +(owned?'<span class="lvchip">Lv.'+cardLv(card.id)+'</span>':"")
     +(owned&&dupN>0?'<span class="dupchip">素材 ×'+dupN+'</span>':"")
-    +'<span class="art">'+charArt(c,seed,false)+'</span>'
+    +'<span class="art">'+charArt(c,seed,false,card.id)+'</span>'
     +'<div class="meta"><div class="nm">'+(owned?c.name:"？？？")+'</div><div class="ttl">'+(owned?card.title+" ・ "+d.no:"未所持")+'</div>'+(owned?pipsHTML(card):"")+'</div></div>';
 }
 /* ===== state (memory only) ===== */
@@ -3769,7 +3776,7 @@ function openCard(id){
   var card=null; CARDS.forEach(function(k){if(k.id===id)card=k;}); if(!card)return;
   S.cardViews++;
   var c=charOf(card.char), d=cardData(card), owned=!!S.owned[card.id];
-  $("modalSheet").innerHTML='<button type="button" class="jewelbtn mclose" aria-label="閉じる">✕</button><div class="bigart">'+charArt(c,CARDS.indexOf(card),true)+'</div>'
+  $("modalSheet").innerHTML='<button type="button" class="jewelbtn mclose" aria-label="閉じる">✕</button><div class="bigart">'+charArt(c,CARDS.indexOf(card),true,card.id)+'</div>'
     +'<h3 style="font-size:19px;margin-top:12px">'+c.name+' ・ '+card.title+' <span class="rar '+card.rar+'" style="position:static;display:inline-block;vertical-align:2px">'+(card.limited?"限定":card.rar)+'</span></h3>'
     +pipsHTML(card)
     +'<p class="note" style="margin-top:4px">'+d.no+' ／ '+(owned?"所持中":"未所持（ガチャまたは交換で入手）")+(card.limited?" ／ 撮影会ピックアップ限定カード":"")+'</p>'
@@ -4245,7 +4252,7 @@ function bigCardHTML(card,isNew){
   var c=charOf(card.char), d=cardData(card), seed=CARDS.indexOf(card);
   return '<div class="rvcard f-'+card.rar+'">'
     +'<span class="rar '+card.rar+'">'+(card.limited?"限定":card.rar)+'</span>'+(isNew?'<span class="newtag">NEW</span>':"")
-    +'<span class="rvcard-art">'+charArt(c,seed,true)+'</span>'
+    +'<span class="rvcard-art">'+charArt(c,seed,true,card.id)+'</span>'
     +'<div class="rvcard-meta"><b>'+c.name+'</b><span>'+card.title+' ・ '+d.no+(card.limited?" ・ 撮影会ピックアップ限定":"")+'</span></div></div>';
 }
 function startReveal(res,news,gains){
@@ -4646,7 +4653,7 @@ function renderDeck(){
   host.innerHTML=S.deck.map(function(id,i){
     if(!id)return '<button type="button" class="bt-slot" data-slot="'+i+'">＋<br>カードを選ぶ</button>';
     var card=cardById(id), c=charOf(card.char), lv=cardLv(id);
-    return '<button type="button" class="bt-slot filled" data-slot="'+i+'">'+charArt(c,CARDS.indexOf(card),true)
+    return '<button type="button" class="bt-slot filled" data-slot="'+i+'">'+charArt(c,CARDS.indexOf(card),true,card.id)
       +'<span class="bt-sm"><b>'+c.name+' ・ '+card.title+'</b><span>'+card.rar+' ／ Lv.'+lv+' ／ HP '+hpMaxOf(card,lv)+'</span></span></button>';
   }).join("");
   host.querySelectorAll("[data-slot]").forEach(function(b){b.addEventListener("click",function(){if(S.btBusy)return;openDeckPicker(parseInt(this.getAttribute("data-slot"),10));});});
@@ -4659,7 +4666,7 @@ function openDeckPicker(slot){
   var oc=ownedCards();
   var rows=oc.map(function(card){
     var c=charOf(card.char), lv=cardLv(card.id), inDeck=S.deck.indexOf(card.id)>=0&&S.deck[slot]!==card.id;
-    return '<button type="button" class="pickrow'+(inDeck?" indeck":"")+'" data-pick="'+card.id+'" '+(inDeck?"disabled":"")+'>'+charArt(c,CARDS.indexOf(card),true)
+    return '<button type="button" class="pickrow'+(inDeck?" indeck":"")+'" data-pick="'+card.id+'" '+(inDeck?"disabled":"")+'>'+charArt(c,CARDS.indexOf(card),true,card.id)
       +'<span class="pk-t"><b>'+c.name+' ・ '+card.title+'</b><span>'+(card.limited?"限定":card.rar)+' ／ Lv.'+lv+' ／ HP '+hpMaxOf(card,lv)+' ／ ビジュアル'+effStat(card,lv,0)+'・表現力'+effStat(card,lv,1)+'・オーラ'+effStat(card,lv,2)+'</span></span>'
       +(S.deck[slot]===card.id?'<span class="bt-pow">選択中</span>':"")+'</button>';
   }).join("");
@@ -5944,7 +5951,7 @@ function vnSlots(n){return n<=1?["c"]:n===2?["l","r"]:["l","c","r"];}
 function vnCharHTML(cid,slot,idx){
   var dl=' style="animation-delay:'+(idx*0.13).toFixed(2)+'s"';
   var img;
-  if(cid==="paradise")img='<img src="assets/char_paradise.webp" alt="中川パラダイス" decoding="async"'+dl+'>';
+  if(cid==="paradise")img='<img src="assets/cut_paradise.webp" alt="中川パラダイス" decoding="async"'+dl+'>';
   else if(VN_SUPPORT[cid])img='<img src="'+VN_SUPPORT[cid].img+'" alt="'+VN_SUPPORT[cid].name+'" decoding="async"'+dl+'>';
   else img='<img src="assets/cut_'+cid+'.webp" alt="'+vnEsc(charOf(cid).name)+'" decoding="async"'+dl+'>';
   return '<div class="vn-char slot-'+slot+(vnIsSD(cid)?" sd":"")+'" data-cid="'+cid+'" style="z-index:'+(2+idx)+'">'+img+'</div>';
@@ -5957,7 +5964,7 @@ function renderScene(){
   if(!vnPreloaded){
     vnPreloaded=true;
     Object.keys(VN_LOCS).forEach(function(k){var im=new Image();im.src=VN_LOCS[k].bg;});
-    ["momona","akari","kaede","nana","misa"].forEach(function(id){var im=new Image();im.src="assets/cut_"+id+".webp";});
+    ["momona","akari","kaede","nana","misa","paradise"].forEach(function(id){var im=new Image();im.src="assets/cut_"+id+".webp";});
     Object.keys(VN_SUPPORT).forEach(function(id){var im=new Image();im.src=VN_SUPPORT[id].img;});
   }
   var n=S.scene;
