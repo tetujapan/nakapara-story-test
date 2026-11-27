@@ -139,10 +139,73 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>PARA NOVEL 試作版</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@600;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="assets/capsule_big_normal.webp">
-<link rel="preload" as="image" href="assets/stage_bg.webp">
-<link rel="preload" as="image" href="assets/full_momona.webp">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- fast boot (v107): webfonts must NOT block first paint. The stylesheet is
+     preloaded and swapped in when it arrives; text renders in the system
+     font for the first moments instead of a blank white screen. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@600;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@600;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet"></noscript>
+<!-- fast boot (v107): critical CSS ONLY — the page ground colour and the
+     splash. This is everything the browser needs to paint the loading
+     screen from the first bytes of the document. The full app stylesheet
+     sits in <body> right after the splash markup, so a slow connection
+     shows the splash immediately instead of white. No image preloads:
+     on a thin connection they only compete with the HTML itself. -->
+<style id="npCritical">
+html{background:#180a24}
+body{background:#180a24;margin:0}
+#npSplash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 28%,#3d1150,#180a24 78%);color:#fff;font-family:"M PLUS Rounded 1c","Noto Sans JP",system-ui,sans-serif;transition:opacity .4s ease}
+#npSplash.np-out{opacity:0;pointer-events:none}
+.np-splash-icon{width:92px;height:92px;border-radius:22px;box-shadow:0 14px 34px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.18)}
+.np-splash-logo{margin-top:20px;font-weight:800;font-size:30px;letter-spacing:.04em;line-height:1.1}
+.np-splash-logo b{color:#ff5c9e}
+.np-splash-sub{margin-top:6px;font-size:10px;font-weight:700;letter-spacing:.22em;color:#d9b8e6}
+.np-splash-track{margin-top:30px;width:min(240px,64vw);height:8px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}
+.np-splash-track i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#ff5c9e,#ffb300);transition:width .18s ease}
+.np-splash-pct{margin-top:10px;font-size:12px;font-weight:700;color:#f3d9ec}
+@media (prefers-reduced-motion: reduce){#npSplash{transition:none}}
+</style>
+
+<!-- v93 fast boot: deferred so they no longer block first paint;
+     OnlineAPI.init() is likewise deferred until after the home
+     screen is up (see the boot script at the end of <body>). -->
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<!-- v93 fast boot splash: plain markup + one tiny inline script, so
+     it paints before any app script has run. The boot script at the
+     end of <body> completes the bar and removes it. -->
+<div id="npSplash" role="status" aria-label="読み込み中">
+  <img class="np-splash-icon" src="assets/app-icon.webp" alt="" width="92" height="92">
+  <div class="np-splash-logo">PARA <b>NOVEL</b></div>
+  <div class="np-splash-sub">MULTI-ENDING STORY GAME ・ 試作版</div>
+  <div class="np-splash-track"><i id="npSplashBar"></i></div>
+  <div class="np-splash-pct"><span id="npSplashPct">0%</span>　読み込み中…</div>
+</div>
+<script>
+(function(){
+  var bar=document.getElementById("npSplashBar"),pct=document.getElementById("npSplashPct"),p=0;
+  var t=setInterval(function(){
+    p=Math.min(92,p+Math.max(1,(92-p)*0.09));
+    if(bar)bar.style.width=p+"%";
+    if(pct)pct.textContent=Math.floor(p)+"%";
+    if(p>=92)clearInterval(t);
+  },90);
+  window.__npSplashDone=function(){
+    clearInterval(t);
+    if(bar)bar.style.width="100%";
+    if(pct)pct.textContent="100%";
+  };
+  /* failsafe: never trap the user behind the splash */
+  setTimeout(function(){
+    var s=document.getElementById("npSplash");
+    if(s&&window.__npHideSplash)window.__npHideSplash();
+    else if(s)s.style.display="none";
+  },8000);
+})();
+</script>
 <style>
 :root{
   --bg:#fff6f8; --bg2:#fff; --ink:#2b1a22; --ink2:#725663; --line:#f0d3dd;
@@ -2690,46 +2753,6 @@ img{-webkit-user-drag:none}
 .np-splash-pct{margin-top:10px;font-size:12px;font-weight:700;color:#f3d9ec}
 @media (prefers-reduced-motion: reduce){#npSplash{transition:none}}
 </style>
-<!-- v93 fast boot: deferred so they no longer block first paint;
-     OnlineAPI.init() is likewise deferred until after the home
-     screen is up (see the boot script at the end of <body>). -->
-<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-</head>
-<body>
-<!-- v93 fast boot splash: plain markup + one tiny inline script, so
-     it paints before any app script has run. The boot script at the
-     end of <body> completes the bar and removes it. -->
-<div id="npSplash" role="status" aria-label="読み込み中">
-  <img class="np-splash-icon" src="assets/app-icon.webp" alt="" width="92" height="92">
-  <div class="np-splash-logo">PARA <b>NOVEL</b></div>
-  <div class="np-splash-sub">MULTI-ENDING STORY GAME ・ 試作版</div>
-  <div class="np-splash-track"><i id="npSplashBar"></i></div>
-  <div class="np-splash-pct"><span id="npSplashPct">0%</span>　読み込み中…</div>
-</div>
-<script>
-(function(){
-  var bar=document.getElementById("npSplashBar"),pct=document.getElementById("npSplashPct"),p=0;
-  var t=setInterval(function(){
-    p=Math.min(92,p+Math.max(1,(92-p)*0.09));
-    if(bar)bar.style.width=p+"%";
-    if(pct)pct.textContent=Math.floor(p)+"%";
-    if(p>=92)clearInterval(t);
-  },90);
-  window.__npSplashDone=function(){
-    clearInterval(t);
-    if(bar)bar.style.width="100%";
-    if(pct)pct.textContent="100%";
-  };
-  /* failsafe: never trap the user behind the splash */
-  setTimeout(function(){
-    var s=document.getElementById("npSplash");
-    if(s&&window.__npHideSplash)window.__npHideSplash();
-    else if(s)s.style.display="none";
-  },8000);
-})();
-</script>
 <div class="device">
 <header class="topbar"><div class="topbar-in">
   <img class="app-icon" src="assets/app-icon.webp" alt="PARA NOVEL アイコン" width="38" height="38">
@@ -2789,8 +2812,8 @@ img{-webkit-user-drag:none}
     <div id="gachaTop">
       <div class="sec-head"><h2>📸 ガチャ</h2><p>バナーをタップすると機械が登場します</p></div>
       <button type="button" class="gbanner" id="bannerNormal">
-        <img class="gb-bg" src="assets/stage_bg.webp" alt="">
-        <img class="gb-cut" src="assets/cut_momona.webp" alt="">
+        <img loading="lazy" decoding="async" class="gb-bg" src="assets/stage_bg.webp" alt="">
+        <img loading="lazy" decoding="async" class="gb-cut" src="assets/cut_momona.webp" alt="">
         <span class="gb-tx">
           <span class="gb-tag">常設ガチャ</span>
           <span class="gb-title">フォトカードガチャ</span>
@@ -2799,8 +2822,8 @@ img{-webkit-user-drag:none}
         </span>
       </button>
       <button type="button" class="gbanner" id="bannerOshi">
-        <img class="gb-bg" src="assets/stage_bg.webp" alt="">
-        <img class="gb-cut" src="assets/cut_momona.webp" alt="">
+        <img loading="lazy" decoding="async" class="gb-bg" src="assets/stage_bg.webp" alt="">
+        <img loading="lazy" decoding="async" class="gb-cut" src="assets/cut_momona.webp" alt="">
         <span class="gb-tx">
           <span class="gb-tag">推し専用ガチャ</span>
           <span class="gb-title">ももか推しガチャ</span>
@@ -2809,8 +2832,8 @@ img{-webkit-user-drag:none}
         </span>
       </button>
       <button type="button" class="gbanner gold" id="bannerPickup">
-        <img class="gb-bg" src="assets/stage_bg.webp" alt="">
-        <img class="gb-cut" src="assets/cut_momona.webp" alt="">
+        <img loading="lazy" decoding="async" class="gb-bg" src="assets/stage_bg.webp" alt="">
+        <img loading="lazy" decoding="async" class="gb-cut" src="assets/cut_momona.webp" alt="">
         <span class="gb-tx">
           <span class="gb-tag pk">実イベント連動 ・ 期間限定</span>
           <span class="gb-title">撮影会ピックアップ</span>
@@ -2832,7 +2855,7 @@ img{-webkit-user-drag:none}
             <img loading="lazy" decoding="async" class="gcrank" id="gcrank" src="assets/gacha_crank.webp" alt="">
             <div class="gbulbs" id="gbulbs"></div>
             <button type="button" class="gtap" id="crankBtn" aria-label="マシンをタップしてガチャを回す"></button>
-            <img class="gcap2" id="gcap2" src="assets/capsule_big_normal.webp" alt="">
+            <img loading="lazy" decoding="async" class="gcap2" id="gcap2" src="assets/capsule_big_normal.webp" alt="">
             <div class="flash" id="gflash"></div>
           </div>
           <div class="capfield" id="capField"></div>
@@ -2880,7 +2903,7 @@ img{-webkit-user-drag:none}
   <div class="rv-ring" id="rvRing"></div>
   <div class="rv-ring" id="rvRing2" style="animation-delay:.16s"></div>
   <div class="rv-core">
-    <img class="rv-cap" id="rvCap" src="assets/capsule_big_normal.webp" alt="">
+    <img loading="lazy" decoding="async" class="rv-cap" id="rvCap" src="assets/capsule_big_normal.webp" alt="">
     <div class="rv-cardwrap" id="rvCardWrap"></div>
     <img loading="lazy" decoding="async" class="rv-bang" id="rvBang" src="assets/bang_sr.webp" alt="">
     <div class="rv-stamp" id="rvStamp"></div>
@@ -3049,7 +3072,7 @@ img{-webkit-user-drag:none}
       <div id="btSetup">
         <button type="button" class="mg-back" id="btBack">‹ ミニゲーム一覧へ</button>
         <div class="sec-head"><h2>⚔️ 人気バトル</h2><p>HP制 ・ 相手の3枚全滅で勝ち</p></div>
-        <img class="kv-banner" src="assets/kv_versus.webp" alt="人気バトル ― ステージで対峙する2人" style="object-position:50% 42%">
+        <img loading="lazy" decoding="async" class="kv-banner" src="assets/kv_versus.webp" alt="人気バトル ― ステージで対峙する2人" style="object-position:50% 42%">
         <p class="note" style="font-size:12.5px">👆 枠タップで3枚選んでバトル開始！</p>
         <div class="bt-slots" id="btSlots"></div>
         <p class="bt-deckpow" id="btDeckPow"></p>
@@ -3063,11 +3086,11 @@ img{-webkit-user-drag:none}
     <section style="margin-top:8px">
       <button type="button" class="mg-back" id="shBack">‹ ミニゲーム一覧へ</button>
       <div class="sec-head"><h2>📸 撮影会シャッターゲーム</h2><p>全5ショット</p></div>
-      <img class="kv-banner" src="assets/mg_shutter.webp" alt="撮影会シャッターゲーム ― ファインダー越しのモデル" style="object-position:100% 20%">
+      <img loading="lazy" decoding="async" class="kv-banner" src="assets/mg_shutter.webp" alt="撮影会シャッターゲーム ― ファインダー越しのモデル" style="object-position:100% 20%">
       <p class="note" style="font-size:12.5px">📸 針が金ゾーンに入った瞬間にシャッター！</p>
       <div class="sh-stage" id="shStage">
-        <img class="sh-bg" src="assets/stage_bg.webp" alt="">
-        <img class="sh-model" id="shModel" src="assets/cut_momona.webp" alt="撮影モデル">
+        <img loading="lazy" decoding="async" class="sh-bg" src="assets/stage_bg.webp" alt="">
+        <img loading="lazy" decoding="async" class="sh-model" id="shModel" src="assets/cut_momona.webp" alt="撮影モデル">
         <div class="sh-call" id="shCall"></div>
         <div class="sh-combo" id="shCombo" style="display:none">COMBO<b id="shComboN">0</b></div>
         <div class="sh-pose" id="shPose">ポーズ：笑顔</div>
@@ -3091,7 +3114,7 @@ img{-webkit-user-drag:none}
       <div id="obTop">
         <button type="button" class="mg-back" id="obBack">‹ ミニゲーム一覧へ</button>
         <div class="sec-head"><h2>🌐 オンライン対戦</h2><p>ランク戦 ・ 他プレイヤーのデッキと対戦</p></div>
-        <img class="kv-banner" src="assets/kv_versus.webp" alt="オンライン対戦 ― ステージで対峙する2人" style="object-position:50% 42%">
+        <img loading="lazy" decoding="async" class="kv-banner" src="assets/kv_versus.webp" alt="オンライン対戦 ― ステージで対峙する2人" style="object-position:50% 42%">
         <div id="obHome"></div>
       </div>
       <div id="obStageWrap"></div>
@@ -3102,7 +3125,7 @@ img{-webkit-user-drag:none}
     <section style="margin-top:8px">
       <button type="button" class="mg-back" id="pkBack">‹ ミニゲーム一覧へ</button>
       <div class="sec-head"><h2>🃏 ポーカー</h2><p>テキサスホールデム ・ CPUと1対1</p></div>
-      <img class="kv-banner" src="assets/mg_poker.webp" alt="ポーカー ― 緑のテーブルにカードとチップの山" style="object-position:50% 55%">
+      <img loading="lazy" decoding="async" class="kv-banner" src="assets/mg_poker.webp" alt="ポーカー ― 緑のテーブルにカードとチップの山" style="object-position:50% 55%">
       <div id="pkStageWrap"></div>
       <img loading="lazy" decoding="async" class="mg-bang" id="pkBang" src="assets/bang_jackpot.webp" alt="大当たり！">
       <div class="pk-howto">
@@ -3132,10 +3155,10 @@ img{-webkit-user-drag:none}
         <!-- the cabinet frame itself (photographed slim frame,
              cut out of its backdrop) — everything else on the
              machine is an overlay fitted to its windows -->
-        <img class="sl-cab" src="assets/sl_cabinet.webp" alt="" width="760" height="1151">
+        <img loading="lazy" decoding="async" class="sl-cab" src="assets/sl_cabinet.webp" alt="" width="760" height="1151">
         <!-- cabinet crown : title emblem sign over the frame top -->
         <div class="sl-emblem">
-          <img src="assets/sl_emblem.webp" alt="NAKAPARA SLOT ― スロット筐体の紋章" width="1000" height="286">
+          <img loading="lazy" decoding="async" src="assets/sl_emblem.webp" alt="NAKAPARA SLOT ― スロット筐体の紋章" width="1000" height="286">
         </div>
         <!-- LCD : the show screen. Scenes breathe every game
              (foreshadow), heat up on a chance / reach (build),
@@ -3143,14 +3166,14 @@ img{-webkit-user-drag:none}
              numbers) and settle on the result. -->
         <div class="sl-lcd" id="slLcd">
           <div class="sl-lcd-scene" id="slLcdScene">
-            <img id="slLcdImg" src="assets/cover_momona.webp" alt="">
+            <img loading="lazy" decoding="async" id="slLcdImg" src="assets/cover_momona.webp" alt="">
             <div class="sl-lcd-shine"></div>
             <div class="sl-lcd-cap" id="slLcdCap">ステージ開演中♪</div>
           </div>
           <div class="sl-lcd-data" id="slLcdData">通常 0G ／ 天井まで あと 1000G</div>
-          <img class="sl-lcd-bonus" id="slLcdBonus" src="assets/sl_bonus.webp" alt="BIG BONUS" hidden>
+          <img loading="lazy" decoding="async" class="sl-lcd-bonus" id="slLcdBonus" src="assets/sl_bonus.webp" alt="BIG BONUS" hidden>
           <div class="sl-lcd-ue" id="slUe" hidden></div>
-          <button type="button" class="sl-push" id="slPush" hidden><img src="assets/sl_push.webp" alt="PUSHボタン"></button>
+          <button type="button" class="sl-push" id="slPush" hidden><img loading="lazy" decoding="async" src="assets/sl_push.webp" alt="PUSHボタン"></button>
           <div class="sl-reach" id="slReach" style="display:none">テンパイ！</div>
         </div>
         <!-- the drums, fitted into the frame's reel window -->
@@ -3164,7 +3187,7 @@ img{-webkit-user-drag:none}
         </div>
         <!-- the lever : a compact photographed lever,
              front-left on the deck like a real machine -->
-        <button type="button" class="sl-lever" id="slLever" aria-label="レバーを引いて回す"><img src="assets/sl_lever.webp" alt="" width="190" height="620"></button>
+        <button type="button" class="sl-lever" id="slLever" aria-label="レバーを引いて回す"><img loading="lazy" decoding="async" src="assets/sl_lever.webp" alt="" width="190" height="620"></button>
         <!-- stop buttons : any order, player's own timing -->
         <div class="sl-stops">
           <button type="button" class="sl-stop" id="slStop0" data-stop="0" aria-label="左リールを止める"></button>
@@ -3188,7 +3211,7 @@ img{-webkit-user-drag:none}
             <button type="button" class="sl-bet" data-slbet="100">100</button>
           </div>
           <button type="button" class="sl-spin" id="slSpinBtn">スタート</button>
-          <div class="sl-pushdock" aria-hidden="true"><img src="assets/sl_push.webp" alt=""></div>
+          <div class="sl-pushdock" aria-hidden="true"><img loading="lazy" decoding="async" src="assets/sl_push.webp" alt=""></div>
         </div>
       </div>
       <img loading="lazy" decoding="async" class="mg-bang" id="slBang" src="assets/bang_jackpot.webp" alt="大当たり！">
@@ -3215,7 +3238,7 @@ img{-webkit-user-drag:none}
         <div class="bf-banner" id="rtBanner" hidden><div class="bf-bang">面クリア！</div><div class="bf-sub" id="rtBannerSub"></div><div id="rtUe" hidden></div></div>
         <div class="rt-overlay" id="rtOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/kv_battle_instore.webp" alt="Lit店内バトル ― 迷惑客をひっくり返す主人公" style="object-position:50% 60%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/kv_battle_instore.webp" alt="Lit店内バトル ― 迷惑客をひっくり返す主人公" style="object-position:50% 60%">
             <p class="rt-ov-ttl" id="rtOvTtl">Lit店内バトル</p>
             <p class="rt-ov-tx" id="rtOvTx">ひっくり返して、蹴り飛ばせ！</p>
             <p class="rt-charlab">― 主人公を選ぶ ―</p>
@@ -3259,7 +3282,7 @@ img{-webkit-user-drag:none}
         <canvas id="tbCanvas" width="360" height="690"></canvas>
         <div class="rt-overlay" id="tbOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/kv_sky.webp" alt="スカイシューティング ― 音符ショットでドローンを迎撃する主人公" style="object-position:50% 42%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/kv_sky.webp" alt="スカイシューティング ― 音符ショットでドローンを迎撃する主人公" style="object-position:50% 42%">
             <p class="rt-ov-ttl">スカイシューティング</p>
             <p class="rt-ov-tx">音符ショットでドローンを撃ち落とせ！<br>相方と横に並ぶと手をつないで合体 ― ショット強化！<br>合体中は「✋ はなす」ボタンでいつでも離れられる</p>
             <p class="rt-charlab">― 主人公を選ぶ ―</p>
@@ -3291,7 +3314,7 @@ img{-webkit-user-drag:none}
         <div class="mg-confetti" id="ccConfetti"></div>
         <div class="rt-overlay" id="ccOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/kv_climb.webp" alt="ビルクライム ― 壁をよじ登る中川パラダイス" style="object-position:50% 40%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/kv_climb.webp" alt="ビルクライム ― 壁をよじ登る中川パラダイス" style="object-position:50% 40%">
             <p class="rt-ov-ttl">ビルクライム</p>
             <p class="rt-ov-tx">頂上50m ― 開く窓と植木鉢を避けて登れ！</p>
             <button type="button" class="btn gold rt-start" id="ccStartBtn">▶ スタート</button>
@@ -3330,7 +3353,7 @@ img{-webkit-user-drag:none}
         <div class="bf-banner" id="bfBanner" hidden><div class="bf-bang" id="bfBangTx">面クリア！</div><div class="bf-sub" id="bfBangSub"></div><div id="bfUe" hidden></div></div>
         <div class="rt-overlay" id="bfOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/kv_wing.webp" alt="エンジェルウィング ― 白い羽でカラスに挑む主人公" style="object-position:50% 38%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/kv_wing.webp" alt="エンジェルウィング ― 白い羽でカラスに挑む主人公" style="object-position:50% 38%">
             <p class="rt-ov-ttl">エンジェルウィング</p>
             <p class="rt-ov-tx">白い羽で舞い上がり、黒いカラスを上から蹴落とせ！</p>
             <p class="rt-charlab">― 主人公を選ぶ ―</p>
@@ -3370,7 +3393,7 @@ img{-webkit-user-drag:none}
         <canvas id="bmCanvas" width="364" height="700"></canvas>
         <div class="rt-overlay" id="bmOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/kv_bomber.webp" alt="ボンバーバトル ― 爆風から逃げる4人" style="object-position:50% 45%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/kv_bomber.webp" alt="ボンバーバトル ― 爆風から逃げる4人" style="object-position:50% 45%">
             <p class="rt-ov-ttl">ボンバーバトル</p>
             <p class="rt-ov-tx">爆弾でブロックとライバルを吹き飛ばせ！</p>
             <p class="rt-charlab">― 主人公を選ぶ ―</p>
@@ -3412,7 +3435,7 @@ img{-webkit-user-drag:none}
         <div class="mg-confetti" id="skConfetti"></div>
         <div class="sk-overlay" id="skOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/mg_suika.webp" alt="合体ドリンク ― 合体するドリンク玉とSDキャラ玉" style="object-position:50% 45%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/mg_suika.webp" alt="合体ドリンク ― 合体するドリンク玉とSDキャラ玉" style="object-position:50% 45%">
             <p class="rt-ov-ttl">合体ドリンク</p>
             <p class="rt-ov-tx" id="skOvTx">同じ玉をくっつけて合体進化！</p>
             <div id="skUe" hidden></div>
@@ -3465,7 +3488,7 @@ img{-webkit-user-drag:none}
         <div class="pz-bang" id="m3Bang" hidden></div>
         <div class="sk-overlay" id="m3Overlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/mg_match3.webp" alt="キラキラドリンク ― 宝石のように光るドリンクパネル" style="object-position:50% 50%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/mg_match3.webp" alt="キラキラドリンク ― 宝石のように光るドリンクパネル" style="object-position:50% 50%">
             <p class="rt-ov-ttl">キラキラドリンク</p>
             <p class="rt-ov-tx" id="m3OvTx">同じドリンクを3つそろえて消そう！</p>
             <div id="m3Ue" hidden></div>
@@ -3494,7 +3517,7 @@ img{-webkit-user-drag:none}
         <div class="pz-bang" id="rnBang" hidden></div>
         <div class="sk-overlay rn-ov" id="rnOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/mg_rensa.webp" alt="れんさカクテル ― 落ちてくるドリンク玉と連鎖の爆発" style="object-position:50% 40%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/mg_rensa.webp" alt="れんさカクテル ― 落ちてくるドリンク玉と連鎖の爆発" style="object-position:50% 40%">
             <p class="rt-ov-ttl">れんさカクテル</p>
             <p class="rt-ov-tx" id="rnOvTx">同色4つつなげて消そう！</p>
             <div id="rnUe" hidden></div>
@@ -3521,7 +3544,7 @@ img{-webkit-user-drag:none}
       </div>
       <div class="cn-stage" id="cnStage">
         <div class="cn-bowlwrap" id="cnBowlWrap">
-          <img class="cn-bowl" src="assets/cn_scene.webp" alt="バーのカウンターに置かれたチンチロのお茶碗">
+          <img loading="lazy" decoding="async" class="cn-bowl" src="assets/cn_scene.webp" alt="バーのカウンターに置かれたチンチロのお茶碗">
           <div class="cn-dropshadow" id="cnDropShadow" hidden></div>
           <div class="cn-die" id="cnDie0" role="img" aria-label="サイコロ"></div>
           <div class="cn-die" id="cnDie1" role="img" aria-label="サイコロ"></div>
@@ -3530,7 +3553,7 @@ img{-webkit-user-drag:none}
           <div class="cn-aim" id="cnAim" hidden><span></span></div>
           <div class="cn-role" id="cnRole" hidden></div>
         </div>
-        <div class="cn-fine" id="cnFine" hidden><img src="assets/cn_fine.webp" alt="ファインプレイ！"></div>
+        <div class="cn-fine" id="cnFine" hidden><img loading="lazy" decoding="async" src="assets/cn_fine.webp" alt="ファインプレイ！"></div>
         <div class="cn-gauge" id="cnGauge" hidden><span class="cn-gauge-lb">落とす高さ</span><div class="cn-gauge-bar"><i id="cnGaugeFill"></i><em class="cn-gauge-ob">OBゾーン</em></div><span class="cn-gauge-tx" id="cnGaugeTx">ひくい</span></div>
         <p class="cn-msg" id="cnMsg">人数とアンティを選んでスタート！</p>
         <div class="cn-actions" id="cnActions"></div>
@@ -3561,7 +3584,7 @@ img{-webkit-user-drag:none}
         <div class="mg-confetti" id="ipConfetti"></div>
         <div class="sk-overlay ip-ov" id="ipOverlay">
           <div class="rt-ov-in">
-            <img class="kv-img" src="assets/mg_indian.webp" alt="インディアンポーカー ― スポットライトに立つ1枚のカード" style="object-position:50% 50%">
+            <img loading="lazy" decoding="async" class="kv-img" src="assets/mg_indian.webp" alt="インディアンポーカー ― スポットライトに立つ1枚のカード" style="object-position:50% 50%">
             <p class="rt-ov-ttl">インディアンポーカー</p>
             <p class="rt-ov-tx" id="ipOvTx">スマホを額に当てて遊ぶ1枚勝負</p>
             <div id="ipUe" hidden></div>
