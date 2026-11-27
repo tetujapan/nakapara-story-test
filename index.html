@@ -3230,7 +3230,7 @@ img{-webkit-user-drag:none}
           <div class="rt-ov-in">
             <img class="kv-img" src="assets/kv_sky.webp" alt="スカイシューティング ― 音符ショットでドローンを迎撃する主人公" style="object-position:50% 42%">
             <p class="rt-ov-ttl">スカイシューティング</p>
-            <p class="rt-ov-tx">音符ショットでドローンを撃ち落とせ！</p>
+            <p class="rt-ov-tx">音符ショットでドローンを撃ち落とせ！<br>相方と横に並ぶと手をつないで合体 ― ショット強化！</p>
             <p class="rt-charlab">― 主人公を選ぶ ―</p>
             <div class="rt-chars" data-charsel></div>
             <button type="button" class="btn gold rt-start" id="tbStartBtn">▶ スタート</button>
@@ -3489,7 +3489,7 @@ img{-webkit-user-drag:none}
       </div>
       <div class="cn-stage" id="cnStage">
         <div class="cn-bowlwrap" id="cnBowlWrap">
-          <img class="cn-bowl" src="assets/cn_bowl.webp" alt="斜め上から見たチンチロのお茶碗">
+          <img class="cn-bowl" src="assets/cn_scene.webp" alt="バーのカウンターに置かれたチンチロのお茶碗">
           <div class="cn-dropshadow" id="cnDropShadow" hidden></div>
           <div class="cn-die" id="cnDie0" role="img" aria-label="サイコロ"></div>
           <div class="cn-die" id="cnDie1" role="img" aria-label="サイコロ"></div>
@@ -3498,6 +3498,7 @@ img{-webkit-user-drag:none}
           <div class="cn-aim" id="cnAim" hidden><span></span></div>
           <div class="cn-role" id="cnRole" hidden></div>
         </div>
+        <div class="cn-fine" id="cnFine" hidden><img src="assets/cn_fine.webp" alt="ファインプレイ！"></div>
         <div class="cn-gauge" id="cnGauge" hidden><span class="cn-gauge-lb">落とす高さ</span><div class="cn-gauge-bar"><i id="cnGaugeFill"></i><em class="cn-gauge-ob">OBゾーン</em></div><span class="cn-gauge-tx" id="cnGaugeTx">ひくい</span></div>
         <p class="cn-msg" id="cnMsg">人数とアンティを選んでスタート！</p>
         <div class="cn-actions" id="cnActions"></div>
@@ -6877,14 +6878,19 @@ var SDIMG={},ENIMG={},CLIMBIMG={};
    (93%, 90%) of the image, so drawing it with that point on the
    caller's origin roots it exactly on the shoulder blade. */
 var WINGIMG=new Image();WINGIMG.src="assets/wing_fly.webp";
-function drawWingFly(g,w){
-  if(WINGIMG.complete&&WINGIMG.naturalWidth){
-    var h=w*WINGIMG.naturalHeight/WINGIMG.naturalWidth;
-    g.drawImage(WINGIMG,-0.93*w,-0.90*h,w,h);
+/* the same feather illustration darkened to crow black, layering
+   intact — Angel Wing's crows wear it so white and black wings
+   read as the same kind of wing, told apart by colour alone */
+var WINGIMG_B=new Image();WINGIMG_B.src="assets/wing_fly_black.webp";
+function drawWingImg(g,im,w){
+  if(im.complete&&im.naturalWidth){
+    var h=w*im.naturalHeight/im.naturalWidth;
+    g.drawImage(im,-0.93*w,-0.90*h,w,h);
   }else{
     g.drawImage(SPR.wingFly,-44,-28,46,32);
   }
 }
+function drawWingFly(g,w){drawWingImg(g,WINGIMG,w);}
 /* draw a sprite contain-fitted into the box (x,y,w,h), bottom-aligned.
    opt: faceLeft (mirror), flipped (180°), rot (spin radians), bob (px).
    Returns false when the image is not ready yet. */
@@ -8758,9 +8764,16 @@ document.addEventListener("keyup",function(e){
 });
 /* ================= RETRO 2 : TwinBee style vertical shooter ================= */
 var TB={on:false,raf:0,frame:0,score:0,bells:0,lives:3,pow:1,rate:1,barrier:0,state:"ready",px:180,tx:180,py:520,ty:520,invuln:0,fireT:0,spawnT:0,
-  bullets:[],enemies:[],ebullets:[],items:[],stars:[],fx:[],trail:[],net:null,mySlot:0,p2:null,p1char:null,remoteIn:null,netRaf:0,_snapSeq:-1};
+  bullets:[],enemies:[],ebullets:[],items:[],stars:[],fx:[],trail:[],net:null,mySlot:0,p2:null,p1char:null,remoteIn:null,netRaf:0,_snapSeq:-1,
+  union:false,unionSide:1,unionCD:0,unionFireT:0};
 function tbStart(){
-  TB.net=null;TB.p2=null;TB.p1char=null;TB.remoteIn=null;
+  TB.net=null;TB.p1char=null;TB.remoteIn=null;
+  TB.union=false;TB.unionCD=0;TB.unionFireT=0;
+  /* solo play still gets a wingman : a CPU partner flies the
+     slot beside you and steers into hand-hold range by itself,
+     so the TwinBee union can be tried alone */
+  var cpuChar=["akari","kaede","nana","misa","momona"].filter(function(c){return c!==RTCHAR;})[0];
+  TB.p2={char:cpuChar,name:"CPU",x:252,y:544,tx:252,ty:544,invuln:0,fireT:36,active:true,ai:true,side:1};
   TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.px=180;TB.tx=180;TB.py=520;TB.ty=520;TB.invuln=0;
   TB.bullets=[];TB.enemies=[];TB.ebullets=[];TB.items=[];TB.fx=[];TB.trail=[];TB.spawnT=40;TB.state="play";
   if(TB.stars.length===0)for(var i=0;i<40;i++)TB.stars.push({x:Math.random()*360,y:Math.random()*690,s:Math.random()*2+0.5});
@@ -8771,7 +8784,7 @@ function tbStart(){
 }
 function tbHud(){
   $("tbHudScore").textContent="SCORE "+TB.score;
-  $("tbHudPow").textContent="SHOT Lv."+TB.pow+(TB.rate>1?" ⚡連射"+TB.rate:"")+(TB.barrier>0?" 🛡バリア":"");
+  $("tbHudPow").textContent="SHOT Lv."+TB.pow+(TB.rate>1?" ⚡連射"+TB.rate:"")+(TB.barrier>0?" 🛡バリア":"")+(TB.union?" 🤝合体中":"");
   $("tbHudLife").textContent=TB.lives>0?("❤️".repeat(TB.lives)):"";
 }
 /* ---- defeat & pickup effects : flash, shock ring, debris
@@ -8791,6 +8804,14 @@ function tbKillFx(e){
   TB.fx.push({type:"pop",x:cx,y:cy-14,life:42,txt:"+"+(big?300:100),col:big?"#ffd23f":"#ffffff"});
 }
 function tbPop(x,y,txt,col){TB.fx.push({type:"pop",x:x,y:y,life:46,txt:txt,col:col});}
+/* taking a real hit shakes the joined hands apart (a barrier
+   save does not — no damage was taken) */
+function tbUnionBreak(){
+  if(!TB.union)return;
+  TB.union=false;TB.unionCD=110;
+  if(TB.p2)tbPop((TB.px+TB.p2.x)/2,TB.py-44,"💔 合体解除！","#ff8a8a");
+  tbHud();
+}
 function tbFxUpdate(){
   TB.fx.forEach(function(f){
     f.life--;
@@ -8872,7 +8893,7 @@ function tbUpdate(){
   /* fire : musical notes stream from the mic in her raised
      hand — the penlight item shortens the interval
      (rate Lv.1:9 / Lv.2:5 / Lv.3:4) */
-  if(--TB.fireT<=0){
+  if(!TB.union&&--TB.fireT<=0){
     TB.fireT=Math.max(4,Math.round(9/TB.rate));
     if(TB.pow===1)TB.bullets.push({x:TB.px+15,y:TB.py-46,vx:0,vy:-7});
     else if(TB.pow===2){TB.bullets.push({x:TB.px+7,y:TB.py-43,vx:0,vy:-7});TB.bullets.push({x:TB.px+23,y:TB.py-43,vx:0,vy:-7});}
@@ -8886,12 +8907,56 @@ function tbUpdate(){
      wingman takes the stick ---- */
   if(TB.p2&&TB.p2.active){
     var pq=TB.p2;
-    if(pq.ai){pq.tx=TB.px+58;pq.ty=TB.py+40;if(pq.tx>338){pq.tx=TB.px-58;}pq.ty=Math.max(60,Math.min(536,pq.ty));}
+    if(pq.ai){
+      /* the CPU wingman holds the hand-hold slot right beside
+         the player (switching sides only at the screen edge,
+         and never mid-union), so it flies INTO union range on
+         its own — that is what makes the union triable solo */
+      if(pq.side===undefined)pq.side=1;
+      if(!TB.union){
+        if(TB.px+pq.side*46>336)pq.side=-1;
+        else if(TB.px+pq.side*46<24)pq.side=1;
+      }
+      pq.tx=TB.px+pq.side*46;pq.ty=TB.py+4;
+    }
     else if(TB.remoteIn){pq.tx=TB.remoteIn.tx;pq.ty=TB.remoteIn.ty;}
     pq.tx=Math.max(20,Math.min(340,pq.tx));pq.ty=Math.max(56,Math.min(540,pq.ty));
-    pq.x+=(pq.tx-pq.x)*0.35;pq.y+=(pq.ty-pq.y)*0.35;
+    var usm=TB.union?0.5:0.35;
+    pq.x+=(pq.tx-pq.x)*usm;pq.y+=(pq.ty-pq.y)*usm;
     if(pq.invuln>0)pq.invuln--;
-    if(--pq.fireT<=0){
+    /* ---- hand-hold union (the TwinBee rule) : side-by-side
+       and level, and the two join hands — their separate shots
+       merge into one heavier volley. Drifting apart breaks it,
+       and so does a real hit on either ship (tbUnionBreak). */
+    if(TB.unionCD>0)TB.unionCD--;
+    var udx=pq.x-TB.px,udy=pq.y-TB.py,udist=Math.sqrt(udx*udx+udy*udy);
+    if(!TB.union&&TB.unionCD<=0&&Math.abs(udx)>=28&&Math.abs(udx)<=56&&Math.abs(udy)<=26){
+      TB.union=true;TB.unionSide=udx>=0?1:-1;TB.unionFireT=0;
+      TB.fx.push({type:"ring",x:(TB.px+pq.x)/2,y:TB.py-14,r:8,vr:3.2,life:16,max:16,col:"#ff7ab3"});
+      tbPop((TB.px+pq.x)/2,TB.py-44,"🤝 合体！","#ff9ec4");
+      toast("🤝 手をつないで合体！ ショットが強化された！");
+      tbHud();
+    }else if(TB.union&&udist>84){
+      TB.union=false;TB.unionCD=55;
+      tbPop((TB.px+pq.x)/2,TB.py-44,"合体が解けた","#b9a8e8");
+      tbHud();
+    }
+    if(TB.union){
+      /* the merged volley : a heavy double-damage note from the
+         joined hands, both mics firing as one, and a pair of
+         angled notes fanning out — denser and harder-hitting
+         than the two ships could ever manage apart */
+      if(--TB.unionFireT<=0){
+        TB.unionFireT=Math.max(3,Math.round(9/TB.rate)-1);
+        var umx=(TB.px+pq.x)/2,umy=Math.min(TB.py,pq.y);
+        TB.bullets.push({x:umx,y:umy-52,vx:0,vy:-8.4,dmg:2,u:1});
+        TB.bullets.push({x:TB.px+15,y:TB.py-46,vx:0,vy:-7.6});
+        TB.bullets.push({x:pq.x+15,y:pq.y-46,vx:0,vy:-7.6});
+        TB.bullets.push({x:umx-14,y:umy-42,vx:-1.7,vy:-6.8});
+        TB.bullets.push({x:umx+14,y:umy-42,vx:1.7,vy:-6.8});
+      }
+      if(TB.frame%9===0)TB.fx.push({type:"shard",x:(TB.px+pq.x)/2+(Math.random()*16-8),y:TB.py-16+(Math.random()*10-5),vx:(Math.random()-0.5)*0.5,vy:-0.6-Math.random()*0.5,life:14,col:"#ff9ec4",r:1.6});
+    }else if(--pq.fireT<=0){
       pq.fireT=Math.max(4,Math.round(9/TB.rate));
       if(TB.pow===1)TB.bullets.push({x:pq.x+15,y:pq.y-46,vx:0,vy:-7});
       else if(TB.pow===2){TB.bullets.push({x:pq.x+7,y:pq.y-43,vx:0,vy:-7});TB.bullets.push({x:pq.x+23,y:pq.y-43,vx:0,vy:-7});}
@@ -8918,8 +8983,8 @@ function tbUpdate(){
     if(b.dead)return;
     TB.enemies.forEach(function(e){
       if(e.dead||b.dead)return;
-      if(Math.abs(b.x-e.x)<e.w/2+3&&Math.abs(b.y-e.y)<e.h/2+6){
-        b.dead=true;e.hp--;
+      if(Math.abs(b.x-e.x)<e.w/2+(b.u?7:3)&&Math.abs(b.y-e.y)<e.h/2+(b.u?9:6)){
+        b.dead=true;e.hp-=(b.dmg||1);
         if(e.hp<=0){e.dead=true;TB.score+=e.big?300:100;tbKillFx(e);tbDrop(e);tbHud();}
         else{e.flash=5;tbBurst(b.x,b.y-4,"#ffd23f",3,false);}
       }
@@ -8949,6 +9014,7 @@ function tbUpdate(){
       tbHud();
     }else if(hit){
       TB.lives--;TB.pow=Math.max(1,TB.pow-1);TB.rate=Math.max(1,TB.rate-1);TB.invuln=130;tbHud();
+      tbUnionBreak();
       if(TB.lives<=0){tbGameOver();return;}
     }
   }
@@ -8965,6 +9031,7 @@ function tbUpdate(){
       tbHud();
     }else if(hit2){
       TB.lives--;TB.pow=Math.max(1,TB.pow-1);TB.rate=Math.max(1,TB.rate-1);TB.p2.invuln=130;tbHud();
+      tbUnionBreak();
       if(TB.lives<=0){tbGameOver();return;}
     }
   }
@@ -9044,7 +9111,15 @@ function tbDraw(){
   /* player shots : musical notes, bobbing as they fly */
   TB.bullets.forEach(function(b){
     g.save();g.translate(b.x,b.y);g.rotate(Math.sin(TB.frame*0.3+b.x)*0.14);
-    drawSpr(g,SPR.note,-8,-10,16,20);
+    if(b.u){
+      /* the union note : bigger, gold-lit, double damage */
+      g.globalAlpha=0.45+0.2*Math.sin(TB.frame*0.5);
+      g.fillStyle="#ffd23f";g.beginPath();g.arc(0,0,13,0,7);g.fill();
+      g.globalAlpha=1;
+      drawSpr(g,SPR.note,-12,-15,24,30);
+    }else{
+      drawSpr(g,SPR.note,-8,-10,16,20);
+    }
     g.restore();
   });
   /* light-jet trail sparkles, behind everything of the player */
@@ -9071,7 +9146,7 @@ function tbDraw(){
     (function(){
       var a=-0.62+Math.sin(flapPh+0.55)*0.5;
       g.save();g.translate(shX+2,shY+2);g.scale(-0.92,0.92);g.rotate(a);
-      g.globalAlpha=0.88;drawWingFly(g,50);g.restore();g.globalAlpha=1;
+      g.globalAlpha=0.88;drawWingFly(g,27);g.restore();g.globalAlpha=1;
     })();
     /* light jet under her feet : two layered teardrops, the
        outer fringe breathing with a fast flicker */
@@ -9083,7 +9158,7 @@ function tbDraw(){
     (function(){
       var a=-0.62+Math.sin(flapPh)*0.5;
       g.save();g.translate(shX-2,shY);g.rotate(a);
-      drawWingFly(g,50);g.restore();
+      drawWingFly(g,28);g.restore();
     })();
     /* the idol herself */
     if(!drawChara(g,SDIMG[(TB.p1char||RTCHAR)],TB.px-20,TB.py-48+bobY,40,48,{}))
@@ -9109,7 +9184,7 @@ function tbDraw(){
   if(TB.p2&&TB.p2.active&&!(TB.p2.invuln>0&&Math.floor(TB.frame/5)%2===0)){
     var pq2=TB.p2,bob3=Math.sin(TB.frame*0.09+2.1)*2.2;
     g.save();g.translate(pq2.x,pq2.y-20+bob3);
-    g.globalAlpha=0.9;drawWingFly(g,48);g.globalAlpha=1;
+    g.globalAlpha=0.9;drawWingFly(g,26);g.globalAlpha=1;
     if(!drawChara(g,SDIMG[pq2.char],-20,-28,40,48,{}))drawSD(g,pq2.char,-16,-22,1.6,{});
     g.restore();
     g.fillStyle="#7ce7ff";g.font="900 10px 'M PLUS Rounded 1c',sans-serif";g.textAlign="center";
@@ -9121,6 +9196,33 @@ function tbDraw(){
       g.setLineDash([8,6]);g.beginPath();g.arc(0,0,33,0,7);g.stroke();
       g.restore();g.globalAlpha=1;
     }
+  }
+  /* the hand-hold, drawn over both ships : each inner arm
+     reaches in to joined hands at the midpoint — an outlined
+     arm line under a skin-tone line, a pulsing heart on the
+     grip and a soft pink light along the arms, so the union
+     reads at a glance even mid-dogfight */
+  if(TB.union&&TB.p2&&TB.p2.active){
+    var usd=TB.p2.x>=TB.px?1:-1;
+    var uh1x=TB.px+usd*10,uh1y=TB.py-14,uh2x=TB.p2.x-usd*10,uh2y=TB.p2.y-14;
+    var umx2=(uh1x+uh2x)/2,umy2=(uh1y+uh2y)/2;
+    g.save();
+    g.lineCap="round";
+    g.strokeStyle="rgba(255,158,196,.45)";g.lineWidth=7;
+    g.beginPath();g.moveTo(uh1x,uh1y);g.lineTo(umx2,umy2);g.lineTo(uh2x,uh2y);g.stroke();
+    g.strokeStyle="#8a5a3b";g.lineWidth=4.6;
+    g.beginPath();g.moveTo(uh1x,uh1y);g.lineTo(umx2,umy2);g.lineTo(uh2x,uh2y);g.stroke();
+    g.strokeStyle="#ffd9b8";g.lineWidth=2.8;
+    g.beginPath();g.moveTo(uh1x,uh1y);g.lineTo(umx2,umy2);g.lineTo(uh2x,uh2y);g.stroke();
+    var upu=1+Math.sin(TB.frame*0.25)*0.16;
+    g.translate(umx2,umy2);g.scale(upu,upu);
+    drawSpr(g,SPR.heart,-9,-9,18,18);
+    g.restore();
+    g.save();
+    g.fillStyle="#ffe98a";g.font="900 10px 'M PLUS Rounded 1c',sans-serif";g.textAlign="center";
+    g.shadowColor="rgba(0,0,0,.75)";g.shadowBlur=3;
+    g.fillText("合体中！",umx2,umy2-16);
+    g.restore();
   }
   /* effects layer : kill flashes, shock rings, debris shards
      and rising score / pickup popups */
@@ -9147,12 +9249,12 @@ function tbDraw(){
 window.__tbStop=function(){TB.on=false;TB._lt=0;TB._acc=0;if(TB.raf)cancelAnimationFrame(TB.raf);if(TB.netRaf){cancelAnimationFrame(TB.netRaf);TB.netRaf=0;}};
 /* back to a clean start screen after a mid-game exit (see __rtReset) */
 window.__tbReset=function(){
-  TB.state="ready";TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;TB.net=null;TB.p2=null;TB.p1char=null;TB.remoteIn=null;
+  TB.state="ready";TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;TB.net=null;TB.p2=null;TB.p1char=null;TB.remoteIn=null;TB.union=false;TB.unionCD=0;TB.unionFireT=0;
   TB.bullets=[];TB.enemies=[];TB.ebullets=[];TB.items=[];TB.fx=[];TB.trail=[];TB.px=180;TB.tx=180;TB.py=520;TB.ty=520;
   if(TB.keys){TB.keys.l=false;TB.keys.r=false;TB.keys.u=false;TB.keys.d=false;}
   var ov=$("tbOverlay");
   ov.querySelector(".rt-ov-ttl").textContent="スカイシューティング";
-  ov.querySelector(".rt-ov-tx").innerHTML="音符ショットでドローンを撃ち落とせ！";
+  ov.querySelector(".rt-ov-tx").innerHTML="音符ショットでドローンを撃ち落とせ！<br>相方と横に並ぶと手をつないで合体 ― ショット強化！";
   $("tbStartBtn").textContent="▶ スタート";
   ov.hidden=false;
   mgPad("tbStage",false);tbHud();
@@ -9825,16 +9927,24 @@ function bfDraw(){
     g.fillStyle="rgba(255,214,120,.95)";g.beginPath();g.arc(p.x+p.w/2,p.y+5.5,1.7,0,7);g.fill();
   });
   /* one wing ROOTED at the back (cx,cy = the shoulder blade) :
-     the sprite points up-left with its root at bottom-right, and
-     the base angle keeps it swept up behind the body — the flap
-     then swings the tip through a wide arc, up over the back
-     and back down, like a real angel wing beating. The far wing
-     mirrors it a beat behind. */
+     the SAME layered-feather illustration Sky Shooting flies on
+     (assets/wing_fly.webp — and its darkened twin for the crows),
+     drawn with its root exactly on the pivot so it sprouts from
+     the back with no strut or bar showing. The base angle keeps
+     it swept up behind the body and the flap swings the tip
+     through a wide arc, up over the back and back down. Sized
+     to about 70% of the body's height, so the character stays
+     the star. The far wing mirrors it a beat behind. */
   function wing(g,cx,cy,ph,black,mirror,scale){
-    var spr=black?SPR.wingB:SPR.wingW;
-    var a=-0.92+Math.sin(ph)*0.55;
+    var a=-0.30+Math.sin(ph)*0.5;
     g.save();g.translate(cx,cy);if(mirror)g.scale(-1,1);g.rotate(a);g.scale(scale,scale);
-    g.drawImage(spr,-29,-20,30,22.5);
+    var im=black?WINGIMG_B:WINGIMG;
+    if(im.complete&&im.naturalWidth){
+      var w=28,h=w*im.naturalHeight/im.naturalWidth;
+      g.drawImage(im,-0.93*w,-0.90*h,w,h);
+    }else{
+      g.drawImage(black?SPR.wingB:SPR.wingW,-29,-20,30,22.5);
+    }
     g.restore();
   }
   function wingsPair(g,cx,cy,ph,black,count){
@@ -9855,7 +9965,7 @@ function bfDraw(){
       if(!drawChara(g,ENIMG.crow,e.x-11,e.y-16,44,46,{}))
         drawDrunk(g,e.x,e.y+4,1.05,{});
     }else{
-      wingsPair(g,e.x+11,e.y+12,e.flapPh,true,2);
+      wingsPair(g,e.x+11,e.y+10,e.flapPh,true,2);
       if(!drawChara(g,ENIMG.crow,e.x-11,e.y-14,44,50,{faceLeft:e.face<0})){
         drawDrunk(g,e.x,e.y+(e.state==="fly"?8:0),1.05,{faceLeft:e.face<0});
       }
@@ -9871,7 +9981,7 @@ function bfDraw(){
     });
     g.globalAlpha=1;
     if(!(p.invuln>0&&Math.floor(BF.frame/5)%2===0)){
-      wingsPair(g,p.x+11,p.y+11,p.flapPh,false,Math.max(1,p.wings));
+      wingsPair(g,p.x+11,p.y+9,p.flapPh,false,Math.max(1,p.wings));
       if(!drawChara(g,SDIMG[RTCHAR],p.x-10,p.y-20,42,50,{faceLeft:p.face<0}))
         drawSD(g,RTCHAR,p.x-3,p.y-6,1.8,{frame:Math.floor(BF.frame/7)%2===0,faceLeft:p.face<0});
     }
@@ -12121,6 +12231,7 @@ function bmHostFallback(){
 function tbStartNet(cfg){
   TB.net={role:cfg.role,slots:cfg.slots};TB.mySlot=cfg.mySlot;TB.p1char=cfg.slots[0].char;TB.remoteIn=null;TB._snapSeq=-1;TB._overShown=false;
   TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;
+  TB.union=false;TB.unionCD=0;TB.unionFireT=0;
   TB.bullets=[];TB.enemies=[];TB.ebullets=[];TB.items=[];TB.fx=[];TB.trail=[];TB.spawnT=40;TB.state="play";
   TB.px=140;TB.py=520;
   if(cfg.role==="guest"){TB.tx=230;TB.ty=520;}
@@ -12143,8 +12254,9 @@ function tbSnap(){
   return {seq:cur.seq,t:Date.now(),score:TB.score,bells:TB.bells,lives:TB.lives,pow:TB.pow,rate:TB.rate,barrier:TB.barrier,
     p1:{x:Math.round(TB.px),y:Math.round(TB.py),invuln:TB.invuln},
     p2:TB.p2?{x:Math.round(TB.p2.x),y:Math.round(TB.p2.y),invuln:TB.p2.invuln,active:TB.p2.active!==false}:null,
+    union:TB.union?1:0,
     enemies:TB.enemies.map(function(e){return {x:Math.round(e.x),y:Math.round(e.y),w:e.w,h:e.h,hp:e.hp,big:!!e.big,flash:e.flash||0};}),
-    bullets:TB.bullets.map(function(b){return {x:Math.round(b.x),y:Math.round(b.y)};}),
+    bullets:TB.bullets.map(function(b){return {x:Math.round(b.x),y:Math.round(b.y),u:b.u?1:0};}),
     ebullets:TB.ebullets.map(function(b){return {x:Math.round(b.x),y:Math.round(b.y)};}),
     items:TB.items.map(function(it){return {x:Math.round(it.x),y:Math.round(it.y),kind:it.kind,ph:it.ph};}),
     state:TB.state,reward:TB.state==="over"?(Math.floor(TB.score/80)+TB.bells*5):0};
@@ -12155,6 +12267,7 @@ function tbApplyState(st){
   TB.score=st.score;TB.bells=st.bells||0;TB.lives=st.lives;TB.pow=st.pow;TB.rate=st.rate;TB.barrier=st.barrier;
   if(st.p1){TB._sx=st.p1.x;TB._sy=st.p1.y;TB.invuln=st.p1.invuln;}
   if(TB.p2&&st.p2){TB.p2._sx=st.p2.x;TB.p2._sy=st.p2.y;TB.p2.invuln=st.p2.invuln;TB.p2.active=st.p2.active!==false;}
+  TB.union=!!st.union;
   TB.enemies=st.enemies||[];TB.bullets=st.bullets||[];TB.ebullets=st.ebullets||[];TB.items=st.items||[];
   tbHud();
   if(st.state==="over"&&TB.state!=="over"){TB.state="over";tbGuestOver(st);}
@@ -12195,7 +12308,7 @@ function tbGuestOver(st){
 function tbHostFallback(){
   if(TB.netRaf){cancelAnimationFrame(TB.netRaf);TB.netRaf=0;}
   if(TB.p2){TB.px=TB.p2.x;TB.py=TB.p2.y;TB.invuln=Math.max(TB.invuln,TB.p2.invuln||0);}
-  TB.net=null;TB.p2=null;TB.p1char=null;
+  TB.net=null;TB.p2=null;TB.p1char=null;TB.union=false;TB.unionCD=0;
   if(TB.state==="play"){TB._lt=0;TB._acc=0;TB.raf=requestAnimationFrame(tbLoop);}
 }
 /* ================= STORE (Mario Bros.) : net start / snapshot / guest ================= */
@@ -12719,7 +12832,11 @@ document.addEventListener("pointercancel",function(){
 .rn-btn.on{background:linear-gradient(180deg,#ffd23f,#d99a06);color:#50350a}
 .rn-btn:active{transform:scale(.96)}
 /* ---------- CHINCHIRO ---------- */
-.cn-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:linear-gradient(180deg,#241147,#120826);box-shadow:0 16px 32px rgba(0,0,0,.5);padding-bottom:8px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;min-height:min(470px,calc(100dvh - 272px))}
+.cn-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:#120826;box-shadow:0 16px 32px rgba(0,0,0,.5);-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;height:min(690px,max(470px,calc(100dvh - 226px)))}
+/* a soft shade settles over the counter surface at the foot of
+   the scene, so the message line and buttons sitting in the
+   scene stay readable against the wood */
+.cn-stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:36%;background:linear-gradient(180deg,rgba(10,5,22,0),rgba(10,5,22,.34) 52%,rgba(10,5,22,.62));pointer-events:none;z-index:2}
 /* player info lives OUTSIDE the stage, in one slim strip above it :
    nothing ever overlaps the bowl or the aim ring */
 .cn-topbar{margin-top:2px}
@@ -12729,7 +12846,7 @@ document.addEventListener("pointercancel",function(){
 .cn-bal b{font-size:12.5px;color:#fff;margin-left:3px}
 .cn-bal.turn{border-color:#ffd23f;color:#ffe9a8;box-shadow:0 0 0 1.5px rgba(255,210,63,.5)}
 .cn-bal.win{border-color:#ffd23f;background:rgba(255,210,63,.16);color:#ffe9a8}
-.cn-bowlwrap{position:relative;width:100%;flex:1 1 auto;min-height:250px;margin:0;touch-action:none;cursor:pointer;overflow:hidden;border-radius:14px;perspective:660px}
+.cn-bowlwrap{position:absolute;inset:0;margin:0;touch-action:none;cursor:pointer;overflow:hidden;perspective:660px}
 #cnOverlay{top:0}
 #cnOverlay .rt-ov-in{gap:14px;padding:20px 16px;overflow:hidden;background:#0c0518;justify-content:center}
 #cnOverlay .kv-img{height:118px;width:min(100%,340px);object-fit:cover}
@@ -12767,7 +12884,7 @@ document.addEventListener("pointercancel",function(){
 .cn-pip.off{opacity:.2;filter:grayscale(1)}
 .cn-aim span{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#ffd23f;box-shadow:0 0 8px rgba(255,210,63,.9)}
 .cn-dropshadow{position:absolute;width:70px;height:24px;margin:-12px 0 0 -35px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%);z-index:2;pointer-events:none}
-.cn-gauge{display:flex;align-items:center;gap:8px;margin:5px 12px 0}
+.cn-gauge{position:absolute;left:12px;right:12px;bottom:118px;z-index:6;display:flex;align-items:center;gap:8px;margin:0}
 .cn-gauge[hidden]{display:none}
 .cn-gauge-lb{font-size:11px;font-weight:900;color:#ffe9a8;white-space:nowrap}
 .cn-gauge-bar{position:relative;flex:1;height:14px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);overflow:hidden}
@@ -12775,15 +12892,24 @@ document.addEventListener("pointercancel",function(){
 .cn-gauge-ob{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-style:normal;font-weight:900;color:#ffb3ab;letter-spacing:.05em}
 .cn-gauge-tx{font-size:11.5px;font-weight:900;color:#fff;min-width:56px;white-space:nowrap}
 #cnDropBtn{touch-action:none}
-.cn-role{position:absolute;left:50%;top:12%;transform:translateX(-50%);z-index:5;white-space:nowrap;pointer-events:none;padding:0 4px;
+.cn-role{position:absolute;left:50%;top:35%;transform:translateX(-50%);z-index:5;white-space:nowrap;pointer-events:none;padding:0 4px;
   font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:clamp(28px,12vw,47px);color:#ffe98a;-webkit-text-stroke:2px rgba(122,52,0,.9);
   text-shadow:0 3px 0 #b35c00,0 0 26px rgba(255,190,40,.9),0 6px 16px rgba(0,0,0,.65)}
 .cn-role.show{animation:cnRolePop .8s cubic-bezier(.2,1.6,.4,1) both}
+/* fine play : the gold image-text (assets/cn_fine.webp) slams in
+   over the scene when a danger-height drop stays in the bowl.
+   It is screen-blended, so the black ground of the artwork
+   vanishes into the bar photo and only the letters land. */
+.cn-fine{position:absolute;left:50%;top:22%;transform:translateX(-50%);width:min(88%,440px);z-index:8;pointer-events:none;mix-blend-mode:screen}
+.cn-fine[hidden]{display:none}
+.cn-fine img{display:block;width:100%}
+.cn-fine.show{animation:cnFinePop 1.75s cubic-bezier(.2,1.5,.35,1) both}
+@keyframes cnFinePop{0%{transform:translateX(-50%) scale(.3) rotate(-5deg);opacity:0}14%{transform:translateX(-50%) scale(1.12) rotate(1.5deg);opacity:1}22%{transform:translateX(-50%) scale(1) rotate(0deg)}82%{transform:translateX(-50%) scale(1.02);opacity:1}100%{transform:translateX(-50%) scale(1.05);opacity:0}}
 @keyframes cnRolePop{0%{transform:translateX(-50%) scale(.3) rotate(-4deg);opacity:0}35%{transform:translateX(-50%) scale(1.18) rotate(1.5deg);opacity:1}60%{transform:translateX(-50%) scale(1)}100%{transform:translateX(-50%) scale(1.04);opacity:1}}
 .cn-role.lose{color:#b9a8e8;-webkit-text-stroke:2px rgba(30,10,60,.9);text-shadow:0 3px 0 #241047,0 4px 12px rgba(0,0,0,.7)}
 .cn-role.mid{color:#aef3ff;-webkit-text-stroke:2px rgba(0,60,90,.9);text-shadow:0 3px 0 #065a77,0 0 22px rgba(90,200,255,.8),0 6px 16px rgba(0,0,0,.6)}
-.cn-msg{text-align:center;font-size:13px;font-weight:800;color:#f3eafd;margin:5px 12px 0;line-height:1.5;min-height:20px}
-.cn-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:6px 12px 0}
+.cn-msg{position:absolute;left:12px;right:12px;bottom:64px;z-index:6;text-align:center;font-size:13px;font-weight:800;color:#f3eafd;margin:0;line-height:1.5;min-height:20px;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 14px rgba(0,0,0,.55)}
+.cn-actions{position:absolute;left:0;right:0;bottom:8px;z-index:6;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 12px}
 .cn-actions .btn{min-height:48px;padding:8px 18px;font-size:14.5px}
 .cn-ov .rt-ov-in{gap:9px}
 .cn-ovname{font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:27px;color:#ffe98a;text-shadow:0 3px 0 rgba(140,60,0,.8),0 0 20px rgba(255,180,0,.55);margin:0;text-align:center;line-height:1.4}
@@ -12863,7 +12989,7 @@ document.addEventListener("pointercancel",function(){
 #ipOverlay .rt-ov-ttl{font-size:21px}
 #ipOverlay .rt-ov-tx{font-size:11.5px;line-height:1.55}
 @media (prefers-reduced-motion: reduce){
-  .pz-bang.show,.cn-role.show,.ip-taphint,.ip-flip.going .ip-flip-in,.ip-big.waiting .ip-flip,.ip-big.waiting::after,.ip-flip.done .ip-flip-in,.ip-flip.done .ip-flip-f.face,.ip-flip.win .ip-flip-f.face,.cn-aim{animation:none}
+  .pz-bang.show,.cn-role.show,.cn-fine.show,.ip-taphint,.ip-flip.going .ip-flip-in,.ip-big.waiting .ip-flip,.ip-big.waiting::after,.ip-flip.done .ip-flip-in,.ip-flip.done .ip-flip-f.face,.ip-flip.win .ip-flip-f.face,.cn-aim{animation:none}
 }
 </style>
 
@@ -13442,16 +13568,16 @@ window.__on("rnBack",function(){window.__rnStop();mgShow("hub");});
 /* ==================== CHINCHIRO : pass & play ==================== */
 var CN={state:"setup",count:2,ante:50,bal:[],pot:0,carry:0,round:1,turn:0,rolls:0,results:[],
   playoff:null,playoffRound:0,rolling:false,timers:[],iv:0,dice:[1,1,1],
-  phase:"idle",aim:{x:0,y:0.05},height:0,charging:false,chargeIv:0,chargeT0:0,raf:0,phys:null,dragging:false};
+  phase:"idle",aim:{x:0,y:0.05},height:0,charging:false,chargeIv:0,chargeT0:0,raf:0,phys:null,dragging:false,finePending:false};
 /* bowl interior ellipse, in % of the bowl wrap (diagonal-view photo) */
-var CN_BOWL={cx:50,cy:60,rx:27,ry:22};
-var CN_BOWL0={cx:50,cy:60,rx:27,ry:22};
+var CN_BOWL={cx:49.9,cy:57.6,rx:21.2,ry:8.2};
+var CN_BOWL0={cx:49.9,cy:57.6,rx:21.2,ry:8.2};
 /* the bowl photo is cover-fitted into the (taller) wrap, so remap the
    interior ellipse to wherever the picture actually landed */
 function cnFit(){
   var w=$("cnBowlWrap");if(!w)return;
   var W=w.clientWidth,H=w.clientHeight;if(!W||!H)return;
-  var s=Math.max(W/1080,H/720),fx=(1080*s)/W,fy=(720*s)/H;
+  var s=Math.max(W/880,H/1318),fx=(880*s)/W,fy=(1318*s)/H;
   CN_BOWL.cx=CN_BOWL0.cx;
   CN_BOWL.cy=50+(CN_BOWL0.cy-50)*fy;
   CN_BOWL.rx=CN_BOWL0.rx*fx;
@@ -13464,7 +13590,7 @@ var CN_OFF=[{x:-0.34,y:-0.10},{x:0.34,y:-0.14},{x:0,y:0.30}];
 /* rest slots at the bowl bottom : a wide triangle, far enough apart
    (in px) that the three cubes never overlap once settled, so every
    top face stays fully readable */
-var CN_SLOTS=[{x:-0.42,y:0.10},{x:0.43,y:0.04},{x:0.0,y:0.62}];
+var CN_SLOTS=[{x:-0.56,y:0.02},{x:0.57,y:-0.02},{x:0.0,y:0.55}];
 function cnLater(fn,ms){var t=setTimeout(fn,ms);CN.timers.push(t);return t;}
 function cnClearTimers(){CN.timers.forEach(function(t){clearTimeout(t);});CN.timers=[];
   if(CN.iv){clearInterval(CN.iv);CN.iv=0;}
@@ -13590,6 +13716,7 @@ function cnSetupOv(){
     +'<p class="rt-ov-ttl">チンチロ</p>'
     +'<p class="rt-ov-tx" style="margin-top:2px">人数</p><div class="cn-choices">'+cnt+'</div>'
     +'<p class="rt-ov-tx" style="margin-top:2px">アンティ（1人あたり）</p><div class="cn-choices">'+ant+'</div>'
+    +'<p class="rt-ov-tx">高く落としてOBしなければ「ファインプレイ」！<br>その目で勝つとボーナスチップ（アンティと同額）</p>'
     +'<button type="button" class="btn gold rt-start" id="cnStartBtn">▶ ゲームスタート</button>');
   cnMsg("人数とアンティを選んでスタート！");
   cnActions("");
@@ -13616,6 +13743,8 @@ function cnNextTurn(){
   while(CN.turn<CN.count&&CN.results[CN.turn])CN.turn++;
   if(CN.turn>=CN.count){cnJudge();return;}
   CN.state="handover";CN.rolls=0;
+  CN.finePending=false;
+  var fe=$("cnFine");if(fe){fe.hidden=true;fe.classList.remove("show");}
   cnDiceShow();
   cnOv('<p class="rt-ov-tx">スマホを渡してね</p>'
     +'<img class="cn-ovimg" src="assets/mg_chinchiro.webp" alt="チンチロのお茶碗とサイコロ">'
@@ -13833,9 +13962,15 @@ function cnDropFinish(){
   CN.dice=faces;
   CN.phase="idle";
   if(ob){
+    CN.finePending=false;
     cnShowRole({cat:0,val:0,name:"しょんべん！",cls:"lose"},true);
     return;
   }
+  /* fine play : a drop from the danger height (h >= 0.85, the
+     gauge's own OB-warning zone) that stayed in the bowl. The
+     celebration fires on the spot; the chip bonus lands later,
+     only if this hand goes on to win the round (see cnJudge). */
+  if(P.h>=0.85){CN.finePending=true;cnFinePlay();}
   var role=cnRoleOf(faces);
   if(role.cat===0&&CN.rolls<3){
     CN.phase="idle";
@@ -13861,7 +13996,7 @@ function cnFitRole(){
   while(r.offsetWidth*1.18>max&&fs>16&&guard<30){fs-=2;r.style.fontSize=fs+"px";guard++;}
 }
 function cnShowRole(role,ob){
-  CN.results[CN.turn]={cat:role.cat,val:role.val,name:ob?"しょんべん（OB）":role.name,dice:CN.dice.slice()};
+  CN.results[CN.turn]={cat:role.cat,val:role.val,name:ob?"しょんべん（OB）":role.name,dice:CN.dice.slice(),fine:!!CN.finePending};
   cnAimUI(false);
   var r=$("cnRole");
   if(r){
@@ -13873,10 +14008,16 @@ function cnShowRole(role,ob){
     cnFitRole();
   }
   if(role.cat>=5)pzConfetti($("cnConfetti"),22);
-  cnMsg("プレイヤー"+(CN.turn+1)+"さん ― 「"+(ob?"しょんべん（OB）":role.name)+"」で確定！");
+  cnMsg("プレイヤー"+(CN.turn+1)+"さん ― 「"+(ob?"しょんべん（OB）":role.name)+"」で確定！"+(CN.finePending?" ✨ファインプレイ！":""));
   var last=CN.results.filter(Boolean).length>=CN.count;
   cnActions('<button type="button" class="btn gold" id="cnNextBtn">'+(last?"結果を見る":"次の人へ渡す")+'</button>');
   cnHud();
+}
+function cnFinePlay(){
+  var f=$("cnFine");if(!f)return;
+  f.hidden=false;f.classList.remove("show");void f.offsetWidth;f.classList.add("show");
+  pzConfetti($("cnConfetti"),18);
+  cnLater(function(){f.hidden=true;f.classList.remove("show");},1780);
 }
 function cnJudge(){
   CN.state="judge";
@@ -13916,10 +14057,17 @@ function cnJudge(){
   var winners=tied;
   var share=Math.floor(CN.pot/winners.length);
   winners.forEach(function(w){CN.bal[w]+=share;});
+  /* fine-play bonus : a winner whose hand came from a danger-
+     height drop that stayed in takes a bonus equal to the ante
+     (50 chips at the standard ante), paid on top of the pot */
+  var fineWin=winners.filter(function(w){return CN.results[w]&&CN.results[w].fine;});
+  fineWin.forEach(function(w){CN.bal[w]+=CN.ante;});
+  var fineLine=fineWin.length?('<p class="rt-ov-tx">✨ ファインプレイ！ '+fineWin.map(function(x){return "プレイヤー"+(x+1);}).join("・")+' にボーナス +'+CN.ante+' チップ</p>'):"";
   CN.winner=winners[0];
   var wnames=winners.map(function(x){return "プレイヤー"+(x+1);}).join("・");
   cnOv('<p class="cn-ovname">🏆 '+wnames+' の勝ち！</p>'
     +'<p class="rt-ov-tx">「'+CN.results[best].name+'」で POT '+CN.pot+' チップ'+(winners.length>1?"を分け合い":"総取り")+'！</p>'
+    +fineLine
     +'<div class="cn-result">'+cnResultList(winners)+'</div>'
     +'<button type="button" class="btn gold rt-start" id="cnNextRoundBtn">▶ 次のラウンド</button>'
     +'<button type="button" class="btn ghost" id="cnReSetupBtn">人数・アンティを変える</button>');
@@ -13934,7 +14082,7 @@ function cnResultList(winners){
   for(var i=0;i<CN.count;i++){
     var r=CN.results[i];
     var isW=Array.isArray(winners)?winners.indexOf(i)>=0:winners===i;
-    html+='<div class="cn-bal'+(isW?" win":"")+'">プレイヤー'+(i+1)+' ― <b>'+(r?esc(r.name):"―")+'</b>（持ちチップ '+CN.bal[i]+'）</div>';
+    html+='<div class="cn-bal'+(isW?" win":"")+'">プレイヤー'+(i+1)+' ― <b>'+(r?esc(r.name):"―")+'</b>'+(r&&r.fine?" ✨ファインプレイ":"")+'（持ちチップ '+CN.bal[i]+'）</div>';
   }
   return html;
 }
