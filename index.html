@@ -12673,13 +12673,13 @@ document.addEventListener("pointercancel",function(){
 .rn-btn.on{background:linear-gradient(180deg,#ffd23f,#d99a06);color:#50350a}
 .rn-btn:active{transform:scale(.96)}
 /* ---------- CHINCHIRO ---------- */
-.cn-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:linear-gradient(180deg,#241147,#120826);box-shadow:0 16px 32px rgba(0,0,0,.5);padding-bottom:12px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;min-height:calc(100dvh - 204px)}
+.cn-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:linear-gradient(180deg,#241147,#120826);box-shadow:0 16px 32px rgba(0,0,0,.5);padding-bottom:12px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;min-height:min(480px,calc(100dvh - 204px))}
 .cn-balances{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px 0}
 .cn-bal{flex:1;min-width:70px;text-align:center;font-size:11px;font-weight:800;color:#c9b6ea;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:5px 4px}
 .cn-bal b{display:block;font-size:14px;color:#fff}
 .cn-bal.turn{border-color:#ffd23f;color:#ffe9a8;box-shadow:0 0 0 1.5px rgba(255,210,63,.5)}
 .cn-bal.win{border-color:#ffd23f;background:rgba(255,210,63,.16);color:#ffe9a8}
-.cn-bowlwrap{position:relative;width:100%;flex:1 1 auto;min-height:0;margin:0;touch-action:none;cursor:pointer}
+.cn-bowlwrap{position:relative;width:100%;flex:none;aspect-ratio:3/2;margin:0;touch-action:none;cursor:pointer;overflow:hidden;border-radius:14px}
 #cnOverlay{top:0}
 #cnOverlay .rt-ov-in{gap:14px;padding:20px 16px;overflow:hidden;background:#0c0518;justify-content:center}
 #cnOverlay .kv-img{height:118px;width:min(100%,340px);object-fit:cover}
@@ -12689,7 +12689,7 @@ document.addEventListener("pointercancel",function(){
 #cnOverlay .cn-choice{min-height:48px;padding:6px 18px;font-size:16px}
 #cnOverlay .cn-ovname{font-size:37px}
 .cn-ovimg{width:min(84%,320px);border-radius:16px;box-shadow:0 14px 30px rgba(0,0,0,.55)}
-.cn-bowl{display:block;width:100%;height:100%;object-fit:cover;border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.55)}
+.cn-bowl{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
 .cn-die{position:absolute;width:19%;z-index:3;pointer-events:none;filter:drop-shadow(0 6px 5px rgba(0,0,0,.45));will-change:left,top,transform}
 .cn-aim{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border:2.5px solid #ffd23f;border-radius:50%;z-index:4;pointer-events:none;box-shadow:0 0 0 2px rgba(0,0,0,.35),0 0 16px rgba(255,210,63,.75);animation:cnAimPulse 1s ease-in-out infinite}
 @keyframes cnAimPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
@@ -12708,10 +12708,11 @@ document.addEventListener("pointercancel",function(){
 .cn-gauge-ob{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-style:normal;font-weight:900;color:#ffb3ab;letter-spacing:.05em}
 .cn-gauge-tx{font-size:11.5px;font-weight:900;color:#fff;min-width:56px;white-space:nowrap}
 #cnDropBtn{touch-action:none}
-.cn-role{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:5;white-space:nowrap;
-  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:47px;color:#ffe98a;-webkit-text-stroke:2px rgba(122,52,0,.9);
+.cn-role{position:absolute;left:50%;top:12%;transform:translateX(-50%);z-index:5;white-space:nowrap;pointer-events:none;padding:0 4px;
+  font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:clamp(28px,12vw,47px);color:#ffe98a;-webkit-text-stroke:2px rgba(122,52,0,.9);
   text-shadow:0 3px 0 #b35c00,0 0 26px rgba(255,190,40,.9),0 6px 16px rgba(0,0,0,.65)}
-.cn-role.show{animation:pzBangPop .8s cubic-bezier(.2,1.6,.4,1) both}
+.cn-role.show{animation:cnRolePop .8s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes cnRolePop{0%{transform:translateX(-50%) scale(.3) rotate(-4deg);opacity:0}35%{transform:translateX(-50%) scale(1.18) rotate(1.5deg);opacity:1}60%{transform:translateX(-50%) scale(1)}100%{transform:translateX(-50%) scale(1.04);opacity:1}}
 .cn-role.lose{color:#b9a8e8;-webkit-text-stroke:2px rgba(30,10,60,.9);text-shadow:0 3px 0 #241047,0 4px 12px rgba(0,0,0,.7)}
 .cn-role.mid{color:#aef3ff;-webkit-text-stroke:2px rgba(0,60,90,.9);text-shadow:0 3px 0 #065a77,0 0 22px rgba(90,200,255,.8),0 6px 16px rgba(0,0,0,.6)}
 .cn-msg{text-align:center;font-size:13.5px;font-weight:800;color:#f3eafd;margin:10px 12px 0;line-height:1.6;min-height:22px}
@@ -13513,6 +13514,7 @@ function cnBeginRoll(){
     r.textContent="プレイヤー"+(CN.turn+1)+" の番";
     r.className="cn-role mid";r.hidden=false;
     void r.offsetWidth;r.classList.add("show");
+    cnFitRole();
     cnLater(function(){if(CN.phase==="aim")r.hidden=true;},1250);
   }
 }
@@ -13700,11 +13702,21 @@ function cnDropFinish(){
       r0.textContent="目なし";
       r0.className="cn-role lose";r0.hidden=false;
       void r0.offsetWidth;r0.classList.add("show");
+      cnFitRole();
     }
     cnLater(function(){cnAimPhase();cnHud();},1150);
     return;
   }
   cnShowRole(role,false);
+}
+/* shrink the big role text until it fits the bowl width, counting
+   the pop animation's 1.18x overshoot, so no role name ever clips */
+function cnFitRole(){
+  var r=$("cnRole");if(!r||r.hidden)return;
+  r.style.fontSize="";
+  var w=$("cnBowlWrap");var max=(w?w.clientWidth:370)-10;
+  var fs=parseFloat(window.getComputedStyle(r).fontSize)||47,guard=0;
+  while(r.offsetWidth*1.18>max&&fs>16&&guard<30){fs-=2;r.style.fontSize=fs+"px";guard++;}
 }
 function cnShowRole(role,ob){
   CN.results[CN.turn]={cat:role.cat,val:role.val,name:ob?"しょんべん（OB）":role.name,dice:CN.dice.slice()};
@@ -13716,6 +13728,7 @@ function cnShowRole(role,ob){
     r.hidden=false;
     void r.offsetWidth;
     r.classList.add("show");
+    cnFitRole();
   }
   if(role.cat>=5)pzConfetti($("cnConfetti"),22);
   cnMsg("プレイヤー"+(CN.turn+1)+"さん ― 「"+(ob?"しょんべん（OB）":role.name)+"」で確定！");
@@ -13802,7 +13815,7 @@ window.__cnReset=function(){
 };
 (function(){
   var wrap=$("cnStage");if(!wrap)return;
-  window.addEventListener("resize",function(){cnFit();if(CN.phase==="aim")cnHoverDice();});
+  window.addEventListener("resize",function(){cnFit();if(CN.phase==="aim")cnHoverDice();var rr=$("cnRole");if(rr&&!rr.hidden)cnFitRole();});
   wrap.addEventListener("click",function(ev){
     var el=ev.target;
     while(el&&el!==wrap){
