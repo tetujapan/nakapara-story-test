@@ -1736,6 +1736,13 @@ body.gfs,body.gfs .device,body.gfs .rt-stage{-webkit-touch-callout:none;-webkit-
 img{-webkit-user-drag:none}
 .rt-exit{position:absolute;top:calc(8px + env(safe-area-inset-top));right:10px;z-index:8;display:none;align-items:center;background:rgba(10,3,20,.55);border:1px solid rgba(255,255,255,.45);color:rgba(255,255,255,.92);font-size:11px;font-weight:900;letter-spacing:.04em;border-radius:99px;padding:6px 13px;min-height:32px;cursor:pointer}
 body.gfs .rt-exit{display:inline-flex}
+/* sky-shooting union release : shown only while the two ships hold
+   hands, so the player can always let go on purpose — a CPU wingman
+   flies back into formation, so drifting apart alone never worked.
+   Plain centre, gold rim (house button rule). */
+.tb-union-btn{position:absolute;top:calc(46px + env(safe-area-inset-top));right:10px;z-index:7;min-height:46px;padding:9px 18px;border-radius:99px;border:1.5px solid rgba(255,217,122,.9);background:linear-gradient(180deg,#452a78,#241147);color:#ffeeb8;font-size:14px;font-weight:900;font-family:inherit;letter-spacing:.05em;box-shadow:0 8px 18px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.25);cursor:pointer}
+.tb-union-btn[hidden]{display:none}
+.tb-union-btn:active{transform:scale(.95)}
 .vpad{position:absolute;left:0;right:0;bottom:0;z-index:4;display:none;justify-content:space-between;align-items:flex-end;padding:0 14px calc(14px + env(safe-area-inset-bottom)) 14px;pointer-events:none;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 /* the pad exists ONLY while a game is actually being played :
    never on the start / game-over overlays */
@@ -3230,13 +3237,14 @@ img{-webkit-user-drag:none}
           <div class="rt-ov-in">
             <img class="kv-img" src="assets/kv_sky.webp" alt="スカイシューティング ― 音符ショットでドローンを迎撃する主人公" style="object-position:50% 42%">
             <p class="rt-ov-ttl">スカイシューティング</p>
-            <p class="rt-ov-tx">音符ショットでドローンを撃ち落とせ！<br>相方と横に並ぶと手をつないで合体 ― ショット強化！</p>
+            <p class="rt-ov-tx">音符ショットでドローンを撃ち落とせ！<br>相方と横に並ぶと手をつないで合体 ― ショット強化！<br>合体中は「✋ はなす」ボタンでいつでも離れられる</p>
             <p class="rt-charlab">― 主人公を選ぶ ―</p>
             <div class="rt-chars" data-charsel></div>
             <button type="button" class="btn gold rt-start" id="tbStartBtn">▶ スタート</button>
           </div>
         </div>
         <button type="button" class="rt-exit" data-exit="tbBack">✕ 終了</button>
+        <button type="button" class="tb-union-btn" id="tbUnionBtn" hidden>✋ はなす</button>
         <div class="vpad">
           <div class="vp-dpad">
             <span class="vp-sp"></span><button type="button" class="vp-btn vp-dir" data-vp="u" aria-label="上へ移動">▲</button><span class="vp-sp"></span>
@@ -8765,10 +8773,10 @@ document.addEventListener("keyup",function(e){
 /* ================= RETRO 2 : TwinBee style vertical shooter ================= */
 var TB={on:false,raf:0,frame:0,score:0,bells:0,lives:3,pow:1,rate:1,barrier:0,state:"ready",px:180,tx:180,py:520,ty:520,invuln:0,fireT:0,spawnT:0,
   bullets:[],enemies:[],ebullets:[],items:[],stars:[],fx:[],trail:[],net:null,mySlot:0,p2:null,p1char:null,remoteIn:null,netRaf:0,_snapSeq:-1,
-  union:false,unionSide:1,unionCD:0,unionFireT:0};
+  union:false,unionSide:1,unionCD:0,unionFireT:0,relSeq:0,_relSeen:0};
 function tbStart(){
   TB.net=null;TB.p1char=null;TB.remoteIn=null;
-  TB.union=false;TB.unionCD=0;TB.unionFireT=0;
+  TB.union=false;TB.unionCD=0;TB.unionFireT=0;TB.relSeq=0;TB._relSeen=0;
   /* solo play still gets a wingman : a CPU partner flies the
      slot beside you and steers into hand-hold range by itself,
      so the TwinBee union can be tried alone */
@@ -8786,6 +8794,7 @@ function tbHud(){
   $("tbHudScore").textContent="SCORE "+TB.score;
   $("tbHudPow").textContent="SHOT Lv."+TB.pow+(TB.rate>1?" ⚡連射"+TB.rate:"")+(TB.barrier>0?" 🛡バリア":"")+(TB.union?" 🤝合体中":"");
   $("tbHudLife").textContent=TB.lives>0?("❤️".repeat(TB.lives)):"";
+  var ub=$("tbUnionBtn");if(ub)ub.hidden=!(TB.union&&TB.state==="play");
 }
 /* ---- defeat & pickup effects : flash, shock ring, debris
    shards and a rising score popup. Bigger enemies burst bigger. */
@@ -8811,6 +8820,33 @@ function tbUnionBreak(){
   TB.union=false;TB.unionCD=110;
   if(TB.p2)tbPop((TB.px+TB.p2.x)/2,TB.py-44,"💔 合体解除！","#ff8a8a");
   tbHud();
+}
+/* voluntary release (the ✋ はなす button, shown only while joined) :
+   a CPU wingman steers straight back into hand-hold range, so
+   drifting apart could never break the union on purpose. A manual
+   release therefore carries a long re-join cooldown — 300 frames,
+   about 5 seconds — during which the pair cannot join again even
+   though the wingman is already hovering in formation. Online the
+   same button works for both humans : a guest's press is streamed
+   to the host as a rising relSeq and the host breaks the union. */
+var TB_UNION_MANUAL_CD=300;
+function tbUnionReleaseDo(){
+  if(!TB.union)return;
+  TB.union=false;TB.unionCD=TB_UNION_MANUAL_CD;
+  if(TB.p2)tbPop((TB.px+TB.p2.x)/2,TB.py-44,"✋ 手を離した！","#ffe9a8");
+  tbHud();
+}
+function tbReleaseUnion(){
+  if(TB.state!=="play")return;
+  TB.relSeq=(TB.relSeq||0)+1;
+  if(TB.net&&TB.net.role==="guest"){
+    if(typeof MP!=="undefined"&&MP.sendInput)MP.sendInput(true);
+    toast("✋ 合体解除をリクエスト！");
+    return;
+  }
+  if(!TB.union)return;
+  tbUnionReleaseDo();
+  toast("✋ 手を離した！ しばらく合体しない");
 }
 function tbFxUpdate(){
   TB.fx.forEach(function(f){
@@ -8929,6 +8965,13 @@ function tbUpdate(){
        merge into one heavier volley. Drifting apart breaks it,
        and so does a real hit on either ship (tbUnionBreak). */
     if(TB.unionCD>0)TB.unionCD--;
+    /* a human partner's ✋ release request arrives as a rising
+       relSeq in their streamed inputs — the host honours it with
+       the same manual-release cooldown as a local press */
+    if(TB.remoteIn&&typeof TB.remoteIn.rel==="number"&&TB.remoteIn.rel!==(TB._relSeen||0)){
+      TB._relSeen=TB.remoteIn.rel;
+      if(TB.union){tbUnionReleaseDo();toast("✋ 相方が手を離した！ しばらく合体しない");}
+    }
     var udx=pq.x-TB.px,udy=pq.y-TB.py,udist=Math.sqrt(udx*udx+udy*udy);
     if(!TB.union&&TB.unionCD<=0&&Math.abs(udx)>=28&&Math.abs(udx)<=56&&Math.abs(udy)<=26){
       TB.union=true;TB.unionSide=udx>=0?1:-1;TB.unionFireT=0;
@@ -9249,18 +9292,19 @@ function tbDraw(){
 window.__tbStop=function(){TB.on=false;TB._lt=0;TB._acc=0;if(TB.raf)cancelAnimationFrame(TB.raf);if(TB.netRaf){cancelAnimationFrame(TB.netRaf);TB.netRaf=0;}};
 /* back to a clean start screen after a mid-game exit (see __rtReset) */
 window.__tbReset=function(){
-  TB.state="ready";TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;TB.net=null;TB.p2=null;TB.p1char=null;TB.remoteIn=null;TB.union=false;TB.unionCD=0;TB.unionFireT=0;
+  TB.state="ready";TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;TB.net=null;TB.p2=null;TB.p1char=null;TB.remoteIn=null;TB.union=false;TB.unionCD=0;TB.unionFireT=0;TB.relSeq=0;TB._relSeen=0;
   TB.bullets=[];TB.enemies=[];TB.ebullets=[];TB.items=[];TB.fx=[];TB.trail=[];TB.px=180;TB.tx=180;TB.py=520;TB.ty=520;
   if(TB.keys){TB.keys.l=false;TB.keys.r=false;TB.keys.u=false;TB.keys.d=false;}
   var ov=$("tbOverlay");
   ov.querySelector(".rt-ov-ttl").textContent="スカイシューティング";
-  ov.querySelector(".rt-ov-tx").innerHTML="音符ショットでドローンを撃ち落とせ！<br>相方と横に並ぶと手をつないで合体 ― ショット強化！";
+  ov.querySelector(".rt-ov-tx").innerHTML="音符ショットでドローンを撃ち落とせ！<br>相方と横に並ぶと手をつないで合体 ― ショット強化！<br>合体中は「✋ はなす」ボタンでいつでも離れられる";
   $("tbStartBtn").textContent="▶ スタート";
   ov.hidden=false;
   mgPad("tbStage",false);tbHud();
   try{tbDraw();}catch(e){}
 };
 window.__on("tbStartBtn",tbStart);
+window.__on("tbUnionBtn",function(){tbReleaseUnion();});
 window.__on("tbBack",function(){window.__tbStop();mgShow("hub");});
 (function(){
   var cv=$("tbCanvas");if(!cv)return;var drag=false;
@@ -12046,7 +12090,7 @@ var MP={
   inputPayload:function(){
     var cur=this.cur;if(!cur)return null;
     if(cur.game==="bomber")return {dir:(typeof bmDir==="function"?(bmDir()||""):""),bombSeq:this.bombSeq};
-    if(cur.game==="twin")return {tx:Math.round(TB.tx),ty:Math.round(TB.ty)};
+    if(cur.game==="twin")return {tx:Math.round(TB.tx),ty:Math.round(TB.ty),rel:TB.relSeq||0};
     return {l:RT.keys.l?1:0,r:RT.keys.r?1:0,jumpSeq:this.jumpSeq};
   },
   sendInput:function(force){
@@ -12231,7 +12275,7 @@ function bmHostFallback(){
 function tbStartNet(cfg){
   TB.net={role:cfg.role,slots:cfg.slots};TB.mySlot=cfg.mySlot;TB.p1char=cfg.slots[0].char;TB.remoteIn=null;TB._snapSeq=-1;TB._overShown=false;
   TB.score=0;TB.bells=0;TB.lives=3;TB.pow=1;TB.rate=1;TB.barrier=0;TB.invuln=0;
-  TB.union=false;TB.unionCD=0;TB.unionFireT=0;
+  TB.union=false;TB.unionCD=0;TB.unionFireT=0;TB.relSeq=0;TB._relSeen=0;
   TB.bullets=[];TB.enemies=[];TB.ebullets=[];TB.items=[];TB.fx=[];TB.trail=[];TB.spawnT=40;TB.state="play";
   TB.px=140;TB.py=520;
   if(cfg.role==="guest"){TB.tx=230;TB.ty=520;}
@@ -12861,7 +12905,7 @@ document.addEventListener("pointercancel",function(){
    arrangement (1 opposite 6, 2 opposite 5, 3 opposite 4). JS tumbles
    .cn-tumble (rx / ry / rz) and sets .cn-orient so the rolled face
    ends up on top ; --h is the cube half-size in px, set by cnFit */
-.cn-die{position:absolute;width:15.5%;aspect-ratio:1;z-index:3;pointer-events:none;transform-style:preserve-3d;will-change:left,top,transform;--h:26px}
+.cn-die{position:absolute;width:8.6%;aspect-ratio:1;z-index:3;pointer-events:none;transform-style:preserve-3d;will-change:left,top,transform;--h:15px}
 .cn-tumble{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
 .cn-orient{position:absolute;inset:0;transform-style:preserve-3d}
 .cn-dsh{position:absolute;left:-8%;top:16%;width:116%;height:104%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.5),rgba(0,0,0,0) 68%);transform:translateZ(calc(var(--h) * -1.35));pointer-events:none}
@@ -13584,13 +13628,16 @@ function cnFit(){
   CN_BOWL.ry=CN_BOWL0.ry*fy;
   CN.pxRx=CN_BOWL.rx/100*W;CN.pxRy=CN_BOWL.ry/100*H;
   CN.wrapW=W;CN.wrapH=H;
-  for(var di=0;di<3;di++){var de=$("cnDie"+di);if(de)de.style.setProperty("--h",(W*0.0775)+"px");}
+  for(var di=0;di<3;di++){var de=$("cnDie"+di);if(de)de.style.setProperty("--h",(W*0.043)+"px");}
 }
-var CN_OFF=[{x:-0.34,y:-0.10},{x:0.34,y:-0.14},{x:0,y:0.30}];
-/* rest slots at the bowl bottom : a wide triangle, far enough apart
-   (in px) that the three cubes never overlap once settled, so every
-   top face stays fully readable */
-var CN_SLOTS=[{x:-0.56,y:0.02},{x:0.57,y:-0.02},{x:0.0,y:0.55}];
+var CN_OFF=[{x:-0.30,y:-0.08},{x:0.30,y:-0.12},{x:0,y:0.26}];
+/* rest slots at the bowl bottom : a compact triangle well inside
+   the rim. One die is ~20% of the bowl's inner diameter (the real
+   chinchiro proportion), so at these slots every cube — edges
+   included — sits inside the interior with margin to spare, far
+   enough apart (in px) that the three never overlap once settled
+   and every top face stays fully readable */
+var CN_SLOTS=[{x:-0.52,y:-0.16},{x:0.52,y:-0.16},{x:0.0,y:0.48}];
 function cnLater(fn,ms){var t=setTimeout(fn,ms);CN.timers.push(t);return t;}
 function cnClearTimers(){CN.timers.forEach(function(t){clearTimeout(t);});CN.timers=[];
   if(CN.iv){clearInterval(CN.iv);CN.iv=0;}
@@ -13825,7 +13872,7 @@ function cnDrop(h){
   for(var i=0;i<3;i++){
     var u=CN.aim.x+CN_OFF[i].x*0.8, v=CN.aim.y+CN_OFF[i].y*0.8;
     var q0=Math.sqrt(u*u+v*v);
-    if(q0>0.97){u*=0.97/q0;v*=0.97/q0;}
+    if(q0>0.85){u*=0.85/q0;v*=0.85/q0;}
     var ang=Math.random()*Math.PI*2;
     var spd=(0.75+h*1.6)*(0.75+Math.random()*0.5);
     var vx=Math.cos(ang)*spd, vy=Math.sin(ang)*spd*0.85;
@@ -13844,7 +13891,7 @@ function cnPhysStep(now){
   var P=CN.phys;if(!P)return;
   var dt=Math.min(0.033,(now-P.last)/1000);P.last=now;P.frame++;
   var elapsed=(now-P.t0)/1000;
-  var rxPx=CN.pxRx||90, ryPx=CN.pxRy||60, diePx=(CN.wrapW||360)*0.155;
+  var rxPx=CN.pxRx||90, ryPx=CN.pxRy||60, diePx=(CN.wrapW||360)*0.086;
   var allDone=true,i,j;
   for(i=0;i<3;i++){
     var d=P.dice[i];
@@ -13916,7 +13963,11 @@ function cnPhysStep(now){
         d.vx*=0.78;d.vy*=0.78;
         d.ry+=(Math.random()*170-85);
       }
-      d.u=nx*0.995;d.v=ny*0.995;
+      /* centres stop at 0.64 of the interior ellipse, not at the
+         rim itself : a die is ~0.2 of the inner diameter wide and
+         ~0.33 of the inner height tall, so at 0.64 the whole cube
+         still sits inside the bowl with margin on every side */
+      d.u=nx*0.64;d.v=ny*0.64;
     }
     /* dice vs dice, measured in px so the cubes never overlap */
     for(j=0;j<3;j++){
