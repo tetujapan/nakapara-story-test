@@ -13142,8 +13142,12 @@ document.addEventListener("pointercancel",function(){
 .ip-big{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-height:0}
 .ip-bigname{font-family:"M PLUS Rounded 1c",sans-serif;font-size:17px;font-weight:900;color:#fff;text-shadow:0 3px 0 rgba(60,20,110,.9),0 0 22px rgba(160,110,255,.45);margin:0 0 3px;text-align:center;line-height:1.15}
 .ip-bigname small{display:inline-block;font-family:inherit;font-size:9px;font-weight:900;color:#ffd23f;letter-spacing:.14em;margin-right:7px;vertical-align:middle}
-.ip-flip{width:min(80vw,340px);aspect-ratio:5/5.5;perspective:950px;cursor:pointer;flex:none}
-@media (max-height:600px){.ip-flip{width:min(80vw,46dvh,340px)}}
+/* REAL playing-card proportions : poker size 63x88mm = 1 : 1.3968.
+   Width wants 80vw; when the stage cannot fit the matching height
+   (short viewports such as 390x670) the width shrinks instead —
+   the 63/88 ratio itself never changes. --ipw is the one width
+   every card measurement below is derived from. */
+.ip-flip{--ipw:min(80vw,330px,max(132px,calc((100dvh - 416px)*.7159)));width:var(--ipw);aspect-ratio:63/88;perspective:950px;cursor:pointer;flex:none}
 /* TRUE 3D flip : two faces with backface-visibility hidden, plus
    thin edge strips so the card reads as a physical object edge-on.
    NOTHING between .ip-flip and the faces may carry a grouping
@@ -13171,12 +13175,30 @@ document.addEventListener("pointercancel",function(){
 @keyframes ipFaceFlash{0%{filter:brightness(1.9) drop-shadow(0 0 30px rgba(255,240,190,.95))}100%{filter:brightness(1) drop-shadow(0 0 0 rgba(255,240,190,0))}}
 .ip-flip.win .ip-flip-f.face{animation:ipWinGlow .9s ease-in-out infinite alternate}
 @keyframes ipWinGlow{from{filter:drop-shadow(0 0 10px rgba(255,210,63,.5))}to{filter:drop-shadow(0 0 32px rgba(255,210,63,.95))}}
-.ip-hugecard{width:100%;height:100%;border-radius:16px;background:linear-gradient(165deg,#ffffff,#e9e6de);color:#1c1c22;box-shadow:0 18px 38px rgba(0,0,0,.55),inset 0 0 0 3px rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:"M PLUS Rounded 1c",sans-serif}
-.ip-hugecard.hot{box-shadow:0 18px 38px rgba(0,0,0,.55),inset 0 0 0 3px rgba(217,169,79,.8),0 0 36px rgba(255,190,40,.8)}
-.ip-hugecard .pr{font-size:clamp(92px,35vw,158px);font-weight:900;line-height:.95}
-.ip-hugecard .ps{font-size:clamp(68px,26vw,118px);line-height:1.05}
+/* the card face, drawn like a real trump : corner indices top-left
+   and bottom-right (rotated 180deg), the rank's pips laid out in the
+   standard pip positions, a single oversized suit for the ace, and a
+   framed court panel for J / Q / K. Base font-size scales with the
+   card width (--ipw) so every glyph stays proportional. */
+.ip-hugecard{position:relative;width:100%;height:100%;border-radius:calc(var(--ipw)*.05);background:linear-gradient(165deg,#ffffff,#eceae3);color:#20202a;box-shadow:0 18px 38px rgba(0,0,0,.55),inset 0 0 0 5px #fff,inset 0 0 0 6px rgba(20,20,40,.12);font-family:"M PLUS Rounded 1c",sans-serif;font-size:calc(var(--ipw)*.16);overflow:hidden}
+.ip-hugecard.hot{box-shadow:0 18px 38px rgba(0,0,0,.55),inset 0 0 0 2px rgba(217,169,79,.9),inset 0 0 0 5px #fff,inset 0 0 0 6px rgba(217,169,79,.55),0 0 36px rgba(255,190,40,.8)}
 .ip-hugecard.red{color:#d21f3c}
-.ip-hugecard.backd{background:repeating-linear-gradient(45deg,#8c1a56 0 12px,#5c0f38 12px 24px);border:3px solid rgba(255,233,168,.9);box-shadow:0 18px 38px rgba(0,0,0,.55)}
+.ip-corner{position:absolute;z-index:3;display:flex;flex-direction:column;align-items:center;width:calc(var(--ipw)*.14);line-height:1.04;text-align:center}
+.ip-corner b{font-size:.54em;font-weight:900;letter-spacing:-.03em}
+.ip-corner i{font-style:normal;font-size:.5em;line-height:1.05}
+.ip-corner.tl{top:3.4%;left:3.2%}
+.ip-corner.br{bottom:3.4%;right:3.2%;transform:rotate(180deg)}
+.ip-pips{position:absolute;inset:11.5% 16.5%}
+.ip-pip{position:absolute;transform:translate(-50%,-50%);font-size:1em;line-height:1}
+.ip-pip.inv{transform:translate(-50%,-50%) rotate(180deg)}
+.ip-ace{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.ip-ace:before{content:"";position:absolute;width:calc(var(--ipw)*.54);aspect-ratio:1;border-radius:50%;border:calc(var(--ipw)*.008) solid currentColor;opacity:.22}
+.ip-ace span{font-size:2.65em;line-height:1;position:relative}
+.ip-court{position:absolute;inset:12.5% 19%;border:calc(var(--ipw)*.009) solid currentColor;border-radius:calc(var(--ipw)*.035);background:radial-gradient(circle at 50% 36%,rgba(255,205,80,.30),rgba(255,205,80,.04) 68%);box-shadow:inset 0 0 0 calc(var(--ipw)*.012) #fff,inset 0 0 0 calc(var(--ipw)*.021) currentColor;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--ipw)*.015)}
+.ip-court-l{font-family:"Noto Serif JP",serif;font-size:1.95em;font-weight:900;line-height:1;text-shadow:0 2px 0 rgba(255,255,255,.7)}
+.ip-court-s{font-size:.92em;line-height:1}
+.ip-court-s.cs-b{transform:rotate(180deg)}
+.ip-hugecard.backd{background:radial-gradient(circle at 50% 50%,rgba(255,233,168,.28) 0 17%,rgba(255,233,168,0) 18%),repeating-linear-gradient(45deg,#8c1a56 0 12px,#5c0f38 12px 24px);border:3px solid rgba(255,233,168,.9);box-shadow:0 18px 38px rgba(0,0,0,.55),inset 0 0 0 5px rgba(92,15,56,.9),inset 0 0 0 7px rgba(255,233,168,.75)}
 .ip-taphint{margin:6px 0 0;font-size:13px;font-weight:900;color:#ffd23f;text-shadow:0 2px 8px rgba(0,0,0,.6);animation:ipTapPulse 1.1s ease-in-out infinite}
 @keyframes ipTapPulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.07);opacity:1}}
 .ip-others{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;padding:5px 4px 0;min-height:22px}
@@ -14508,9 +14530,39 @@ function ipAiSchedule(slot,act){
     if(IP.state&&IP.state.phase==="play")ipApplyInput(slot,act);
   },850+Math.random()*850);
 }
+/* standard pip layouts, [x%, y%, inverted] inside the pip field :
+   the same positions a real deck prints (bottom-half pips rotated) */
+var IP_PIPS={
+  2:[[50,6],[50,94,1]],
+  3:[[50,6],[50,50],[50,94,1]],
+  4:[[27,6],[73,6],[27,94,1],[73,94,1]],
+  5:[[27,6],[73,6],[50,50],[27,94,1],[73,94,1]],
+  6:[[27,6],[73,6],[27,50],[73,50],[27,94,1],[73,94,1]],
+  7:[[27,6],[73,6],[50,28],[27,50],[73,50],[27,94,1],[73,94,1]],
+  8:[[27,6],[73,6],[50,28],[27,50],[73,50],[50,72,1],[27,94,1],[73,94,1]],
+  9:[[27,6],[73,6],[27,37],[73,37],[50,50],[27,63,1],[73,63,1],[27,94,1],[73,94,1]],
+  10:[[27,6],[73,6],[50,17],[27,37],[73,37],[27,63,1],[73,63,1],[50,83,1],[27,94,1],[73,94,1]]
+};
 function ipHugecardHTML(c){
   if(!c)return '<div class="ip-hugecard backd"></div>';
-  return '<div class="ip-hugecard'+((c.s===1||c.s===2)?" red":"")+((c.r>=13)?" hot":"")+'"><span class="pr">'+pkRankTxt(c.r)+'</span><span class="ps">'+PK_SUITS[c.s]+'</span></div>';
+  var suit=PK_SUITS[c.s], rk=pkRankTxt(c.r);
+  var corner='<span class="ip-corner tl"><b>'+rk+'</b><i>'+suit+'</i></span>'
+    +'<span class="ip-corner br"><b>'+rk+'</b><i>'+suit+'</i></span>';
+  var mid="";
+  if(c.r===14){
+    mid='<div class="ip-ace"><span>'+suit+'</span></div>';
+  }else if(c.r>=11){
+    mid='<div class="ip-court"><span class="ip-court-s">'+suit+'</span>'
+      +'<span class="ip-court-l">'+rk+'</span>'
+      +'<span class="ip-court-s cs-b">'+suit+'</span></div>';
+  }else{
+    var ps=IP_PIPS[c.r]||[];
+    mid='<div class="ip-pips">'+ps.map(function(p){
+      return '<span class="ip-pip'+(p[2]?" inv":"")+'" style="left:'+p[0]+'%;top:'+p[1]+'%">'+suit+'</span>';
+    }).join("")+'</div>';
+  }
+  return '<div class="ip-hugecard'+((c.s===1||c.s===2)?" red":"")+((c.r>=13)?" hot":"")+'">'
+    +corner+mid+'</div>';
 }
 /* tap feedback you can feel and hear without looking at the screen */
 var IP_AC=null;
