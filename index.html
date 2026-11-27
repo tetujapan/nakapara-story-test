@@ -3554,7 +3554,10 @@ img{-webkit-user-drag:none}
           <div class="cn-role" id="cnRole" hidden></div>
         </div>
         <div class="cn-fine" id="cnFine" hidden><img loading="lazy" decoding="async" src="assets/cn_fine.webp" alt="ファインプレイ！"></div>
-        <div class="cn-gauge" id="cnGauge" hidden><span class="cn-gauge-lb">落とす高さ</span><div class="cn-gauge-bar"><i id="cnGaugeFill"></i><em class="cn-gauge-ob">OBゾーン</em></div><span class="cn-gauge-tx" id="cnGaugeTx">ひくい</span></div>
+        <div class="cn-gauge" id="cnGauge" hidden>
+          <div class="cn-grow cn-grow-pow"><span class="cn-gauge-lb">パワー</span><div class="cn-powbar"><i id="cnPowFill"></i><b class="cn-powtick"></b><em class="cn-gauge-ob">強い＝OB危険</em><b class="cn-powneedle" id="cnPowNeedle"></b></div><span class="cn-gauge-tx" id="cnPowTx">よわい</span></div>
+          <div class="cn-grow"><span class="cn-gauge-lb">落とす高さ</span><div class="cn-gauge-bar"><i id="cnGaugeFill"></i><em class="cn-gauge-ob">OBゾーン</em></div><span class="cn-gauge-tx" id="cnGaugeTx">ひくい</span></div>
+        </div>
         <p class="cn-msg" id="cnMsg">人数とアンティを選んでスタート！</p>
         <div class="cn-actions" id="cnActions"></div>
         <div class="mg-confetti" id="cnConfetti"></div>
@@ -13123,8 +13126,17 @@ document.addEventListener("pointercancel",function(){
 .cn-pip.off{opacity:.2;filter:grayscale(1)}
 .cn-aim span{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#ffd23f;box-shadow:0 0 8px rgba(255,210,63,.9)}
 .cn-dropshadow{position:absolute;width:70px;height:24px;margin:-12px 0 0 -35px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%);z-index:2;pointer-events:none}
-.cn-gauge{position:absolute;left:12px;right:12px;bottom:118px;z-index:6;display:flex;align-items:center;gap:8px;margin:0}
+.cn-gauge{position:absolute;left:12px;right:12px;bottom:112px;z-index:6;display:flex;flex-direction:column;gap:7px;margin:0}
 .cn-gauge[hidden]{display:none}
+.cn-grow{display:flex;align-items:center;gap:8px}
+.cn-gauge-lb{min-width:58px}
+.cn-powbar{position:relative;flex:1;height:24px;border-radius:12px;background:linear-gradient(90deg,#3fae5a 0%,#8fd14f 34%,#ffd23f 58%,#ff7847 80%,#ff3b30 100%);border:1.5px solid rgba(255,255,255,.5);box-shadow:0 4px 14px rgba(0,0,0,.45),inset 0 2px 3px rgba(255,255,255,.35);overflow:hidden}
+.cn-powbar i{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(255,255,255,.28)}
+.cn-powtick{position:absolute;left:60%;top:0;bottom:0;width:2px;background:rgba(0,0,0,.45)}
+.cn-powbar .cn-gauge-ob{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.65);z-index:1}
+.cn-powneedle{position:absolute;top:-2px;bottom:-2px;left:0%;width:5px;margin-left:-2.5px;border-radius:3px;background:#fff;box-shadow:0 0 0 1.5px rgba(0,0,0,.55),0 0 12px rgba(255,255,255,.95);z-index:2}
+.cn-grow-pow .cn-gauge-lb{color:#fff;font-size:12.5px}
+.cn-grow-pow .cn-gauge-tx{font-size:13px;min-width:46px}
 .cn-gauge-lb{font-size:11px;font-weight:900;color:#ffe9a8;white-space:nowrap}
 .cn-gauge-bar{position:relative;flex:1;height:14px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);overflow:hidden}
 .cn-gauge-bar i{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#57d977,#ffd23f 55%,#ff7847 82%,#ff3b30)}
@@ -13264,8 +13276,10 @@ document.addEventListener("pointercancel",function(){
    - CHINCHIRO : pass & play on one phone, 2-4 players, antes
      into a pot, strongest role takes all, ties re-roll. v95 :
      diagonal-view bowl photo + realistic 3D dice, drag to aim
-     the drop point, hold the button to set the drop height,
-     simple physics bounce — a die that flies out of the bowl
+     the drop point and slide up / down to set the drop height
+     (nothing charges on its own), an eased power needle sweeps
+     back and forth while the finger is down and freezes on
+     release, simple physics bounce — a die that flies out of the bowl
      is しょんべん (OB), a losing role.
    - INDIAN POKER : online via the MP room base (quick match /
      4-digit code), host authoritative, CPU fills empty slots
@@ -13829,7 +13843,8 @@ window.__on("rnBack",function(){window.__rnStop();mgShow("hub");});
 /* ==================== CHINCHIRO : pass & play ==================== */
 var CN={state:"setup",count:2,ante:50,bal:[],pot:0,carry:0,round:1,turn:0,rolls:0,results:[],
   playoff:null,playoffRound:0,rolling:false,timers:[],iv:0,dice:[1,1,1],
-  phase:"idle",aim:{x:0,y:0.05},height:0,charging:false,chargeIv:0,chargeT0:0,raf:0,phys:null,dragging:false,finePending:false};
+  phase:"idle",aim:{x:0,y:0.05},height:0,power:0,charging:false,chargeIv:0,chargeT0:0,raf:0,phys:null,dragging:false,finePending:false,
+  dragY0:0,dragH0:0,powerT0:0};
 /* bowl interior ellipse, in % of the bowl wrap (diagonal-view photo) */
 var CN_BOWL={cx:49.9,cy:57.6,rx:21.2,ry:8.2};
 var CN_BOWL0={cx:49.9,cy:57.6,rx:21.2,ry:8.2};
@@ -14034,12 +14049,12 @@ function cnBeginRoll(){
   }
 }
 function cnAimPhase(){
-  CN.phase="aim";CN.height=0;CN.aim={x:0,y:0.05};
+  CN.phase="aim";CN.height=0;CN.power=0;CN.aim={x:0,y:0.05};
   cnFit();
   cnAimUI(true);
   var g=$("cnGauge");if(g)g.hidden=true;
   cnGaugeShow();
-  cnMsg("");
+  cnMsg("タッチしてドラッグ：上下で高さ、離した瞬間のパワーで落下！");
   cnPips();
   cnHoverDice();
 }
@@ -14055,15 +14070,32 @@ function cnGaugeShow(){
   var f=$("cnGaugeFill"),t=$("cnGaugeTx");
   if(f)f.style.width=(CN.height*100)+"%";
   if(t)t.textContent=CN.height<0.3?"ひくい":CN.height<0.62?"ほどほど":CN.height<0.85?"たかい":"危険！ OB注意";
+  var pf=$("cnPowFill"),nd=$("cnPowNeedle"),pt=$("cnPowTx");
+  if(pf)pf.style.width=(CN.power*100)+"%";
+  if(nd)nd.style.left=(CN.power*100)+"%";
+  if(pt)pt.textContent=CN.power<0.35?"よわい":CN.power<0.6?"ふつう":CN.power<0.82?"つよい":"危険！";
 }
-function cnChargeStart(){
+/* one touch, three decisions : the touch point (plus sideways
+   steering) sets where the dice drop, the vertical slide sets the
+   height — freely up AND down, so a height that overshot into the
+   OB zone can always be walked back — and while the finger is
+   down the power needle sweeps the big gauge in an eased
+   back-and-forth (a cosine swing : it lingers at both ends and
+   rushes through the middle, so stopping it feels deliberate).
+   Releasing freezes the power where the needle stands and drops
+   the dice at the dragged height with that power. There is no
+   press-and-hold charging any more : nothing rises on its own. */
+var CN_POWER_MS=1500;
+function cnChargeStart(e){
   if(CN.phase!=="aim"||CN.charging||CN.rolling)return;
-  CN.charging=true;CN.height=0;CN.chargeT0=performance.now();
+  CN.charging=true;CN.power=0;CN.powerT0=performance.now();
+  CN.dragY0=e?e.clientY:0;CN.dragH0=CN.height;
   var g=$("cnGauge");if(g)g.hidden=false;
   cnGaugeShow();cnHoverDice();
   CN.chargeIv=setInterval(function(){
-    CN.height=Math.min(1,(performance.now()-CN.chargeT0)/1300);
-    cnGaugeShow();cnHoverDice();
+    var ph=(performance.now()-CN.powerT0)/CN_POWER_MS*Math.PI*2;
+    CN.power=0.5-0.5*Math.cos(ph);
+    cnGaugeShow();
   },30);
 }
 function cnChargeEnd(){
@@ -14071,10 +14103,11 @@ function cnChargeEnd(){
   CN.charging=false;
   if(CN.chargeIv){clearInterval(CN.chargeIv);CN.chargeIv=0;}
   var g=$("cnGauge");if(g)g.hidden=true;
-  if(CN.phase==="aim")cnDrop(CN.height);
+  if(CN.phase==="aim")cnDrop(CN.height,CN.power);
 }
-function cnDrop(h){
+function cnDrop(h,p){
   if(CN.rolling||CN.state!=="play"||CN.results[CN.turn])return;
+  if(typeof p!=="number")p=0;
   CN.phase="drop";CN.rolling=true;CN.rolls++;
   cnAimUI(false);
   var rr=$("cnRole");if(rr)rr.hidden=true;
@@ -14091,7 +14124,7 @@ function cnDrop(h){
     var q0=Math.sqrt(u*u+v*v);
     if(q0>0.85){u*=0.85/q0;v*=0.85/q0;}
     var ang=Math.random()*Math.PI*2;
-    var spd=(0.75+h*1.6)*(0.75+Math.random()*0.5);
+    var spd=(0.55+h*0.85+p*1.55)*(0.75+Math.random()*0.5);
     var vx=Math.cos(ang)*spd, vy=Math.sin(ang)*spd*0.85;
     if(aimR>0.6){vx+=CN.aim.x/aimR*(aimR-0.6)*0.9*(0.4+h*0.6);vy+=CN.aim.y/aimR*(aimR-0.6)*0.9*(0.4+h*0.6);}
     cnSetFace(i,faces[i]);
@@ -14101,7 +14134,7 @@ function cnDrop(h){
       sx:(Math.random()<0.5?-1:1)*(430+Math.random()*330),sy:(Math.random()<0.5?-1:1)*(380+Math.random()*330),
       setT:0,fu:0,fv:0,frx:0,fry:0,frz:0,trx:0,try_:0,trz:0,outT:0,escaped:false});
   }
-  CN.phys={dice:dice,h:h,aimR:aimR,t0:performance.now(),last:performance.now(),frame:0};
+  CN.phys={dice:dice,h:h,p:p,aimR:aimR,t0:performance.now(),last:performance.now(),frame:0};
   CN.raf=requestAnimationFrame(cnPhysStep);
 }
 function cnPhysStep(now){
@@ -14167,11 +14200,18 @@ function cnPhysStep(now){
       if(vn>0){
         var impact=Math.sqrt(d.vx*d.vx+d.vy*d.vy);
         /* the wall CATCHES the die : reflect inward, damped. An
-           escape (OB) needs a genuinely hard edge shot — a high
-           drop or a rim-hugging aim AND a fast impact. A normal
-           centre drop at a normal height can never fly out. */
-        var canOut=(P.h>0.82||P.aimR>0.78);
-        if(canOut&&impact>2.65&&Math.random()<Math.min(0.55,(impact-2.65)*0.85)){
+           escape (OB) is priced by the power the player stopped
+           the needle at : at or below 0.6 the needle is in the
+           safe zone and a die can NEVER fly out, however high the
+           drop. Past 0.6 the risk climbs steeply (a 1.5-power
+           curve), and the drop height multiplies it — full power
+           from full height is the classic しょんべん, full power
+           from low down is merely lively. A rim-hugging aim adds
+           a little on top. */
+        var over=Math.max(0,(P.p-0.6)/0.4);
+        var obRisk=Math.pow(over,1.5)*(0.30+0.70*P.h)*(P.aimR>0.8?1.15:1);
+        var obChance=obRisk*Math.max(0.15,Math.min(1,(impact-1.6)/1.2));
+        if(impact>1.9&&Math.random()<Math.min(0.8,obChance)){
           d.mode="out";d.outT=0;d.escaped=true;
           d.vx=nx*(impact*0.8+0.6);d.vy=ny*(impact*0.8+0.6)-0.4;
           continue;
@@ -14397,10 +14437,14 @@ window.__cnReset=function(){
   });
   var bowl=$("cnBowlWrap");
   if(bowl){
-    var setAim=function(e){
+    var setAim=function(e,xOnly){
       var r=bowl.getBoundingClientRect();
       var l=(e.clientX-r.left)/r.width*100, t=(e.clientY-r.top)/r.height*100;
       var u=(l-CN_BOWL.cx)/CN_BOWL.rx, v=(t-CN_BOWL.cy)/CN_BOWL.ry;
+      /* during the drag the vertical slide belongs to the height,
+         so the drop point keeps the depth of the first touch and
+         only steers sideways */
+      if(xOnly)v=CN.aim.y;
       /* the aim ring stays inside the bowl interior, so it is
          always fully visible — never under the rim or the strip */
       var ar=Math.sqrt(u*u+v*v);
@@ -14408,17 +14452,27 @@ window.__cnReset=function(){
       CN.aim.x=u;CN.aim.y=v;
       cnHoverDice();
     };
-    /* one gesture : touch the bowl and the aim ring + dotted guide
-       follow the finger while the height charges; release to drop */
+    /* one gesture : touch the bowl to place the drop point, slide
+       up / down to set the height (both ways — nothing charges on
+       its own), sideways to steer; the power needle sweeps while
+       the finger is down and freezes the moment it lifts : drop */
     bowl.addEventListener("pointerdown",function(e){
       if(CN.phase!=="aim"||CN.rolling)return;
       e.preventDefault();
       CN.dragging=true;
       try{bowl.setPointerCapture(e.pointerId);}catch(err){}
       setAim(e);
-      cnChargeStart();
+      cnChargeStart(e);
     });
-    bowl.addEventListener("pointermove",function(e){if(CN.dragging&&CN.phase==="aim")setAim(e);});
+    bowl.addEventListener("pointermove",function(e){
+      if(!CN.dragging||CN.phase!=="aim")return;
+      if(CN.charging){
+        var range=Math.max(160,(CN.wrapH||320)*0.55);
+        CN.height=Math.max(0,Math.min(1,CN.dragH0+(CN.dragY0-e.clientY)/range));
+      }
+      setAim(e,true);
+      cnGaugeShow();
+    });
     bowl.addEventListener("pointerup",function(){
       if(!CN.dragging)return;
       CN.dragging=false;
@@ -14429,7 +14483,7 @@ window.__cnReset=function(){
       if(CN.charging){
         CN.charging=false;
         if(CN.chargeIv){clearInterval(CN.chargeIv);CN.chargeIv=0;}
-        CN.height=0;cnGaugeShow();cnHoverDice();
+        CN.height=0;CN.power=0;cnGaugeShow();cnHoverDice();
         var g=$("cnGauge");if(g)g.hidden=true;
       }
     });
