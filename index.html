@@ -543,6 +543,8 @@ footer{margin:24px 0 4px;font-size:10.5px;color:var(--ink2);line-height:1.8;text
 .tab .ic{display:grid;place-items:center;width:42px;height:28px;border-radius:99px;transition:background .15s,transform .15s;font-size:18px}
 .tab.on .ic{background:linear-gradient(180deg,#ffe3f0,var(--chip));box-shadow:inset 0 1px 0 #fff,0 3px 8px rgba(210,20,105,.18);transform:translateY(-1px)}
 .tab.on:after{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--pink);box-shadow:0 0 6px var(--pink)}
+.tab-dot{position:absolute;top:5px;right:calc(50% - 27px);width:10px;height:10px;border-radius:50%;background:#ff4763;border:1.5px solid rgba(16,7,34,.9);box-shadow:0 0 7px rgba(255,71,99,.85);pointer-events:none}
+.tab-dot[hidden]{display:none}
 .tab:active .ic{transform:scale(.9)}
 /* ============================================================
    GACHA — the machine, rebuilt as a physical object
@@ -1703,6 +1705,19 @@ footer{color:#8d76b8}
 .dmenu-row.open .dm-ch{transform:rotate(90deg)}
 .dmenu-panel{border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 14px;background:rgba(10,4,24,.5)}
 .dmenu-panel[hidden]{display:none}
+.dmenu-group{font-size:11px;font-weight:900;letter-spacing:.1em;color:#c9b6ea;margin:8px 2px 0;flex:none}
+.dmenu-group:first-child{margin-top:0}
+.legal{font-size:13px;line-height:1.85;color:#efe9fb}
+.legal h3{font-size:16px;font-weight:900;margin:4px 0 10px}
+.legal h4{font-size:13.5px;font-weight:900;color:#ffd97a;margin:14px 0 4px}
+.legal p{margin:0 0 9px}
+.legal .draft{display:inline-block;background:rgba(255,71,99,.16);border:1px solid rgba(255,71,99,.55);color:#ffb9c6;font-size:11px;font-weight:900;border-radius:99px;padding:3px 11px;margin-bottom:10px;line-height:1.5}
+.legal .legal-end{color:#c9b6ea;font-size:11.5px;margin-top:12px}
+.legal .legal-mail{font-size:16px;font-weight:900;color:#ffd97a;text-align:center;background:rgba(255,217,122,.08);border:1px solid rgba(255,217,122,.35);border-radius:10px;padding:9px 8px;margin:10px 0}
+.legal-tbl{width:100%;border-collapse:collapse;margin:4px 0 10px}
+.legal-tbl th,.legal-tbl td{border:1px solid rgba(255,255,255,.16);padding:7px 9px;font-size:12.5px;line-height:1.6;text-align:left;vertical-align:top}
+.legal-tbl th{width:34%;background:rgba(255,255,255,.06);color:#ffd97a;font-weight:900;white-space:nowrap}
+.legal .btnrow a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 /* bomberman d-pad */
 .bm-pad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,58px);gap:5px}
 .bm-pad .rt-btn{width:58px;height:58px;border-radius:14px}
@@ -3552,11 +3567,12 @@ img{-webkit-user-drag:none}
 <!-- ============ IDEAS / MORE ============ -->
 <div class="view" id="v-idea">
   <section style="margin-top:14px">
-    <div class="sec-head"><h2>🎁 デイリー</h2><p>タップで開く</p></div>
-    <!-- Daily menu : one .dmenu-row + .dmenu-panel pair per item.
-         To add a new daily feature, copy a pair and change the
+    <div class="sec-head"><h2>⚙️ MENU</h2><p>デイリー・規約・サポート</p></div>
+    <!-- MENU : one .dmenu-row + .dmenu-panel pair per item.
+         To add a new menu feature, copy a pair and change the
          icon / name / badge / panel id (data-dmenu must match). -->
     <div class="dmenu" id="dMenu">
+      <div class="dmenu-group">デイリー</div>
       <button type="button" class="dmenu-row" data-dmenu="dmBonus"><span class="dm-ic">🎁</span><span class="dm-tx"><b>ログインボーナス</b><small>開いた日のごほうび ・ +100コイン</small></span><span class="dm-badge">毎日</span><span class="dm-ch">›</span></button>
       <div class="dmenu-panel" id="dmBonus" hidden>
         <div class="idea"><span class="tag">デイリー</span><h3>開いた日のごほうび</h3><p>1日1回、開くだけでコインがもらえます。この試作版ではセッション中1回だけ受け取れます。</p>
@@ -3575,6 +3591,96 @@ img{-webkit-user-drag:none}
         <div class="idea"><span class="tag">テスト用</span><h3>テスト付与（何度でも押せます）</h3><p>テスト専用の付与ボタンです。押すたびにコイン +100,000、交換ポイント +10,000 が入ります。ガチャや交換所の動作確認に使ってください。</p>
         <div class="btnrow"><button type="button" class="btn ghost" id="testGrantBtn">🧪 テスト付与 ・ コイン+100,000 ／ Pt+10,000</button></div></div>
       </div>
+      <div class="dmenu-group">サポート・規約</div>
+      <button type="button" class="dmenu-row" data-dmenu="dmPrivacy"><span class="dm-ic">📄</span><span class="dm-tx"><b>プライバシーポリシー</b><small>個人情報の取り扱いについて</small></span><span class="dm-badge">規約</span><span class="dm-ch">›</span></button>
+      <div class="dmenu-panel" id="dmPrivacy" hidden>
+        <div class="legal"><span class="draft">試作版ドラフト ― 本番公開前に正式版へ差し替えます</span>
+        <h3>プライバシーポリシー</h3>
+        <p>「PARA NOVEL」（以下「本アプリ」）は、合同会社なかよしパラダイス（以下「当社」）が運営するゲームアプリです。当社は、本アプリにおけるユーザーの情報の取り扱いについて、以下のとおり定めます。</p>
+        <h4>1. 取得する情報</h4>
+        <p>当社は、本アプリの提供にあたり、以下の情報を取得します。<br>・プレイヤー名（ユーザーが登録した表示名）<br>・ゲームの進行状況、戦績、所持カード、所持コイン等のゲームデータ<br>・オンライン対戦のマッチングおよび結果送受信に必要な通信情報</p>
+        <h4>2. 利用目的</h4>
+        <p>取得した情報は、以下の目的のためにのみ利用します。<br>・本アプリの提供およびゲームデータの保持<br>・オンライン対戦機能の提供<br>・不正行為の防止および利用規約違反への対応<br>・本アプリの品質改善および新機能の開発</p>
+        <h4>3. 第三者提供</h4>
+        <p>当社は、法令に基づく場合を除き、ユーザーの同意なく取得した情報を第三者に提供しません。</p>
+        <h4>4. 安全管理</h4>
+        <p>当社は、取得した情報の漏えい、滅失または毀損の防止その他の安全管理のために、必要かつ適切な措置を講じます。</p>
+        <h4>5. データの削除</h4>
+        <p>プレイヤーデータの削除をご希望の場合は、本アプリ内「データ削除について」に記載の方法でお申し出ください。ご本人であることの確認のうえ、合理的な期間内に対応します。</p>
+        <h4>6. 本ポリシーの変更</h4>
+        <p>当社は、必要に応じて本ポリシーを変更することがあります。変更後の内容は、本アプリ内または当社ウェブサイトに掲載した時点から効力を生じます。</p>
+        <h4>7. お問い合わせ窓口</h4>
+        <p>合同会社なかよしパラダイス<br>メール：app@nakapara.com</p>
+        <p class="legal-end">以上（試作版ドラフト）</p></div>
+      </div>
+      <button type="button" class="dmenu-row" data-dmenu="dmTerms"><span class="dm-ic">📜</span><span class="dm-tx"><b>利用規約</b><small>コイン・ガチャ・禁止事項</small></span><span class="dm-badge">規約</span><span class="dm-ch">›</span></button>
+      <div class="dmenu-panel" id="dmTerms" hidden>
+        <div class="legal"><span class="draft">試作版ドラフト ― 本番公開前に正式版へ差し替えます</span>
+        <h3>利用規約</h3>
+        <p>本規約は、合同会社なかよしパラダイス（以下「当社」）が提供するゲームアプリ「PARA NOVEL」（以下「本アプリ」）の利用条件を定めるものです。ユーザーは、本アプリを利用することで本規約に同意したものとみなされます。</p>
+        <h4>第1条（ゲーム内コイン）</h4>
+        <p>本アプリ内の「コイン」は、本アプリ内でのみ利用できる電子的な価値であり、現金その他の通貨への換金、払い戻し、第三者への譲渡はできません。コインの有効期限は定めませんが、本アプリのサービス終了時に失効します。</p>
+        <h4>第2条（ガチャと確率表記）</h4>
+        <p>ガチャで提供されるカード等の排出確率は、各ガチャ画面に表示される「排出率」の表記をもって公開します。ユーザーは、ガチャを利用する前に当該表記を確認するものとします。抽選結果はランダムであり、特定のアイテムの出現を保証するものではありません。</p>
+        <h4>第3条（禁止事項）</h4>
+        <p>ユーザーは、以下の行為を行ってはなりません。<br>・本アプリのデータを不正に改ざんする行為<br>・不正な手段によりコイン、カード等を取得する行為<br>・他のユーザーに対する迷惑行為、誹謗中傷<br>・法令または公序良俗に反する行為<br>・当社の運営を妨害する行為</p>
+        <h4>第4条（サービスの変更・中断）</h4>
+        <p>当社は、ユーザーへの事前の通知なく、本アプリの内容の変更、提供の中断または終了を行うことがあります。本アプリは試作版であり、進行状況等のデータが保持されない、またはリセットされる場合があります。</p>
+        <h4>第5条（免責）</h4>
+        <p>当社は、本アプリの利用によりユーザーに生じた損害について、当社の故意または重大な過失による場合を除き、責任を負いません。通信環境等、ユーザーの利用環境に起因する不具合についても同様とします。</p>
+        <h4>第6条（規約の変更）</h4>
+        <p>当社は、必要に応じて本規約を変更することがあります。変更後の規約は、本アプリ内に掲載した時点から効力を生じます。</p>
+        <p class="legal-end">以上（試作版ドラフト）</p></div>
+      </div>
+      <button type="button" class="dmenu-row" data-dmenu="dmLaw"><span class="dm-ic">🏢</span><span class="dm-tx"><b>特定商取引法に基づく表記</b><small>運営者・連絡先の表記</small></span><span class="dm-badge">表記</span><span class="dm-ch">›</span></button>
+      <div class="dmenu-panel" id="dmLaw" hidden>
+        <div class="legal"><span class="draft">試作版ドラフト ― 本番公開前に正式版へ差し替えます</span>
+        <h3>特定商取引法に基づく表記</h3>
+        <table class="legal-tbl">
+          <tr><th>販売事業者</th><td>合同会社なかよしパラダイス</td></tr>
+          <tr><th>運営責任者</th><td>中川パラダイス</td></tr>
+          <tr><th>所在地</th><td>試作版のため省略しています。本番公開時に正式に記載します。</td></tr>
+          <tr><th>連絡先</th><td>app@nakapara.com</td></tr>
+          <tr><th>販売価格</th><td>有料アイテムごとに、購入画面に表示する価格（税込）とします。</td></tr>
+          <tr><th>商品代金以外の必要料金</th><td>本アプリの利用に必要な通信料はユーザーの負担となります。</td></tr>
+          <tr><th>支払方法</th><td>各アプリストアが提供する決済方法によります。</td></tr>
+          <tr><th>支払時期</th><td>購入手続き完了時に各ストアの定める方法で決済されます。</td></tr>
+          <tr><th>引き渡し時期</th><td>購入手続き完了後、直ちにご利用いただけます。</td></tr>
+          <tr><th>返品・返金</th><td>デジタルコンテンツの性質上、購入後の返品・返金は、法令に定める場合を除きお受けできません。</td></tr>
+        </table>
+        <p class="legal-end">以上（試作版ドラフト）</p></div>
+      </div>
+      <button type="button" class="dmenu-row" data-dmenu="dmContact"><span class="dm-ic">✉️</span><span class="dm-tx"><b>お問い合わせ</b><small>連絡先メール</small></span><span class="dm-badge">連絡先</span><span class="dm-ch">›</span></button>
+      <div class="dmenu-panel" id="dmContact" hidden>
+        <div class="legal"><h3>お問い合わせ</h3>
+        <p>本アプリに関するご質問、不具合のご報告、その他のお問い合わせは、下記のメールアドレスまでご連絡ください。</p>
+        <p class="legal-mail">app@nakapara.com</p>
+        <p>お問い合わせの際は、件名に「PARA NOVEL 問い合わせ」とご記入のうえ、プレイヤー名とお問い合わせ内容をお知らせください。内容によっては、返信まで数日いただく場合があります。</p>
+        <div class="btnrow"><a class="btn gold" href="mailto:app@nakapara.com?subject=PARA%20NOVEL%20%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B">メールで問い合わせる</a></div></div>
+      </div>
+      <button type="button" class="dmenu-row" data-dmenu="dmDelete"><span class="dm-ic">🗑️</span><span class="dm-tx"><b>データ削除について</b><small>プレイヤーデータ削除の申し出方法</small></span><span class="dm-badge">案内</span><span class="dm-ch">›</span></button>
+      <div class="dmenu-panel" id="dmDelete" hidden>
+        <div class="legal"><h3>データ削除について</h3>
+        <p>プレイヤーデータ（プレイヤー名、戦績、所持カード等のゲームデータ）の削除をご希望の場合は、以下の方法でお申し出ください。</p>
+        <h4>申し出方法</h4>
+        <p>件名を「データ削除希望」として、登録したプレイヤー名を本文にご記入のうえ、下記のメールアドレスまでご連絡ください。</p>
+        <p class="legal-mail">app@nakapara.com</p>
+        <h4>削除までの流れ</h4>
+        <p>1. お申し出の受付後、ご本人であることの確認を行います。<br>2. 確認が取れ次第、対象のプレイヤーデータを削除します。<br>3. 削除完了後、メールにてご連絡します（合理的な期間内に対応します）。</p>
+        <p>なお、削除したデータは復旧できません。また、法令に基づき保管が必要な情報については、当該期間の経過後に削除します。</p>
+        <div class="btnrow"><a class="btn ghost" href="mailto:app@nakapara.com?subject=%E3%83%87%E3%83%BC%E3%82%BF%E5%89%8A%E9%99%A4%E5%B8%8C%E6%9C%9B">削除を申し出る（メール）</a></div></div>
+      </div>
+      <button type="button" class="dmenu-row" data-dmenu="dmAbout"><span class="dm-ic">ℹ️</span><span class="dm-tx"><b>バージョン情報</b><small>アプリの情報</small></span><span class="dm-badge">情報</span><span class="dm-ch">›</span></button>
+      <div class="dmenu-panel" id="dmAbout" hidden>
+        <div class="legal"><h3>バージョン情報</h3>
+        <table class="legal-tbl">
+          <tr><th>アプリ名</th><td>PARA NOVEL</td></tr>
+          <tr><th>バージョン</th><td>試作版（Prototype）v103</td></tr>
+          <tr><th>運営</th><td>合同会社なかよしパラダイス</td></tr>
+          <tr><th>対応環境</th><td>スマートフォン向けブラウザ</td></tr>
+        </table>
+        <p>本アプリは試作版です。カード図柄・キャラクター・数値はデモ用の仮デザイン／仮データであり、本番では実写フォトカードに差し替わります。進行状況は開いている間のみ保持されます。</p></div>
+      </div>
     </div>
   </section>
 </div>
@@ -3588,7 +3694,7 @@ img{-webkit-user-drag:none}
   <button type="button" class="tab" data-v="gacha"><span class="ic">📸</span>ガチャ</button>
   <button type="button" class="tab" data-v="coll"><span class="ic">🗂️</span>コレクション</button>
   <button type="button" class="tab" data-v="game"><span class="ic">🎮</span>ミニゲーム</button>
-  <button type="button" class="tab" data-v="idea"><span class="ic">🎁</span>デイリー</button>
+  <button type="button" class="tab" data-v="idea"><span class="ic">⚙️</span>MENU<span class="tab-dot" id="menuDot" hidden></span></button>
 </div></nav>
 </div>
 <div class="modal" id="cardModal"><div class="modal-sheet" id="modalSheet"></div></div>
@@ -4016,7 +4122,7 @@ function renderEndings(){
 }
 /* ===== daily missions / shop ===== */
 var MISSIONS=[
- {id:"d_login",title:"ログインボーナスを受け取る",desc:"その他タブのボーナスを受け取ろう",goal:function(){return S.bonusClaimed?1:0;},target:1,reward:50},
+ {id:"d_login",title:"ログインボーナスを受け取る",desc:"MENUタブのボーナスを受け取ろう",goal:function(){return S.bonusClaimed?1:0;},target:1,reward:50},
  {id:"d_gacha",title:"ガチャを1回引く",desc:"通常・ピックアップどちらでもOK",goal:function(){return S.pulls;},target:1,reward:100},
  {id:"d_gacha3",title:"ガチャを3回引く",desc:"今日のカプセル運を試そう",goal:function(){return S.pulls;},target:3,reward:200},
  {id:"d_read",title:"ストーリーを5シーン読む",desc:"既読シーン数で数えます",goal:function(){return readCount();},target:5,reward:150},
@@ -4034,7 +4140,22 @@ function renderMissions(){
     var id=this.getAttribute("data-mission"), m=MISSIONS.filter(function(x){return x.id===id;})[0];
     S.missionsClaimed[id]=1; S.coin+=m.reward; toast("ミッション報酬 +"+m.reward+"コイン"); renderAll();
   });});
+  try{updateMenuDot();}catch(e){}
 }
+/* MENU tab dot : lit while the login bonus or any daily mission
+   reward is waiting to be claimed. */
+function updateMenuDot(){
+  var dot=$("menuDot"); if(!dot)return;
+  var claimable=!S.bonusClaimed;
+  if(!claimable){
+    for(var i=0;i<MISSIONS.length;i++){
+      var m=MISSIONS[i];
+      if(!S.missionsClaimed[m.id]&&Math.min(m.goal(),m.target)>=m.target){claimable=true;break;}
+    }
+  }
+  dot.hidden=!claimable;
+}
+window.updateMenuDot=updateMenuDot;
 var SHOP=[
  {id:"s1",name:"限定フレーム「舞台の灯り」（仮）",cost:300,desc:"カードに付けられる装飾フレームの試作枠"},
  {id:"s2",name:"称号「Litの常連」（仮）",cost:500,desc:"プロフィールに付けられる称号の試作枠"},
@@ -4717,6 +4838,7 @@ window.__npLazyBuild=function(name){
   }catch(e){}
 };
 try{renderStats();}catch(e){}
+try{updateMenuDot();}catch(e){}
 try{renderHeroOshi();}catch(e){}
 try{renderFeatured();}catch(e){}
 
@@ -11460,7 +11582,7 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 
 /* ---------- DAILY / menu : rows fit, open panel is an in-view pane ---------- */
 #v-idea>section{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:8px!important}
-#dMenu{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+#dMenu{flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
 .dmenu-panel{max-height:36dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .dmenu-row{flex:none}
 
