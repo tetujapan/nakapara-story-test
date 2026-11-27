@@ -860,24 +860,25 @@ footer{color:#8d76b8}
    animates. One ornament grammar (the jeweled plate family)
    across every surface; only ONE hero accent per screen.
    ============================================================ */
-/* ---------- buttons : real plate photographs + live text ---------- */
-/* button labels are NEVER embossed : solid fill + a real outline
-   (four 1px offset shadows) + a drop shadow, so the type reads on
-   any part of the plate photograph */
-.btn{border:none;border-radius:8px;background-color:transparent;background-image:url(assets/btn_plate_main.webp);background-size:100% 100%;background-repeat:no-repeat;
-  color:#ffeeb8;text-shadow:1px 0 0 rgba(26,4,38,.95),-1px 0 0 rgba(26,4,38,.95),0 1px 0 rgba(26,4,38,.95),0 -1px 0 rgba(26,4,38,.95),0 2px 5px rgba(0,0,0,.65);
-  min-height:80px;padding:14px 34px;font-size:14.5px;letter-spacing:.05em;line-height:1.35;
-  box-shadow:0 12px 24px rgba(0,0,0,.55);
+/* ---------- buttons : plain plates only ---------- */
+/* The jeweled / gold-foil plate photographs are BANNED as button
+   backgrounds (Hashi, 2026-11-27 : the labels drowned in the gems
+   and could not be read). Every button is a plain plate : a solid
+   or simple-gradient centre with the ornament confined to a thin
+   rim border. Never put a patterned image behind button text. */
+.btn{border:1.5px solid rgba(255,217,122,.85);border-radius:10px;background:linear-gradient(180deg,#452a78,#241147);
+  color:#ffeeb8;text-shadow:0 1px 2px rgba(10,2,24,.8);
+  min-height:80px;padding:14px 30px;font-size:14.5px;letter-spacing:.05em;line-height:1.35;
+  box-shadow:0 12px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);
   transition:transform .07s ease,box-shadow .07s ease,filter .07s ease}
 .btn:before{content:none}
 .btn:hover{filter:brightness(1.06)}
 .btn:active{transform:translateY(3px) scale(.985);box-shadow:0 4px 10px rgba(0,0,0,.5);filter:brightness(1.12)}
-/* gold buttons use the wingless centre cut of the plate photograph
-   (assets/btn_gold_plate.webp) : the plain gold panel fills the
-   button, so the label always sits on plain ground */
-.btn.gold{background-image:url(assets/btn_gold_plate.webp);color:#3d2404;text-shadow:1px 0 0 rgba(255,252,235,.92),-1px 0 0 rgba(255,252,235,.92),0 1px 0 rgba(255,252,235,.92),0 -1px 0 rgba(255,252,235,.92),0 2px 3px rgba(122,74,0,.45);
+/* gold = the hero action : plain gold gradient, dark label */
+.btn.gold{background:linear-gradient(180deg,#ffdf6b,#e6a90c);border-color:#ffe9a8;color:#3d2404;text-shadow:0 1px 0 rgba(255,252,235,.8);
+  box-shadow:0 12px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.65);
   min-height:86px;padding:14px 24px}
-.btn.ghost{background-image:url(assets/btn_sub_wide.webp);color:#ffffff;text-shadow:1px 0 0 rgba(2,6,34,.95),-1px 0 0 rgba(2,6,34,.95),0 1px 0 rgba(2,6,34,.95),0 -1px 0 rgba(2,6,34,.95),0 2px 4px rgba(0,0,0,.6);
+.btn.ghost{background:linear-gradient(180deg,#2b3568,#141b3d);border-color:rgba(255,255,255,.4);color:#ffffff;text-shadow:0 1px 2px rgba(0,0,20,.8);
   min-height:58px;padding:10px 28px;font-size:13px}
 .btn:disabled{filter:grayscale(.55) brightness(.55);box-shadow:0 4px 10px rgba(0,0,0,.4);transform:none}
 .btn:disabled:before{content:none}
@@ -886,22 +887,23 @@ footer{color:#8d76b8}
 .btnrow .btn{flex:1 1 150px}
 .mission .btn{min-height:58px;padding:8px 20px;font-size:12.5px;flex:none}
 .exbtn{width:100%;margin-top:8px;min-height:52px}
-/* story choices : same plate grammar, quieter ornament */
-.choice{border:none;border-radius:8px;background-color:transparent;background-image:url(assets/btn_sub_wide.webp);background-size:100% 100%;background-repeat:no-repeat;
-  color:#ffffff;text-shadow:1px 0 0 rgba(2,6,34,.95),-1px 0 0 rgba(2,6,34,.95),0 1px 0 rgba(2,6,34,.95),0 -1px 0 rgba(2,6,34,.95),0 2px 4px rgba(0,0,0,.6);min-height:60px;padding:13px 44px 13px 34px;
-  box-shadow:0 8px 18px rgba(0,0,0,.5);transition:transform .07s,box-shadow .07s,filter .07s}
+/* story choices : plain deep-purple plate, gold rim */
+.choice{border:1.5px solid rgba(255,217,122,.55);border-radius:10px;background:linear-gradient(180deg,#33235f,#1d1140);
+  color:#ffffff;text-shadow:0 1px 2px rgba(0,0,20,.8);min-height:60px;padding:13px 44px 13px 34px;
+  box-shadow:0 8px 18px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.16);transition:transform .07s,box-shadow .07s,filter .07s}
 .choice:after{color:#ffd97a;text-shadow:0 1px 3px rgba(0,0,0,.7)}
 .choice:active{transform:translateY(3px);box-shadow:0 3px 8px rgba(0,0,0,.5);filter:brightness(1.15)}
-/* filter chips : small navy plates; active = main plate */
-.filters button{border:none;border-radius:7px;background-color:transparent;background-image:url(assets/btn_sub_wide.webp);background-size:100% 100%;
-  color:#ffffff;min-height:40px;padding:7px 16px;text-shadow:1px 0 0 rgba(2,6,34,.95),-1px 0 0 rgba(2,6,34,.95),0 1px 0 rgba(2,6,34,.95),0 -1px 0 rgba(2,6,34,.95);box-shadow:0 5px 11px rgba(0,0,0,.4)}
-.filters button.on{background-image:url(assets/btn_plate_main.webp);color:#ffe9a8}
-.vote button{border:none;border-radius:8px;background-image:url(assets/btn_sub_wide.webp);background-size:100% 100%;background-color:transparent;color:#ffffff;min-height:44px;padding:8px 20px;text-shadow:1px 0 0 rgba(2,6,34,.95),-1px 0 0 rgba(2,6,34,.95),0 1px 0 rgba(2,6,34,.95),0 -1px 0 rgba(2,6,34,.95);box-shadow:0 6px 13px rgba(0,0,0,.45)}
-.vote button.voted{background-image:url(assets/btn_plate_main.webp);color:#ffe9a8}
-/* round jewel button (sapphire cabochon photograph) */
-.jewelbtn{width:54px;height:54px;min-height:54px;border:none;border-radius:50%;padding:0;flex:none;
-  background:url(assets/btn_jewel_round.webp) center/cover no-repeat;color:#fff;font-size:19px;font-weight:900;
-  text-shadow:0 1px 4px rgba(0,10,60,.9),0 0 8px rgba(0,10,60,.6);box-shadow:0 8px 18px rgba(0,0,0,.55);
+/* filter chips : small plain navy plates; active = purple + gold rim */
+.filters button{border:1px solid rgba(255,255,255,.3);border-radius:7px;background:linear-gradient(180deg,#2b3568,#141b3d);
+  color:#ffffff;min-height:40px;padding:7px 16px;text-shadow:0 1px 2px rgba(0,0,20,.8);box-shadow:0 5px 11px rgba(0,0,0,.4)}
+.filters button.on{background:linear-gradient(180deg,#452a78,#241147);border-color:rgba(255,217,122,.85);color:#ffe9a8}
+.vote button{border:1px solid rgba(255,255,255,.3);border-radius:8px;background:linear-gradient(180deg,#2b3568,#141b3d);color:#ffffff;min-height:44px;padding:8px 20px;text-shadow:0 1px 2px rgba(0,0,20,.8);box-shadow:0 6px 13px rgba(0,0,0,.45)}
+.vote button.voted{background:linear-gradient(180deg,#452a78,#241147);border-color:rgba(255,217,122,.85);color:#ffe9a8}
+/* round close button : plain sapphire gradient, gold rim (the
+   cabochon photograph is banned like every jeweled plate) */
+.jewelbtn{width:54px;height:54px;min-height:54px;border:2px solid rgba(255,217,122,.8);border-radius:50%;padding:0;flex:none;
+  background:radial-gradient(circle at 35% 30%,#4a5fd0,#1c2450 72%);color:#fff;font-size:19px;font-weight:900;
+  text-shadow:0 1px 4px rgba(0,10,60,.9);box-shadow:0 8px 18px rgba(0,0,0,.55),inset 0 2px 5px rgba(255,255,255,.35);
   transition:transform .07s,filter .07s}
 .jewelbtn:active{transform:scale(.92);filter:brightness(1.2)}
 .mclose{position:absolute;top:10px;right:12px;z-index:5}
@@ -1007,20 +1009,18 @@ footer{color:#8d76b8}
 .main-catch{position:absolute;z-index:5;left:10px;top:52px;writing-mode:vertical-rl;font-size:11.5px;font-weight:800;letter-spacing:.14em;color:#fff;
   text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.6);pointer-events:none}
 .badges{position:absolute;left:0;right:0;bottom:0;z-index:9;display:flex;gap:8px;align-items:flex-end;padding:16px 10px 10px;background:linear-gradient(180deg,transparent,rgba(9,3,20,.68) 55%)}
-.badge-btn{flex:0 0 84px;border:none;border-radius:8px;background-color:transparent;background-image:url(assets/btn_plate_main.webp);background-size:100% 100%;background-repeat:no-repeat;
+.badge-btn{flex:0 0 84px;border:1.5px solid rgba(255,217,122,.85);border-radius:10px;background:linear-gradient(180deg,#452a78,#241147);
   color:#ffeeb8;font-family:"M PLUS Rounded 1c";font-weight:800;font-size:11.5px;line-height:1.45;letter-spacing:.02em;min-height:72px;padding:8px 4px;
-  text-shadow:1px 0 0 rgba(26,4,38,.95),-1px 0 0 rgba(26,4,38,.95),0 1px 0 rgba(26,4,38,.95),0 -1px 0 rgba(26,4,38,.95),0 2px 4px rgba(0,0,0,.6);box-shadow:0 10px 20px rgba(0,0,0,.55);transition:transform .07s,filter .07s}
-/* gold CTA : the plate photograph's plain panel occupies x 24-76% / y 36-76%
-   of the image. The image is shown at 120% width (wings cropped) so the panel
-   maps to x 19-81% of the button, and the two text lines are sized and padded
-   to sit entirely inside that panel band at any phone width. */
-.badge-btn.gold{flex:1 1 auto;background-image:url(assets/btn_gold_wide.webp);background-size:120% 100%;background-position:50% 50%;color:#3d2404;
-  font-size:13px;line-height:1.3;letter-spacing:.02em;min-height:110px;padding:27px 26px 11px;
+  text-shadow:0 1px 2px rgba(10,2,24,.8);box-shadow:0 10px 20px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);transition:transform .07s,filter .07s}
+/* gold CTA : plain gold gradient plate (the winged jeweled plate
+   photograph is banned) ; the label sits centred on plain ground */
+.badge-btn.gold{flex:1 1 auto;background:linear-gradient(180deg,#ffdf6b,#e6a90c);border-color:#ffe9a8;color:#3d2404;
+  font-size:13px;line-height:1.3;letter-spacing:.02em;min-height:110px;padding:14px 18px;
   display:flex;align-items:center;justify-content:center;text-align:center;
-  text-shadow:1px 0 0 rgba(255,252,235,.92),-1px 0 0 rgba(255,252,235,.92),0 1px 0 rgba(255,252,235,.92),0 -1px 0 rgba(255,252,235,.92),0 2px 3px rgba(122,74,0,.45);animation:ctaGlow 2.2s ease-in-out infinite}
+  text-shadow:0 1px 0 rgba(255,252,235,.8);box-shadow:0 10px 20px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.65);animation:ctaGlow 2.2s ease-in-out infinite}
 @media(max-width:380px){
   .badge-btn{flex-basis:78px;font-size:11px}
-  .badge-btn.gold{font-size:12px;padding:25px 20px 10px}
+  .badge-btn.gold{font-size:12px;padding:12px 14px}
 }
 .badge-btn:active{transform:translateY(3px) scale(.97);filter:brightness(1.15)}
 .stage-bg img.bg,.stage-bg .bgimg2{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -3483,15 +3483,17 @@ img{-webkit-user-drag:none}
     <section style="margin-top:0">
       <button type="button" class="mg-back" id="cnBack">‹ ミニゲーム一覧へ</button>
       <div class="sec-head"><h2>🎲 チンチロ</h2><p>スマホを回して 2〜4人対戦</p></div>
-      <div class="cn-stage" id="cnStage">
+      <div class="cn-topbar">
         <div class="rt-hud"><span id="cnHudRound">ラウンド 1</span><span id="cnHudPot">POT 0</span><span id="cnHudTurn">―</span></div>
         <div class="cn-balances" id="cnBalances"></div>
+      </div>
+      <div class="cn-stage" id="cnStage">
         <div class="cn-bowlwrap" id="cnBowlWrap">
           <img class="cn-bowl" src="assets/cn_bowl.webp" alt="斜め上から見たチンチロのお茶碗">
           <div class="cn-dropshadow" id="cnDropShadow" hidden></div>
-          <img class="cn-die" id="cnDie0" src="assets/cn_dice1.webp" alt="サイコロ">
-          <img class="cn-die" id="cnDie1" src="assets/cn_dice1.webp" alt="サイコロ">
-          <img class="cn-die" id="cnDie2" src="assets/cn_dice1.webp" alt="サイコロ">
+          <div class="cn-die" id="cnDie0" role="img" aria-label="サイコロ"></div>
+          <div class="cn-die" id="cnDie1" role="img" aria-label="サイコロ"></div>
+          <div class="cn-die" id="cnDie2" role="img" aria-label="サイコロ"></div>
           <div class="cn-guide" id="cnGuide" hidden></div>
           <div class="cn-aim" id="cnAim" hidden><span></span></div>
           <div class="cn-role" id="cnRole" hidden></div>
@@ -6869,6 +6871,20 @@ var SDIMG={},ENIMG={},CLIMBIMG={};
      the left hand up, frame 2 the right hand up */
   ["climb1","climb2"].forEach(function(k){var im=new Image();im.src="assets/sd_"+k+".webp";CLIMBIMG[k]=im;});
 })();
+/* the idol's angel wing : a real layered-feather illustration
+   (assets/wing_fly.webp, background removed). The wing sweeps
+   up-left and its root — the fluffy covert cluster — sits at
+   (93%, 90%) of the image, so drawing it with that point on the
+   caller's origin roots it exactly on the shoulder blade. */
+var WINGIMG=new Image();WINGIMG.src="assets/wing_fly.webp";
+function drawWingFly(g,w){
+  if(WINGIMG.complete&&WINGIMG.naturalWidth){
+    var h=w*WINGIMG.naturalHeight/WINGIMG.naturalWidth;
+    g.drawImage(WINGIMG,-0.93*w,-0.90*h,w,h);
+  }else{
+    g.drawImage(SPR.wingFly,-44,-28,46,32);
+  }
+}
 /* draw a sprite contain-fitted into the box (x,y,w,h), bottom-aligned.
    opt: faceLeft (mirror), flipped (180°), rot (spin radians), bob (px).
    Returns false when the image is not ready yet. */
@@ -9055,7 +9071,7 @@ function tbDraw(){
     (function(){
       var a=-0.62+Math.sin(flapPh+0.55)*0.5;
       g.save();g.translate(shX+2,shY+2);g.scale(-0.92,0.92);g.rotate(a);
-      g.globalAlpha=0.88;g.drawImage(SPR.wingFly,-44,-28,46,32);g.restore();g.globalAlpha=1;
+      g.globalAlpha=0.88;drawWingFly(g,50);g.restore();g.globalAlpha=1;
     })();
     /* light jet under her feet : two layered teardrops, the
        outer fringe breathing with a fast flicker */
@@ -9067,7 +9083,7 @@ function tbDraw(){
     (function(){
       var a=-0.62+Math.sin(flapPh)*0.5;
       g.save();g.translate(shX-2,shY);g.rotate(a);
-      g.drawImage(SPR.wingFly,-44,-28,46,32);g.restore();
+      drawWingFly(g,50);g.restore();
     })();
     /* the idol herself */
     if(!drawChara(g,SDIMG[(TB.p1char||RTCHAR)],TB.px-20,TB.py-48+bobY,40,48,{}))
@@ -9093,7 +9109,7 @@ function tbDraw(){
   if(TB.p2&&TB.p2.active&&!(TB.p2.invuln>0&&Math.floor(TB.frame/5)%2===0)){
     var pq2=TB.p2,bob3=Math.sin(TB.frame*0.09+2.1)*2.2;
     g.save();g.translate(pq2.x,pq2.y-20+bob3);
-    g.globalAlpha=0.9;g.drawImage(SPR.wingFly,-42,-27,44,30);g.globalAlpha=1;
+    g.globalAlpha=0.9;drawWingFly(g,48);g.globalAlpha=1;
     if(!drawChara(g,SDIMG[pq2.char],-20,-28,40,48,{}))drawSD(g,pq2.char,-16,-22,1.6,{});
     g.restore();
     g.fillStyle="#7ce7ff";g.font="900 10px 'M PLUS Rounded 1c',sans-serif";g.textAlign="center";
@@ -9646,6 +9662,18 @@ function bfUpdate(){
       if(e.y>BF_WATER+4){e.state="gone";BF.killed++;for(var sw2=0;sw2<4;sw2++)BF.fx.push({type:"spark",x:e.x+11+(Math.random()*24-12),y:BF_WATER-2,vy:-0.6-Math.random(),vx:0,life:15,r:1.6+Math.random()*1.4});}
       return;
     }
+    /* launched : a kicked crow tumbling away — gravity arc, a
+       streak trail, gone when it exits the sky or splashes */
+    if(e.state==="launched"){
+      e.lt++;e.vy+=0.17;e.x+=e.vx;e.y+=e.vy;e.rot+=e.spin;
+      if(e.lt%4===0)BF.fx.push({type:"streak",x:e.x+11,y:e.y+14,vy:0.4,vx:-e.vx*0.14,life:9});
+      if(e.y>BF_WATER+2){
+        for(var sw3=0;sw3<6;sw3++)BF.fx.push({type:"spark",x:e.x+11+(Math.random()*26-13),y:BF_WATER-2,vy:-0.8-Math.random()*1.2,vx:(Math.random()-0.5)*0.8,life:16,r:1.6+Math.random()*1.4});
+        e.state="gone";
+      }
+      if(e.x<-56||e.x>536||e.y<-110)e.state="gone";
+      return;
+    }
     /* fly : a hunter, not a decoration. The crow works the
        WHOLE sky — it flaps to match the player's altitude
        (climbing hard when below her, easing when above),
@@ -9674,7 +9702,7 @@ function bfUpdate(){
     e.flapPh+=0.3;
     e.vy+=0.052;if(e.vy>1.5)e.vy=1.5;if(e.vy<-2.3)e.vy=-2.3;
     BF.enemies.forEach(function(o){
-      if(o===e||o.state==="gone")return;
+      if(o===e||o.state==="gone"||o.state==="launched")return;
       var sx=(e.x+11)-(o.x+11),sy=(e.y+15)-(o.y+15);
       if(Math.abs(sx)<30&&Math.abs(sy)<34){e.vx+=sx===0?(Math.random()<0.5?-0.06:0.06):Math.sign(sx)*0.06;e.vy+=sy<0?-0.03:0.03;}
     });
@@ -9717,7 +9745,18 @@ function bfUpdate(){
   BF.enemies.forEach(function(e){
     if(e.state!=="chute"&&e.state!=="inflate")return;
     if(Math.abs((p.x+p.w/2)-(e.x+e.w/2))<20&&Math.abs((p.y+p.h/2)-(e.y+e.h/2))<28){
-      e.state="gone";BF.score+=200;BF.killed++;bfHud();toast("蹴り飛ばした！ +200");
+      /* kicked : the crow does NOT vanish on the spot — it is
+         launched spinning along a parabola, trailing stars and
+         feathers, and only leaves play off-screen or in the
+         water. She gets a recoil bounce off the kick, so the
+         hit has weight on both sides. */
+      var dir=(e.x+e.w/2)>=(p.x+p.w/2)?1:-1;
+      e.state="launched";e.rot=0;e.spin=dir*(0.22+Math.random()*0.14);
+      e.vx=dir*(3.6+Math.random()*1.2);e.vy=-4.8-Math.random()*0.7;e.lt=0;
+      BF.score+=200;BF.killed++;bfHud();toast("蹴り飛ばした！ +200");
+      p.vy=Math.min(p.vy,-2.1);
+      bfSpawnFeathers(e.x+11,e.y+10,5,false);
+      for(var ks=0;ks<6;ks++)BF.fx.push({type:"spark",x:e.x+11,y:e.y+14,vy:(Math.random()-0.5)*1.6,vx:(Math.random()-0.5)*1.6,life:16+Math.random()*8,r:1.5+Math.random()*1.6});
     }
   });
   BF.enemies=BF.enemies.filter(function(e){return e.state!=="gone";});
@@ -9804,7 +9843,14 @@ function bfDraw(){
   }
   /* enemies : crows on black wings */
   BF.enemies.forEach(function(e){
-    if(e.state==="chute"){
+    if(e.state==="launched"){
+      /* tumbling through the air, wings burst — body only, spun
+         around its centre by the kick's momentum */
+      g.save();g.translate(e.x+11,e.y+15);g.rotate(e.rot);
+      if(!drawChara(g,ENIMG.crow,-22,-29,44,50,{faceLeft:e.face<0}))
+        drawDrunk(g,-11,-11,1.05,{faceLeft:e.face<0});
+      g.restore();
+    }else if(e.state==="chute"){
       g.fillStyle="#f4f1e8";g.beginPath();g.arc(e.x+11,e.y+2,13,Math.PI,0);g.fill();
       if(!drawChara(g,ENIMG.crow,e.x-11,e.y-16,44,46,{}))
         drawDrunk(g,e.x,e.y+4,1.05,{});
@@ -12673,13 +12719,17 @@ document.addEventListener("pointercancel",function(){
 .rn-btn.on{background:linear-gradient(180deg,#ffd23f,#d99a06);color:#50350a}
 .rn-btn:active{transform:scale(.96)}
 /* ---------- CHINCHIRO ---------- */
-.cn-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:linear-gradient(180deg,#241147,#120826);box-shadow:0 16px 32px rgba(0,0,0,.5);padding-bottom:12px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;min-height:min(480px,calc(100dvh - 204px))}
-.cn-balances{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px 0}
-.cn-bal{flex:1;min-width:70px;text-align:center;font-size:11px;font-weight:800;color:#c9b6ea;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:9px;padding:5px 4px}
-.cn-bal b{display:block;font-size:14px;color:#fff}
+.cn-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:linear-gradient(180deg,#241147,#120826);box-shadow:0 16px 32px rgba(0,0,0,.5);padding-bottom:8px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;min-height:min(470px,calc(100dvh - 272px))}
+/* player info lives OUTSIDE the stage, in one slim strip above it :
+   nothing ever overlaps the bowl or the aim ring */
+.cn-topbar{margin-top:2px}
+.cn-topbar .rt-hud{padding:2px 4px;min-height:22px}
+.cn-balances{display:flex;gap:5px;flex-wrap:nowrap;padding:4px 2px 0}
+.cn-bal{flex:1;min-width:0;text-align:center;font-size:10.5px;font-weight:800;color:#c9b6ea;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:8px;padding:3px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cn-bal b{font-size:12.5px;color:#fff;margin-left:3px}
 .cn-bal.turn{border-color:#ffd23f;color:#ffe9a8;box-shadow:0 0 0 1.5px rgba(255,210,63,.5)}
 .cn-bal.win{border-color:#ffd23f;background:rgba(255,210,63,.16);color:#ffe9a8}
-.cn-bowlwrap{position:relative;width:100%;flex:none;aspect-ratio:3/2;margin:0;touch-action:none;cursor:pointer;overflow:hidden;border-radius:14px}
+.cn-bowlwrap{position:relative;width:100%;flex:1 1 auto;min-height:250px;margin:0;touch-action:none;cursor:pointer;overflow:hidden;border-radius:14px;perspective:660px}
 #cnOverlay{top:0}
 #cnOverlay .rt-ov-in{gap:14px;padding:20px 16px;overflow:hidden;background:#0c0518;justify-content:center}
 #cnOverlay .kv-img{height:118px;width:min(100%,340px);object-fit:cover}
@@ -12690,20 +12740,37 @@ document.addEventListener("pointercancel",function(){
 #cnOverlay .cn-ovname{font-size:37px}
 .cn-ovimg{width:min(84%,320px);border-radius:16px;box-shadow:0 14px 30px rgba(0,0,0,.55)}
 .cn-bowl{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
-.cn-die{position:absolute;width:19%;z-index:3;pointer-events:none;filter:drop-shadow(0 6px 5px rgba(0,0,0,.45));will-change:left,top,transform}
+/* the dice are real CSS 3D cubes : six pip faces in the standard
+   arrangement (1 opposite 6, 2 opposite 5, 3 opposite 4). JS tumbles
+   .cn-tumble (rx / ry / rz) and sets .cn-orient so the rolled face
+   ends up on top ; --h is the cube half-size in px, set by cnFit */
+.cn-die{position:absolute;width:15.5%;aspect-ratio:1;z-index:3;pointer-events:none;transform-style:preserve-3d;will-change:left,top,transform;--h:26px}
+.cn-tumble{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+.cn-orient{position:absolute;inset:0;transform-style:preserve-3d}
+.cn-dsh{position:absolute;left:-8%;top:16%;width:116%;height:104%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.5),rgba(0,0,0,0) 68%);transform:translateZ(calc(var(--h) * -1.35));pointer-events:none}
+.cn-face{position:absolute;inset:0;border-radius:15%;background:radial-gradient(130% 130% at 32% 26%,#ffffff,#f2ecdd 55%,#ddd2ba);box-shadow:inset 0 0 0 2px rgba(122,100,58,.28),inset 0 -7px 13px rgba(96,74,32,.20),inset 0 5px 9px rgba(255,255,255,.75);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:17%;box-sizing:border-box;backface-visibility:hidden}
+.cn-face i{display:flex;align-items:center;justify-content:center}
+.cn-face i.on::after{content:"";width:82%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 36% 30%,#54545e,#0d0d13 72%);box-shadow:inset 0 2px 3px rgba(0,0,0,.85),0 1px 0 rgba(255,255,255,.5)}
+.cn-face.f1 i.on::after{width:118%;background:radial-gradient(circle at 36% 30%,#ff7a6e,#c40f1d 72%);box-shadow:inset 0 2px 3px rgba(90,0,0,.7),0 1px 0 rgba(255,255,255,.5)}
+.cn-face[data-v="1"]{transform:rotateX(90deg) translateZ(var(--h))}
+.cn-face[data-v="6"]{transform:rotateX(-90deg) translateZ(var(--h))}
+.cn-face[data-v="2"]{transform:translateZ(var(--h))}
+.cn-face[data-v="5"]{transform:rotateY(180deg) translateZ(var(--h))}
+.cn-face[data-v="3"]{transform:rotateY(90deg) translateZ(var(--h))}
+.cn-face[data-v="4"]{transform:rotateY(-90deg) translateZ(var(--h))}
 .cn-aim{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border:2.5px solid #ffd23f;border-radius:50%;z-index:4;pointer-events:none;box-shadow:0 0 0 2px rgba(0,0,0,.35),0 0 16px rgba(255,210,63,.75);animation:cnAimPulse 1s ease-in-out infinite}
 @keyframes cnAimPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
 .cn-guide{position:absolute;width:0;border-left:3px dotted rgba(255,210,63,.85);z-index:2;pointer-events:none;filter:drop-shadow(0 0 4px rgba(255,210,63,.6))}
-.cn-pips{display:flex;gap:8px;align-items:center;justify-content:center;padding:2px 0}
-.cn-pips-lb{font-size:13px;font-weight:900;color:#ffe9a8;white-space:nowrap}
-.cn-pip{width:36px;height:36px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.45))}
+.cn-pips{display:flex;gap:6px;align-items:center;justify-content:center;padding:0}
+.cn-pips-lb{font-size:12.5px;font-weight:900;color:#ffe9a8;white-space:nowrap}
+.cn-pip{width:26px;height:26px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
 .cn-pip.off{opacity:.2;filter:grayscale(1)}
 .cn-aim span{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#ffd23f;box-shadow:0 0 8px rgba(255,210,63,.9)}
 .cn-dropshadow{position:absolute;width:70px;height:24px;margin:-12px 0 0 -35px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%);z-index:2;pointer-events:none}
-.cn-gauge{display:flex;align-items:center;gap:8px;margin:9px 14px 0}
+.cn-gauge{display:flex;align-items:center;gap:8px;margin:5px 12px 0}
 .cn-gauge[hidden]{display:none}
 .cn-gauge-lb{font-size:11px;font-weight:900;color:#ffe9a8;white-space:nowrap}
-.cn-gauge-bar{position:relative;flex:1;height:17px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);overflow:hidden}
+.cn-gauge-bar{position:relative;flex:1;height:14px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);overflow:hidden}
 .cn-gauge-bar i{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#57d977,#ffd23f 55%,#ff7847 82%,#ff3b30)}
 .cn-gauge-ob{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-style:normal;font-weight:900;color:#ffb3ab;letter-spacing:.05em}
 .cn-gauge-tx{font-size:11.5px;font-weight:900;color:#fff;min-width:56px;white-space:nowrap}
@@ -12715,16 +12782,16 @@ document.addEventListener("pointercancel",function(){
 @keyframes cnRolePop{0%{transform:translateX(-50%) scale(.3) rotate(-4deg);opacity:0}35%{transform:translateX(-50%) scale(1.18) rotate(1.5deg);opacity:1}60%{transform:translateX(-50%) scale(1)}100%{transform:translateX(-50%) scale(1.04);opacity:1}}
 .cn-role.lose{color:#b9a8e8;-webkit-text-stroke:2px rgba(30,10,60,.9);text-shadow:0 3px 0 #241047,0 4px 12px rgba(0,0,0,.7)}
 .cn-role.mid{color:#aef3ff;-webkit-text-stroke:2px rgba(0,60,90,.9);text-shadow:0 3px 0 #065a77,0 0 22px rgba(90,200,255,.8),0 6px 16px rgba(0,0,0,.6)}
-.cn-msg{text-align:center;font-size:13.5px;font-weight:800;color:#f3eafd;margin:10px 12px 0;line-height:1.6;min-height:22px}
-.cn-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:10px 12px 0}
-.cn-actions .btn{min-height:52px;padding:10px 18px;font-size:14.5px}
+.cn-msg{text-align:center;font-size:13px;font-weight:800;color:#f3eafd;margin:5px 12px 0;line-height:1.5;min-height:20px}
+.cn-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:6px 12px 0}
+.cn-actions .btn{min-height:48px;padding:8px 18px;font-size:14.5px}
 .cn-ov .rt-ov-in{gap:9px}
 .cn-ovname{font-family:"M PLUS Rounded 1c",sans-serif;font-weight:900;font-size:27px;color:#ffe98a;text-shadow:0 3px 0 rgba(140,60,0,.8),0 0 20px rgba(255,180,0,.55);margin:0;text-align:center;line-height:1.4}
 .cn-choices{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .cn-choice{min-width:64px;min-height:48px;padding:8px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07);color:#fff;font-weight:900;font-size:15px;font-family:inherit;cursor:pointer}
 .cn-choice.on{border-color:#ffd23f;background:linear-gradient(180deg,#ffd23f,#d99a06);color:#50350a}
 .cn-result{width:100%;max-width:300px;margin:0 auto}
-.cn-result .cn-bal{margin-top:5px;text-align:left;padding:7px 10px}
+.cn-result .cn-bal{margin-top:5px;text-align:left;padding:7px 10px;white-space:normal;overflow:visible}
 .cn-result .cn-bal b{display:inline;font-size:15.5px}
 /* ---------- INDIAN POKER ---------- */
 .ip-stage{position:relative;margin-top:3px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,217,122,.6);background:radial-gradient(120% 100% at 50% 0%,#2c1656,#140a2c 75%);box-shadow:0 16px 32px rgba(0,0,0,.5);padding-bottom:6px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;min-height:calc(100dvh - 204px)}
@@ -12733,22 +12800,34 @@ document.addEventListener("pointercancel",function(){
 .ip-big{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-height:0}
 .ip-bigname{font-family:"M PLUS Rounded 1c",sans-serif;font-size:17px;font-weight:900;color:#fff;text-shadow:0 3px 0 rgba(60,20,110,.9),0 0 22px rgba(160,110,255,.45);margin:0 0 3px;text-align:center;line-height:1.15}
 .ip-bigname small{display:inline-block;font-family:inherit;font-size:9px;font-weight:900;color:#ffd23f;letter-spacing:.14em;margin-right:7px;vertical-align:middle}
-.ip-flip{width:min(80vw,340px);aspect-ratio:5/5.5;perspective:1100px;cursor:pointer;flex:none}
+.ip-flip{width:min(80vw,340px);aspect-ratio:5/5.5;perspective:950px;cursor:pointer;flex:none}
 @media (max-height:600px){.ip-flip{width:min(80vw,46dvh,340px)}}
+/* TRUE 3D flip : two faces with backface-visibility hidden, plus
+   thin edge strips so the card reads as a physical object edge-on.
+   NOTHING between .ip-flip and the faces may carry a grouping
+   property (filter / opacity / overflow) : a filter on .ip-flip-in
+   used to flatten the 3D scene, which showed the front face
+   MIRRORED during the wait. All glow / flash effects therefore
+   live on the leaf faces themselves, never on the flipper. */
 .ip-flip-in{position:relative;width:100%;height:100%;transform-style:preserve-3d}
 .ip-flip-in.showback{transform:rotateY(180deg)}
 .ip-flip-f{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .ip-flip-f.back{transform:rotateY(180deg)}
+.ip-edge{position:absolute;top:1.2%;height:97.6%;width:5px;background:linear-gradient(180deg,#f2ecdd,#c9c0aa);border-radius:2px;pointer-events:none}
+.ip-edge.l{left:-2.5px;transform:rotateY(90deg)}
+.ip-edge.r{right:-2.5px;transform:rotateY(90deg)}
 .ip-big.waiting .ip-flip{animation:ipShake .15s linear infinite}
 @keyframes ipShake{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(.8px,-.6px) rotate(.4deg)}50%{transform:translate(-.8px,.5px) rotate(-.35deg)}75%{transform:translate(.6px,.7px) rotate(.3deg)}100%{transform:translate(0,0) rotate(0deg)}}
-.ip-big.waiting .ip-flip-in{filter:drop-shadow(0 0 17px rgba(255,210,63,.6))}
+.ip-big.waiting .ip-flip-f{filter:drop-shadow(0 0 14px rgba(255,210,63,.55))}
 .ip-big.waiting::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(62% 48% at 50% 46%,rgba(255,210,63,.30),rgba(255,210,63,0) 70%);animation:ipGlowPulse .75s ease-in-out infinite alternate}
 @keyframes ipGlowPulse{from{opacity:.3}to{opacity:1}}
-.ip-flip.going .ip-flip-in{animation:ipReveal .85s cubic-bezier(.35,.05,.25,1) both}
-@keyframes ipReveal{0%{transform:rotateY(180deg) scale(.93)}55%{transform:rotateY(315deg) scale(1.08)}100%{transform:rotateY(360deg) scale(1)}}
+.ip-flip.going .ip-flip-in{animation:ipReveal .95s cubic-bezier(.32,.72,.28,1) both}
+@keyframes ipReveal{0%{transform:rotateY(180deg) scale(.94)}45%{transform:rotateY(264deg) scale(1.045)}75%{transform:rotateY(338deg) scale(1.012)}100%{transform:rotateY(360deg) scale(1)}}
 .ip-flip.done .ip-flip-in{animation:ipLand .5s cubic-bezier(.2,1.6,.4,1) both}
-@keyframes ipLand{0%{transform:scale(1.15);filter:brightness(1.9) drop-shadow(0 0 32px rgba(255,240,190,.95))}100%{transform:scale(1);filter:brightness(1)}}
-.ip-flip.win .ip-flip-in{animation:ipWinGlow .9s ease-in-out infinite alternate}
+@keyframes ipLand{0%{transform:scale(1.15)}100%{transform:scale(1)}}
+.ip-flip.done .ip-flip-f.face{animation:ipFaceFlash .5s ease-out both}
+@keyframes ipFaceFlash{0%{filter:brightness(1.9) drop-shadow(0 0 30px rgba(255,240,190,.95))}100%{filter:brightness(1) drop-shadow(0 0 0 rgba(255,240,190,0))}}
+.ip-flip.win .ip-flip-f.face{animation:ipWinGlow .9s ease-in-out infinite alternate}
 @keyframes ipWinGlow{from{filter:drop-shadow(0 0 10px rgba(255,210,63,.5))}to{filter:drop-shadow(0 0 32px rgba(255,210,63,.95))}}
 .ip-hugecard{width:100%;height:100%;border-radius:16px;background:linear-gradient(165deg,#ffffff,#e9e6de);color:#1c1c22;box-shadow:0 18px 38px rgba(0,0,0,.55),inset 0 0 0 3px rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:"M PLUS Rounded 1c",sans-serif}
 .ip-hugecard.hot{box-shadow:0 18px 38px rgba(0,0,0,.55),inset 0 0 0 3px rgba(217,169,79,.8),0 0 36px rgba(255,190,40,.8)}
@@ -12784,7 +12863,7 @@ document.addEventListener("pointercancel",function(){
 #ipOverlay .rt-ov-ttl{font-size:21px}
 #ipOverlay .rt-ov-tx{font-size:11.5px;line-height:1.55}
 @media (prefers-reduced-motion: reduce){
-  .pz-bang.show,.cn-role.show,.ip-taphint,.ip-flip.going .ip-flip-in,.ip-big.waiting .ip-flip,.ip-big.waiting::after,.ip-flip.done .ip-flip-in,.ip-flip.win .ip-flip-in,.cn-aim{animation:none}
+  .pz-bang.show,.cn-role.show,.ip-taphint,.ip-flip.going .ip-flip-in,.ip-big.waiting .ip-flip,.ip-big.waiting::after,.ip-flip.done .ip-flip-in,.ip-flip.done .ip-flip-f.face,.ip-flip.win .ip-flip-f.face,.cn-aim{animation:none}
 }
 </style>
 
@@ -13365,8 +13444,8 @@ var CN={state:"setup",count:2,ante:50,bal:[],pot:0,carry:0,round:1,turn:0,rolls:
   playoff:null,playoffRound:0,rolling:false,timers:[],iv:0,dice:[1,1,1],
   phase:"idle",aim:{x:0,y:0.05},height:0,charging:false,chargeIv:0,chargeT0:0,raf:0,phys:null,dragging:false};
 /* bowl interior ellipse, in % of the bowl wrap (diagonal-view photo) */
-var CN_BOWL={cx:50,cy:57,rx:26,ry:20};
-var CN_BOWL0={cx:50,cy:57,rx:26,ry:20};
+var CN_BOWL={cx:50,cy:60,rx:27,ry:22};
+var CN_BOWL0={cx:50,cy:60,rx:27,ry:22};
 /* the bowl photo is cover-fitted into the (taller) wrap, so remap the
    interior ellipse to wherever the picture actually landed */
 function cnFit(){
@@ -13377,8 +13456,15 @@ function cnFit(){
   CN_BOWL.cy=50+(CN_BOWL0.cy-50)*fy;
   CN_BOWL.rx=CN_BOWL0.rx*fx;
   CN_BOWL.ry=CN_BOWL0.ry*fy;
+  CN.pxRx=CN_BOWL.rx/100*W;CN.pxRy=CN_BOWL.ry/100*H;
+  CN.wrapW=W;CN.wrapH=H;
+  for(var di=0;di<3;di++){var de=$("cnDie"+di);if(de)de.style.setProperty("--h",(W*0.0775)+"px");}
 }
 var CN_OFF=[{x:-0.34,y:-0.10},{x:0.34,y:-0.14},{x:0,y:0.30}];
+/* rest slots at the bowl bottom : a wide triangle, far enough apart
+   (in px) that the three cubes never overlap once settled, so every
+   top face stays fully readable */
+var CN_SLOTS=[{x:-0.42,y:0.10},{x:0.43,y:0.04},{x:0.0,y:0.62}];
 function cnLater(fn,ms){var t=setTimeout(fn,ms);CN.timers.push(t);return t;}
 function cnClearTimers(){CN.timers.forEach(function(t){clearTimeout(t);});CN.timers=[];
   if(CN.iv){clearInterval(CN.iv);CN.iv=0;}
@@ -13395,26 +13481,61 @@ function cnRoleOf(d){
   if(s[1]===s[2])return {cat:3,val:s[0],name:"目 "+s[0],cls:"mid"};
   return {cat:0,val:0,name:"目なし",cls:"lose"};
 }
-function cnPlaceDie(el,u,v,scale,rot,op){
+/* ---- the dice are real CSS 3D cubes (see the .cn-die CSS) ----
+   Faces sit in the standard arrangement (1 opposite 6, 2 opposite
+   5, 3 opposite 4). CN_ORIENT rotates a cube so the rolled value
+   faces up ; the tumble layer spins freely while the die rolls and
+   is eased back to whole turns when it settles, so the face that
+   the game rolled is the face you see on top. */
+var CN_PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+var CN_ORIENT={1:"rotateX(0deg)",6:"rotateX(180deg)",2:"rotateX(90deg)",5:"rotateX(-90deg)",3:"rotateZ(-90deg)",4:"rotateZ(90deg)"};
+var CN_TILT=-36;
+var CN_CUBE=[];
+function cnBuildDice(){
+  for(var i=0;i<3;i++){
+    var root=$("cnDie"+i);if(!root||root._built)continue;root._built=true;
+    var html='<div class="cn-dsh"></div><div class="cn-tumble"><div class="cn-orient">';
+    [1,2,3,4,5,6].forEach(function(v){
+      html+='<div class="cn-face f'+v+'" data-v="'+v+'">';
+      for(var c=0;c<9;c++)html+='<i class="'+(CN_PIPS[v].indexOf(c)>=0?"on":"")+'"></i>';
+      html+='</div>';
+    });
+    html+='</div></div>';
+    root.innerHTML=html;
+    CN_CUBE[i]={tumble:root.querySelector(".cn-tumble"),orient:root.querySelector(".cn-orient")};
+  }
+}
+function cnSetFace(i,face){var f=CN_CUBE[i];if(f)f.orient.style.transform=CN_ORIENT[face]||CN_ORIENT[1];}
+function cnSpin(i,rx,ry,rz){var f=CN_CUBE[i];if(f)f.tumble.style.transform="rotateX("+CN_TILT+"deg) rotateX("+rx+"deg) rotateY("+ry+"deg) rotateZ("+rz+"deg)";}
+function cnPlaceCube(el,u,v,scale,liftPx){
   el.style.left=(CN_BOWL.cx+u*CN_BOWL.rx)+"%";
-  el.style.top=(CN_BOWL.cy+v*CN_BOWL.ry)+"%";
-  el.style.transform="translate(-50%,-56%) scale("+scale+") rotate("+rot+"deg)";
-  el.style.opacity=(op==null?1:op);
+  el.style.top="calc("+(CN_BOWL.cy+v*CN_BOWL.ry)+"% - "+(liftPx||0)+"px)";
+  el.style.transform="translate(-50%,-50%) scale("+scale+")";
+  el.style.opacity="1";
 }
 function cnHoverDice(){
   /* the three dice hover over the aim point, lifted by the charged
-     height; a dotted guide drops from the dice to the aim ring */
-  var wrap=$("cnBowlWrap"),wrapH=wrap?wrap.clientHeight:300;
-  var liftPct=10+CN.height*36, lift=liftPct/100*wrapH, sc=0.92-CN.height*0.13;
+     height; a dotted guide drops from the dice to the aim ring.
+     Hover positions are clamped INSIDE the bowl wrap : at the top
+     rim the dice slide back in instead of sliding under the
+     player strip and vanishing. */
+  var liftPct=10+CN.height*36, sc=0.92-CN.height*0.13;
+  var minLy=100;
   for(var i=0;i<3;i++){
     var el=$("cnDie"+i);if(!el)continue;
     var u=CN.aim.x+CN_OFF[i].x*0.85, v=CN.aim.y+CN_OFF[i].y*0.85;
-    el.src="assets/cn_dice"+CN.dice[i]+".webp";
+    cnSetFace(i,CN.dice[i]);
     el.style.visibility="";
-    cnPlaceDie(el,u,v,sc,[-8,6,-2][i],1);
-    el.style.top="calc("+(CN_BOWL.cy+v*CN_BOWL.ry)+"% - "+lift+"px)";
+    var lx=CN_BOWL.cx+u*CN_BOWL.rx, ly=CN_BOWL.cy+v*CN_BOWL.ry-liftPct;
+    lx=Math.max(9,Math.min(91,lx)); ly=Math.max(12,Math.min(90,ly));
+    if(ly<minLy)minLy=ly;
+    el.style.left=lx+"%";el.style.top=ly+"%";
+    el.style.transform="translate(-50%,-50%) scale("+sc+")";
+    el.style.opacity="1";
+    cnSpin(i,-14,26,0);
   }
   var ax=CN_BOWL.cx+CN.aim.x*CN_BOWL.rx, ay=CN_BOWL.cy+CN.aim.y*CN_BOWL.ry;
+  ax=Math.max(6,Math.min(94,ax)); ay=Math.max(7,Math.min(93,ay));
   var sh=$("cnDropShadow");
   if(sh){
     sh.style.left=ax+"%";sh.style.top=ay+"%";
@@ -13425,7 +13546,7 @@ function cnHoverDice(){
   var am=$("cnAim");
   if(am){am.style.left=ax+"%";am.style.top=ay+"%";}
   var gd=$("cnGuide");
-  if(gd){gd.style.left=ax+"%";gd.style.top=(ay-liftPct)+"%";gd.style.height=liftPct+"%";}
+  if(gd){var gt=Math.min(ay,minLy+6);gd.style.left=ax+"%";gd.style.top=gt+"%";gd.style.height=Math.max(0,ay-gt)+"%";}
 }
 function cnAimUI(on){
   var am=$("cnAim"),sh=$("cnDropShadow"),gd=$("cnGuide");
@@ -13438,6 +13559,7 @@ function cnAimUI(on){
 function cnDiceShow(){
   CN.aim={x:0,y:0.05};CN.height=0;
   cnFit();
+  cnBuildDice();
   cnHoverDice();
   cnAimUI(false);
   var r=$("cnRole");if(r)r.hidden=true;
@@ -13565,115 +13687,135 @@ function cnDrop(h){
   var rr=$("cnRole");if(rr)rr.hidden=true;
   cnActions("");
   cnMsg("コロコロ…");
+  cnBuildDice();
   var faces=[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)];
   var aimR=Math.sqrt(CN.aim.x*CN.aim.x+CN.aim.y*CN.aim.y);
+  var wrap=$("cnBowlWrap"),wrapH=wrap?wrap.clientHeight:300;
+  var lift0=(10+h*36)/100*wrapH;
   var dice=[];
   for(var i=0;i<3;i++){
     var u=CN.aim.x+CN_OFF[i].x*0.8, v=CN.aim.y+CN_OFF[i].y*0.8;
+    var q0=Math.sqrt(u*u+v*v);
+    if(q0>0.97){u*=0.97/q0;v*=0.97/q0;}
     var ang=Math.random()*Math.PI*2;
-    var spd=(0.85+h*2.1)*(0.7+Math.random()*0.6);
+    var spd=(0.75+h*1.6)*(0.75+Math.random()*0.5);
     var vx=Math.cos(ang)*spd, vy=Math.sin(ang)*spd*0.85;
-    if(aimR>0.55){vx+=CN.aim.x/aimR*(aimR-0.55)*1.15*(0.5+h);vy+=CN.aim.y/aimR*(aimR-0.55)*1.15*(0.5+h);}
+    if(aimR>0.6){vx+=CN.aim.x/aimR*(aimR-0.6)*0.9*(0.4+h*0.6);vy+=CN.aim.y/aimR*(aimR-0.6)*0.9*(0.4+h*0.6);}
+    cnSetFace(i,faces[i]);
     dice.push({u:u,v:v,vx:vx,vy:vy,face:faces[i],mode:"fall",
-      fallT:0.20+h*0.38+i*0.05,t:0,rot:(Math.random()*30-15),pop:0,outT:0,el:$("cnDie"+i),
-      spin:(Math.random()<0.5?-1:1)*(420+Math.random()*380),faceAcc:0,disp:faces[i]});
+      fallT:0.18+h*0.30+i*0.045,t:0,lift:lift0,el:$("cnDie"+i),slot:CN_SLOTS[i],
+      rx:Math.random()*160-80,ry:Math.random()*160-80,rz:0,
+      sx:(Math.random()<0.5?-1:1)*(430+Math.random()*330),sy:(Math.random()<0.5?-1:1)*(380+Math.random()*330),
+      setT:0,fu:0,fv:0,frx:0,fry:0,frz:0,trx:0,try_:0,trz:0,outT:0,escaped:false});
   }
-  CN.phys={dice:dice,h:h,t0:performance.now(),last:performance.now(),frame:0};
+  CN.phys={dice:dice,h:h,aimR:aimR,t0:performance.now(),last:performance.now(),frame:0};
   CN.raf=requestAnimationFrame(cnPhysStep);
-}
-/* while a die tumbles, its visible face keeps changing with the spin */
-function cnSpinFace(d,dt){
-  d.faceAcc+=Math.abs(d.spin)*dt;
-  if(d.faceAcc>75){
-    d.faceAcc=0;
-    var f=1+Math.floor(Math.random()*6);
-    if(f!==d.disp){d.disp=f;d.el.src="assets/cn_dice"+f+".webp";}
-  }
 }
 function cnPhysStep(now){
   var P=CN.phys;if(!P)return;
   var dt=Math.min(0.033,(now-P.last)/1000);P.last=now;P.frame++;
   var elapsed=(now-P.t0)/1000;
+  var rxPx=CN.pxRx||90, ryPx=CN.pxRy||60, diePx=(CN.wrapW||360)*0.155;
   var allDone=true,i,j;
   for(i=0;i<3;i++){
     var d=P.dice[i];
     if(d.mode==="done")continue;
+    allDone=false;
     if(d.mode==="fall"){
-      allDone=false;
+      /* falling from the held height : accelerating, spinning fast,
+         the cube grows as it nears the bowl */
       d.t+=dt;
       var k=Math.min(1,d.t/d.fallT);
-      d.rot+=d.spin*dt;
-      cnSpinFace(d,dt);
-      cnPlaceDie(d.el,d.u,d.v,0.55+0.45*k,d.rot,1);
-      if(k>=1){
-        if(d.u*d.u+d.v*d.v>1.04){d.mode="out";d.vx=d.u*1.4;d.vy=d.v*1.4-0.4;}
-        else{d.mode="roll";d.pop=1;}
-      }
+      d.rx+=d.sx*dt;d.ry+=d.sy*dt;
+      cnPlaceCube(d.el,d.u,d.v,(0.92-P.h*0.13)+0.06*k,d.lift*(1-k*k));
+      cnSpin(i,d.rx,d.ry,d.rz);
+      if(k>=1)d.mode="roll";
       continue;
     }
     if(d.mode==="out"){
       d.outT+=dt;
-      d.u+=d.vx*dt;d.v+=d.vy*dt;d.vy+=1.1*dt;d.rot+=260*dt;
-      cnPlaceDie(d.el,d.u,d.v,0.95,d.rot,Math.max(0,1-d.outT*1.5));
-      if(d.outT>0.75){d.mode="done";d.el.style.visibility="hidden";}
-      else allDone=false;
+      d.u+=d.vx*dt;d.v+=d.vy*dt;d.vy+=1.1*dt;
+      d.rx+=300*dt;d.ry+=220*dt;
+      cnPlaceCube(d.el,d.u,d.v,0.95,0);
+      cnSpin(i,d.rx,d.ry,d.rz);
+      d.el.style.opacity=String(Math.max(0,1-d.outT*1.5));
+      if(d.outT>0.7){d.mode="done";d.el.style.visibility="hidden";}
       continue;
     }
-    /* rolling inside the bowl : the bowl's slope keeps pulling the
-       dice down toward the bottom centre, so they settle in a
-       natural pile instead of sticking to the slope in a row */
-    allDone=false;
-    d.vx+=(0-d.u)*2.4*dt;
-    d.vy+=(0.52-d.v)*2.4*dt;
-    d.u+=d.vx*dt;d.v+=d.vy*dt;
+    if(d.mode==="settle"){
+      /* the last act : glide into the rest slot while the tumble
+         eases back to whole turns — the rolled face lands on top */
+      d.setT+=dt;
+      var sk=Math.min(1,d.setT/0.38), se=1-Math.pow(1-sk,3);
+      d.u=d.fu+(d.slot.x-d.fu)*se;
+      d.v=d.fv+(d.slot.y-d.fv)*se;
+      cnPlaceCube(d.el,d.u,d.v,0.9+0.2*((d.v+1)/2),0);
+      cnSpin(i,d.frx+(d.trx-d.frx)*se,d.fry+(d.try_-d.fry)*se,d.frz+(d.trz-d.frz)*se);
+      if(sk>=1){d.mode="done";cnSpin(i,d.trx,d.try_,d.trz);}
+      continue;
+    }
+    /* rolling inside the bowl : a slope spring draws each die
+       toward its rest slot at the bottom, with strong damping, so
+       the roll dies out in about a second and a half */
+    d.vx+=(d.slot.x-d.u)*3.4*dt;
+    d.vy+=(d.slot.y-d.v)*3.4*dt;
     var spd0=Math.sqrt(d.vx*d.vx+d.vy*d.vy);
-    var damp=Math.pow(spd0>0.5?0.30:0.5,dt);
+    var damp=Math.pow(spd0>1.1?0.42:0.16,dt);
     d.vx*=damp;d.vy*=damp;
-    d.spin=Math.max(-950,Math.min(950,spd0*430))*(d.spin<0?-1:1);
-    d.rot+=d.spin*dt;
-    cnSpinFace(d,dt);
+    d.u+=d.vx*dt;d.v+=d.vy*dt;
+    /* the cube tips in its direction of travel, like a real die */
+    d.rx+=-d.vy*235*dt;
+    d.rz+=d.vx*235*dt;
+    d.ry+=d.vx*36*dt;
     var q=d.u*d.u+d.v*d.v;
     if(q>1){
       var dist=Math.sqrt(q),nx=d.u/dist,ny=d.v/dist;
       var vn=d.vx*nx+d.vy*ny;
       if(vn>0){
         var impact=Math.sqrt(d.vx*d.vx+d.vy*d.vy);
-        var escP=impact>1.5?Math.min(0.9,(impact-1.5)*1.15+(P.h>0.8?0.12:0)):0;
-        if(Math.random()<escP){
-          d.mode="out";d.outT=0;
-          d.vx=nx*(impact*0.85+0.7);d.vy=ny*(impact*0.85+0.7)-0.5;
+        /* the wall CATCHES the die : reflect inward, damped. An
+           escape (OB) needs a genuinely hard edge shot — a high
+           drop or a rim-hugging aim AND a fast impact. A normal
+           centre drop at a normal height can never fly out. */
+        var canOut=(P.h>0.82||P.aimR>0.78);
+        if(canOut&&impact>2.65&&Math.random()<Math.min(0.55,(impact-2.65)*0.85)){
+          d.mode="out";d.outT=0;d.escaped=true;
+          d.vx=nx*(impact*0.8+0.6);d.vy=ny*(impact*0.8+0.6)-0.4;
           continue;
         }
-        var e=0.58;
-        d.vx-=(1+e)*vn*nx;d.vy-=(1+e)*vn*ny;
-        d.pop=1;
+        d.vx-=(1+0.38)*vn*nx;d.vy-=(1+0.38)*vn*ny;
+        d.vx*=0.78;d.vy*=0.78;
+        d.ry+=(Math.random()*170-85);
       }
       d.u=nx*0.995;d.v=ny*0.995;
     }
-    /* dice vs dice */
+    /* dice vs dice, measured in px so the cubes never overlap */
     for(j=0;j<3;j++){
       if(j===i)continue;
       var o=P.dice[j];
-      if(o.mode!=="roll")continue;
-      var dx=d.u-o.u,dy=d.v-o.v,dd=Math.sqrt(dx*dx+dy*dy);
-      if(dd>0.001&&dd<0.36){
-        var push=(0.36-dd)/2,px=dx/dd,py=dy/dd;
-        d.u+=px*push;d.v+=py*push;o.u-=px*push;o.v-=py*push;
-        var rvx=d.vx-o.vx,rvy=d.vy-o.vy,rn=rvx*px+rvy*py;
-        if(rn<0){d.vx-=rn*px*0.8;d.vy-=rn*py*0.8;o.vx+=rn*px*0.8;o.vy+=rn*py*0.8;d.pop=Math.max(d.pop,0.7);d.spin*=-0.5;o.spin*=-0.5;}
+      if(o.mode!=="roll"&&o.mode!=="settle")continue;
+      var dx=(d.u-o.u)*rxPx,dy=(d.v-o.v)*ryPx,dd=Math.sqrt(dx*dx+dy*dy),minD=diePx*1.02;
+      if(dd>0.01&&dd<minD){
+        var push=(minD-dd)/2,pxn=dx/dd,pyn=dy/dd;
+        d.u+=pxn*push/rxPx;d.v+=pyn*push/ryPx;
+        o.u-=pxn*push/rxPx;o.v-=pyn*push/ryPx;
+        var rvn=(d.vx-o.vx)*pxn+(d.vy-o.vy)*pyn;
+        if(rvn<0){
+          d.vx-=rvn*pxn*0.7;d.vy-=rvn*pyn*0.7;
+          o.vx+=rvn*pxn*0.7;o.vy+=rvn*pyn*0.7;
+          d.ry+=(Math.random()*120-60);
+        }
       }
     }
+    cnPlaceCube(d.el,d.u,d.v,0.9+0.2*((d.v+1)/2),0);
+    cnSpin(i,d.rx,d.ry,d.rz);
     var spd2=Math.sqrt(d.vx*d.vx+d.vy*d.vy);
-    d.pop=Math.max(0,d.pop-dt*5);
-    var sc=(0.88+0.22*((d.v+1)/2))*(1+d.pop*0.13);
-    cnPlaceDie(d.el,d.u,d.v,sc,d.rot,1);
-    if(spd2<0.08||elapsed>3.4){
-      d.mode="done";
-      d.el.src="assets/cn_dice"+d.face+".webp";
-      /* land flat : settle the resting angle to the nearest quarter
-         turn with one last small hop, so the stop reads clearly */
-      d.rot=Math.round(d.rot/90)*90;
-      cnPlaceDie(d.el,d.u,d.v,(0.88+0.22*((d.v+1)/2))*1.05,d.rot,1);
+    if(spd2<0.34||elapsed>3.1){
+      d.mode="settle";d.setT=0;
+      d.fu=d.u;d.fv=d.v;d.frx=d.rx;d.fry=d.ry;d.frz=d.rz;
+      d.trx=Math.round(d.rx/360)*360;
+      d.try_=Math.round(d.ry/90)*90;
+      d.trz=Math.round(d.rz/360)*360;
     }
   }
   if(!allDone){CN.raf=requestAnimationFrame(cnPhysStep);return;}
@@ -13685,7 +13827,7 @@ function cnDropFinish(){
   var ob=false,faces=[];
   for(var i=0;i<3;i++){
     var d=P.dice[i];
-    if(d.mode==="done"&&d.el.style.visibility==="hidden")ob=true;
+    if(d.escaped)ob=true;
     faces.push(d.face);
   }
   CN.dice=faces;
@@ -13843,8 +13985,11 @@ window.__cnReset=function(){
       var r=bowl.getBoundingClientRect();
       var l=(e.clientX-r.left)/r.width*100, t=(e.clientY-r.top)/r.height*100;
       var u=(l-CN_BOWL.cx)/CN_BOWL.rx, v=(t-CN_BOWL.cy)/CN_BOWL.ry;
-      CN.aim.x=Math.max(-1.3,Math.min(1.3,u));
-      CN.aim.y=Math.max(-1.3,Math.min(1.3,v));
+      /* the aim ring stays inside the bowl interior, so it is
+         always fully visible — never under the rim or the strip */
+      var ar=Math.sqrt(u*u+v*v);
+      if(ar>0.92){u*=0.92/ar;v*=0.92/ar;}
+      CN.aim.x=u;CN.aim.y=v;
       cnHoverDice();
     };
     /* one gesture : touch the bowl and the aim ring + dotted guide
@@ -14033,14 +14178,14 @@ function ipWaitSec(){
 }
 function ipFlipTick(){
   if(IP.flip==="going"){
-    if(Date.now()-IP.flipT0>=880){IP.flip="done";ipRender();}
+    if(Date.now()-IP.flipT0>=950){IP.flip="done";ipRender();}
     return;
   }
   if(IP.flip!=="wait")return;
   var remain=3000-(Date.now()-IP.flipT0);
   if(remain<=0){
     IP.flip="going";IP.flipT0=Date.now();ipRender();
-    IP.flipTimer=setTimeout(ipFlipTick,920);
+    IP.flipTimer=setTimeout(ipFlipTick,980);
     return;
   }
   ipRender();
@@ -14092,7 +14237,7 @@ function ipRender(){
     IP.flipDealN=mine.dealN;IP.flip="ready";clearTimeout(IP.flipTimer);
   }
   if(IP.flip==="wait"&&Date.now()-IP.flipT0>=3000){IP.flip="going";IP.flipT0=Date.now();}
-  else if(IP.flip==="going"&&Date.now()-IP.flipT0>=880){IP.flip="done";}
+  else if(IP.flip==="going"&&Date.now()-IP.flipT0>=950){IP.flip="done";}
   if(IP.flip==="done")ipFlipDone();
   var flipDone=IP.flip==="done";
   var iWin=st.phase==="show"&&st.winners.indexOf(IP.mySlot)>=0;
@@ -14120,6 +14265,7 @@ function ipRender(){
         +'<div class="ip-flip'+flipCls+'" id="ipFlip" role="button" aria-label="カードをめくる"><div class="ip-flip-in'+innerCls+'">'
         +'<div class="ip-flip-f face">'+ipHugecardHTML(mine.card)+'</div>'
         +'<div class="ip-flip-f back">'+ipHugecardHTML(null)+'</div>'
+        +'<i class="ip-edge l"></i><i class="ip-edge r"></i>'
         +'</div></div>'+hint;
     }
   }
