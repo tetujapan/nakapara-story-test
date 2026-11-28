@@ -2798,6 +2798,7 @@ img{-webkit-user-drag:none}
     <div class="hero-area">
       <img class="bgimg" src="assets/stage_bg.webp" alt="">
       <div id="collage"></div>
+      <div class="home-tap-hint" aria-hidden="true">👗 人物をタップ → 衣装を変えられます</div>
     </div>
   </div>
 
@@ -4022,6 +4023,8 @@ img{-webkit-user-drag:none}
 </div></nav>
 </div>
 <div class="modal" id="cardModal"><div class="modal-sheet" id="modalSheet"></div></div>
+<div class="modal home-act" id="homeActModal"><div class="modal-sheet" id="homeActSheet"></div></div>
+<div class="modal home-act" id="homeCostModal"><div class="modal-sheet" id="homeCostSheet"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -13423,6 +13426,13 @@ function ownedChars(){
   ids.forEach(function(id){var f=false;ALLCHARS.forEach(function(c){if(c.id===id)f=true;});if(!f)out.push({id:id,name:id});});
   return out;
 }
+/* v119 — costume button builder, defined HERE, in the same
+   script block as renderFormation itself, so the button markup
+   can never be lost to script ordering or a later block failing
+   to run : the formation markup calls it inline, always. */
+function formCostBtnHTML(slot,char,mini){
+  return '<button type="button" class="form-costbtn'+(mini?" mini":"")+'" data-cslot="'+(slot||"")+'" data-cchar="'+char+'" aria-label="'+formCharObj(char).name+'の衣装を着替える">👗 衣装</button>';
+}
 function renderFormation(){
   var host=$("formBox"); if(!host)return;
   var slots=FORM_SLOTS.map(function(s){
@@ -18782,6 +18792,242 @@ if(typeof window.mgShow==="function"){
 var rsb=$("rnStartBtn");
 if(rsb)rsb.addEventListener("click",function(){ var st=$("rnStage"); if(st)st.classList.add("playing"); });
 })();
+</script>
+<style>
+/* ============================================================
+   v119 — COSTUME BUTTONS, MADE UNMISSABLE (user's real-device
+   screenshot : no 衣装 button visible anywhere on the formation
+   board — only the tiny "…" drag dots). The buttons were in the
+   markup but small (10.5px) and easy to lose inside the slot /
+   chip flow. Now : the builder lives in the formation's own
+   script block (above), the buttons are a full-width gold strip
+   in their OWN row under the name — never over the photo, never
+   over the name — at a size whose text reads at 390px wide,
+   and a self-heal pass (script below) re-adds any button a
+   render path might have dropped.
+   ============================================================ */
+.form-costbtn{position:relative;z-index:3;flex:none;display:block;width:100%;
+  font-size:13px;font-weight:900;letter-spacing:.08em;line-height:1.3;
+  padding:8px 2px;min-height:38px;margin-top:5px;
+  color:#1d0f38;background:linear-gradient(180deg,#fff6d8,#ffd23f);
+  border:2px solid #ffdf7e;border-radius:99px;cursor:pointer;
+  box-shadow:0 3px 8px rgba(0,0,0,.4),inset 0 1px 0 #fff;
+  -webkit-tap-highlight-color:transparent;font-family:inherit}
+.form-chip .form-costbtn{font-size:11px;padding:6px 1px;min-height:31px;margin-top:4px;letter-spacing:.02em}
+.form-costbtn.mini{font-size:11px;padding:5px 1px;min-height:28px;margin-top:3px;border-width:1.5px;letter-spacing:.02em}
+/* the sticky strip grows to fit the readable mini buttons */
+#formStrip.on{height:108px;margin-bottom:-108px}
+.form-slot.form-mini img{height:22px}
+.form-slot.form-mini.fs-center img{height:22px;min-height:0}
+.form-costbtn:active{transform:scale(.94)}
+.form-slot,.form-chip{overflow:visible}
+/* ============================================================
+   v118 — HOME COSTUME ENTRY (user report : やり方が分からない,
+   repeated AFTER the collection buttons shipped). Changing a
+   costume used to require finding the collection formation;
+   nothing on the home screen — the screen the user actually
+   lives on — led there. Now the home collage itself is the
+   entrance : a gold hint pill sits over the stage, and tapping
+   any figure opens an action sheet (推しにする / 👗 衣装を
+   変える / ストーリー). Picking a costume dresses that member
+   at once — S.formCard[slot] is the same store the collection
+   uses — so the home figure changes on the spot and the pick
+   is saved with the formation.
+   ============================================================ */
+.home-tap-hint{position:absolute;top:38px;left:50%;transform:translateX(-50%);z-index:9;pointer-events:none;
+  background:linear-gradient(180deg,#fff6d8,#ffd23f);color:#1d0f38;
+  font-size:12.5px;font-weight:900;letter-spacing:.03em;white-space:nowrap;
+  border:2px solid #ffdf7e;border-radius:99px;padding:7px 15px;
+  box-shadow:0 5px 14px rgba(0,0,0,.55),inset 0 1px 0 #fff;
+  animation:homeHintPulse 2.2s ease-in-out infinite}
+@keyframes homeHintPulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.045)}}
+@media (prefers-reduced-motion: reduce){.home-tap-hint{animation:none}}
+.ha-head{display:flex;gap:11px;align-items:center;margin:8px 0 12px}
+.ha-face{width:54px;height:54px;border-radius:50%;overflow:hidden;flex:none;border:2px solid var(--gold);background:#241243}
+.ha-face img{width:100%;height:100%;object-fit:cover;object-position:50% 12%;display:block}
+.ha-tx{flex:1;min-width:0}
+.ha-tx b{font-size:18px;display:block;line-height:1.35}
+.ha-tx small{font-size:11.5px;color:var(--ink2);display:block;margin-top:2px;line-height:1.55}
+.ha-tx small b{display:inline;font-size:11.5px;color:var(--gold)}
+.ha-x{flex:none;width:42px;height:42px;min-height:42px;border-radius:50%;border:1px solid var(--line);background:var(--chip);color:var(--ink);font-size:15px;font-weight:900;cursor:pointer}
+.ha-btns{display:grid;gap:9px}
+.ha-btn{min-height:58px;border-radius:14px;font-size:16.5px;font-weight:900;letter-spacing:.03em;
+  border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:12px 14px;cursor:pointer;font-family:inherit;
+  box-shadow:0 3px 0 var(--line),0 7px 14px rgba(0,0,0,.18)}
+.ha-btn:active{transform:translateY(2px)}
+.ha-btn.cost{background:linear-gradient(180deg,#fff6d8,#ffd23f);color:#1d0f38;border-color:#ffdf7e;box-shadow:0 4px 0 #b8860b,0 10px 18px rgba(217,154,6,.35)}
+.ha-btn.oshi{background:linear-gradient(180deg,#ff6aa9,var(--pink) 60%,#c2185b);color:#fff;border-color:transparent;box-shadow:0 4px 0 #8f0f45,0 10px 18px rgba(210,20,105,.3)}
+.ha-btn:disabled{opacity:.55;box-shadow:none}
+.ha-note{font-size:11px;color:var(--ink2);line-height:1.7;margin:11px 2px 0}
+.home-costs{display:flex;flex-wrap:wrap;gap:7px;max-height:48dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 2px 2px}
+.home-cost{position:relative;width:76px;padding:4px 4px 5px;border-radius:10px;border:1.5px solid var(--line);background:var(--chip);cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;font-family:inherit}
+.home-cost:active{transform:scale(.96)}
+.home-cost.sel{border-color:#ffd23f;background:rgba(255,217,122,.18);box-shadow:0 0 0 1px #ffd23f}
+.home-cost img{width:100%;height:50px;object-fit:cover;object-position:50% 8%;border-radius:6px;display:block;background:#241243;pointer-events:none}
+.home-cost .fc-rar{display:inline-block;font-size:8.5px;font-weight:900;line-height:1;padding:2px 6px;border-radius:99px;margin-top:4px;background:#5b6ee1;color:#fff}
+.home-cost .fc-rar.rSR{background:#c9930a}
+.home-cost .fc-rar.rUR{background:#d4246e}
+.home-cost .fc-rar.rD{background:#6a6a7a}
+.home-cost .fc-ttl{display:block;font-size:9.5px;font-weight:700;color:var(--ink);line-height:1.3;margin-top:3px}
+</style>
+<script>
+/* ================================================================
+   v118 — HOME ACTION SHEET + HOME COSTUME SHEET.
+   A capture-phase click listener intercepts taps on the home
+   collage figures BEFORE the legacy data-member handler (which
+   only knew 推しにする / 本を開く), and opens the action sheet
+   instead — so the old behaviours survive as explicit choices
+   and 衣装を変える joins them where the user actually taps.
+   Applying a costume writes S.formCard[slot] for the slot the
+   member stands in (the very store the collection formation
+   uses) and calls renderAll(), whose save wrapper persists it;
+   the v114 collage wrapper then swaps the figure to the
+   costume's cutout, so the home pose changes on the spot.
+   ================================================================ */
+(function(){
+  function $(id){return document.getElementById(id);}
+  function slotOf(ch){var k=null;for(var i=0;i<FORM_KEYS.length;i++){if(S.form[FORM_KEYS[i]]===ch)k=FORM_KEYS[i];}return k;}
+  function curCardId(ch){var s=slotOf(ch);return s?((S.formCard&&S.formCard[s])||""):"";}
+  function curName(ch){
+    var cc=curCardId(ch); if(!cc)return "いつもの姿";
+    var co=formCardObj(cc);
+    return co?("「"+co.title+"」（"+(co.limited?"限定":co.rar)+"）"):"いつもの姿";
+  }
+  var actChar=null;
+  function closeAct(){var m=$("homeActModal");if(m)m.className="modal home-act";}
+  function closeCost(){var m=$("homeCostModal");if(m)m.className="modal home-act";}
+  function openAct(ch){
+    if(!ch)return;
+    actChar=ch;
+    var c=charOf(ch), isOshi=(S.oshi===ch);
+    $("homeActSheet").innerHTML=
+      '<div class="ha-head"><span class="ha-face"><img src="assets/char_'+ch+'.webp" alt="" onerror="this.onerror=null;this.src=\'assets/full_'+ch+'.webp\'"></span>'
+      +'<span class="ha-tx"><b>'+c.name+'</b><small>現在の衣装：<b>'+curName(ch)+'</b></small></span>'
+      +'<button type="button" class="ha-x" id="haClose" aria-label="閉じる">✕</button></div>'
+      +'<div class="ha-btns">'
+      +(isOshi
+        ?'<button type="button" class="ha-btn oshi" disabled>⭐ 推しに設定済み（中央）</button>'
+        :'<button type="button" class="ha-btn oshi" id="haOshi">⭐ 推しにする（中央に立つ）</button>')
+      +'<button type="button" class="ha-btn cost" id="haCost">👗 衣装を変える</button>'
+      +'<button type="button" class="ha-btn story" id="haStory">📖 ストーリーを開く</button>'
+      +'</div>'
+      +'<p class="ha-note">衣装はホームの立ち姿にその場で反映され、セーブにも残ります。コレクションの編成で選んだ衣装と共通です。</p>';
+    $("homeActModal").className="modal home-act on";
+    var b;
+    b=$("haClose"); if(b)b.addEventListener("click",closeAct);
+    b=$("haOshi"); if(b)b.addEventListener("click",function(){var ch2=actChar;closeAct();if(ch2&&ch2!==S.oshi)setOshi(ch2);});
+    b=$("haCost"); if(b)b.addEventListener("click",function(){openCost(actChar);});
+    b=$("haStory"); if(b)b.addEventListener("click",function(){var ch2=actChar;closeAct();closeCost();if(ch2)openBook(ch2);});
+  }
+  function openCost(ch){
+    if(!ch)return;
+    actChar=ch;
+    var c=charOf(ch), cur=curCardId(ch);
+    function badge(on){return on?'<span class="fc-now">選択中</span>':"";}
+    var opts=cardsOfChar(ch).map(function(k){
+      var art=(typeof CARDART!=="undefined"&&CARDART[k.id])?CARDART[k.id]:("assets/char_"+ch+".webp");
+      return '<button type="button" class="home-cost'+(cur===k.id?" sel":"")+'" data-hcost="'+k.id+'" aria-label="'+c.name+'の衣装：'+k.title+'（'+(k.limited?"限定":k.rar)+'）">'+badge(cur===k.id)+'<img src="'+art+'" alt="" draggable="false" onerror="this.onerror=null;this.src=\'assets/char_'+ch+'.webp\'"><span class="fc-rar r'+k.rar+'">'+(k.limited?"限定":k.rar)+'</span><span class="fc-ttl">'+k.title+'</span></button>';
+    }).join("");
+    $("homeCostSheet").innerHTML=
+      '<div class="ha-head"><span class="ha-tx"><b>👗 '+c.name+' の衣装を選んでください</b><small>選択中：<b>'+curName(ch)+'</b> ・ タップするとホームの立ち姿がその場で変わります</small></span>'
+      +'<button type="button" class="ha-x" id="hcClose" aria-label="閉じる">✕</button></div>'
+      +'<div class="home-costs">'
+      +'<button type="button" class="home-cost'+(cur===""?" sel":"")+'" data-hcost="" aria-label="'+c.name+'の衣装：いつもの姿">'+badge(cur==="")+'<img src="assets/char_'+ch+'.webp" alt="" draggable="false"><span class="fc-rar rD">標準</span><span class="fc-ttl">いつもの姿</span></button>'
+      +opts+'</div>'
+      +'<div class="btnrow"><button type="button" class="btn ghost" id="hcBack" style="flex:1">‹ もどる</button></div>';
+    closeAct();
+    $("homeCostModal").className="modal home-act on";
+    var b=$("hcClose"); if(b)b.addEventListener("click",closeCost);
+    b=$("hcBack"); if(b)b.addEventListener("click",function(){closeCost();openAct(actChar);});
+    var btns=$("homeCostSheet").querySelectorAll("[data-hcost]");
+    for(var i=0;i<btns.length;i++)btns[i].addEventListener("click",function(){applyCost(this.getAttribute("data-hcost")||"");});
+  }
+  function applyCost(cardId){
+    var ch=actChar; if(!ch)return;
+    var slot=slotOf(ch);
+    if(!S.formCard)S.formCard={};
+    if(slot){ if(cardId)S.formCard[slot]=cardId; else delete S.formCard[slot]; }
+    if(typeof formCostPick!=="undefined")formCostPick[ch]=cardId;
+    closeCost(); closeAct();
+    renderAll();
+    var co=cardId?formCardObj(cardId):null;
+    toast("衣装を「"+(co?co.title:"いつもの姿")+"」に変更しました");
+  }
+  ["homeActModal","homeCostModal"].forEach(function(id){
+    var m=$(id); if(m)m.addEventListener("click",function(e){if(e.target===this)this.className="modal home-act";});
+  });
+  /* home collage tap → action sheet. Capture phase + stopPropagation
+     keeps the legacy data-member handler from firing first; the
+     sheet re-offers its two behaviours as explicit buttons. */
+  document.addEventListener("click",function(e){
+    var t=e.target;
+    var btn=(t&&t.closest)?t.closest("#collage .cutbtn"):null;
+    if(!btn)return;
+    e.preventDefault(); e.stopPropagation();
+    var ch=btn.getAttribute("data-member"); if(!ch)return;
+    openAct(ch);
+  },true);
+  /* collage buttons announce what a tap does (screen readers +
+     long-press hints), on every re-render of the collage */
+  if(typeof renderFeatured==="function"){
+    var _rf118=renderFeatured;
+    renderFeatured=function(){
+      var r=_rf118.apply(this,arguments);
+      try{
+        var btns=document.querySelectorAll("#collage .cutbtn");
+        for(var i=0;i<btns.length;i++){
+          var ch=btns[i].getAttribute("data-member"); if(!ch)continue;
+          btns[i].setAttribute("aria-label",charOf(ch).name+"：タップでメニュー（推しにする／衣装を変える／ストーリー）");
+        }
+      }catch(e){}
+      return r;
+    };
+    try{renderFeatured();}catch(e){}
+  }
+  window.__homeOpenAct=openAct;
+  window.__homeOpenCost=openCost;
+})();
+/* ================================================================
+   v119 — COSTUME BUTTON SELF-HEAL. Whatever render path rebuilt
+   the formation, every occupied slot, every pool chip and every
+   sticky-strip mini must end up carrying its gold 衣装 button.
+   This wrapper runs after renderFormation and appends a real,
+   working button (same class + data attrs the v116 tap handler
+   listens for) wherever one is missing.
+   ================================================================ */
+if(typeof renderFormation==="function"){
+  var _rfm119=renderFormation;
+  renderFormation=function(){
+    var r=_rfm119.apply(this,arguments);
+    try{
+      function heal(el,slot,char,mini){
+        if(!el||!char)return;
+        if(el.querySelector(".form-costbtn"))return;
+        var b=document.createElement("button");
+        b.type="button";
+        b.className="form-costbtn"+(mini?" mini":"");
+        b.setAttribute("data-cslot",slot||"");
+        b.setAttribute("data-cchar",char);
+        b.setAttribute("aria-label",formCharObj(char).name+"の衣装を着替える");
+        b.textContent="👗 衣装";
+        el.appendChild(b);
+      }
+      var i,els;
+      els=document.querySelectorAll("#formBox .form-slot[data-char]");
+      for(i=0;i<els.length;i++)heal(els[i],els[i].getAttribute("data-slot"),els[i].getAttribute("data-char"),false);
+      els=document.querySelectorAll("#formBox .form-chip[data-char]");
+      for(i=0;i<els.length;i++){
+        var ch=els[i].getAttribute("data-char"),pk=null;
+        for(var j=0;j<FORM_KEYS.length;j++)if(S.form[FORM_KEYS[j]]===ch)pk=FORM_KEYS[j];
+        heal(els[i],pk,ch,false);
+      }
+      els=document.querySelectorAll("#formStrip .form-slot[data-char]");
+      for(i=0;i<els.length;i++)heal(els[i],els[i].getAttribute("data-slot"),els[i].getAttribute("data-char"),true);
+    }catch(e){}
+    return r;
+  };
+  try{renderFormation();}catch(e){}
+}
 </script>
 </body>
 </html>
