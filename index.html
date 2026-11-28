@@ -1090,7 +1090,7 @@ footer{color:#8d76b8}
 .stage-home{position:relative;margin:2px -14px 0;height:min(79dvh,660px);min-height:540px;overflow:hidden;background:#160a2c}
 .stage-home .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .ticker{position:absolute;top:0;left:0;right:0;z-index:8;display:flex;align-items:stretch;box-shadow:0 4px 14px rgba(0,0,0,.45)}
-.tk-tag{flex:none;display:flex;align-items:center;background:linear-gradient(180deg,#8a1450,#4a0c2c);color:#ffe9a8;font-size:11px;font-weight:900;letter-spacing:.06em;padding:7px 10px;border-bottom:1px solid #d9a94f}
+.tk-tag{flex:none;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#8a1450,#4a0c2c);color:#ffe9a8;font-size:16px;line-height:1;padding:7px 9px;border-bottom:1px solid #d9a94f}
 .tk-tx{flex:1;min-width:0;display:flex;align-items:center;background:rgba(13,6,24,.82);color:#f2ecff;font-size:11.5px;font-weight:700;padding:7px 10px;white-space:nowrap;overflow:hidden;border-bottom:1px solid rgba(217,169,79,.5)}
 /* the notice text scrolls (marquee) inside the space left of the
    fixed toggle chip at the ticker's right end — it can never run
@@ -2825,12 +2825,10 @@ img{-webkit-user-drag:none}
 <!-- ============ HOME : full-stage collage ============ -->
 <div class="view on" id="v-home">
   <div class="stage-home pat-a">
-    <div class="ticker"><span class="tk-tag">📢 お知らせ</span><span class="tk-tx"><span class="tk-scroll">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></span></div>
-    <div class="hero-mode-bar"><button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-b">全身</span></button></div>
+    <div class="ticker"><span class="tk-tag" role="img" aria-label="お知らせ">📢</span><span class="tk-tx"><span class="tk-scroll">11月28日 パラダイス撮影会 連動ピックアップ開催中 ― ももか限定カードが登場</span></span><button type="button" class="hero-mode-btn" id="heroModeBtn" aria-label="アップ表示中。タップで全身表示に切り替え"><span class="hm-a on">アップ</span><span class="hm-b">全身</span></button></div>
     <div class="hero-area">
       <img class="bgimg" src="assets/stage_bg.webp" alt="">
       <div id="collage"></div>
-      <div class="home-tap-hint" aria-hidden="true">👗 人物をタップ → 衣装を変えられます</div>
     </div>
   </div>
 
@@ -14232,12 +14230,10 @@ try{renderFormation();}catch(e){}
 /* ---------- 1) hero toggle bar ---------- */
 .stage-home{display:flex;flex-direction:column}
 .stage-home .ticker{position:relative;flex:none}
-.hero-mode-bar{flex:none;position:relative;z-index:8;height:48px;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(180deg,#1d0f38,#120826);border-bottom:1px solid rgba(217,169,79,.55);
-  box-shadow:0 4px 12px rgba(0,0,0,.35)}
 .hero-area{position:relative;flex:1 1 auto;min-height:0;overflow:hidden}
-.hero-mode-btn{width:min(62%,280px);margin:0;min-height:40px;padding:3px;align-self:center}
-.hero-mode-btn span{flex:1 1 0;min-width:0;padding:6px 10px;font-size:15px}
+.hero-mode-btn{width:132px;flex:none;margin:3px 5px 3px 2px;min-height:34px;padding:2px;align-self:stretch}
+.hero-mode-btn span{flex:1 1 0;min-width:0;padding:2px 4px;font-size:12.5px;white-space:nowrap}
+.stage-home .lbl-p0,.stage-home .lbl-p1{top:6px}
 .stage-home .lbl-p0,.stage-home .lbl-p1{top:6px}
 /* ---------- 2) VN non-speaker : a step back, never a ghost ---------- */
 .vn-char.ghost{opacity:.88;filter:brightness(.85) saturate(.95)}
