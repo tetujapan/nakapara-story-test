@@ -30,6 +30,25 @@
 <script src="assets-data-27.js"></script>
 <script src="assets-data-28.js"></script>
 <script src="assets-data-29.js"></script>
+<script src="assets-data-30.js"></script>
+<script src="assets-data-31.js"></script>
+<script src="assets-data-32.js"></script>
+<script src="assets-data-33.js"></script>
+<script src="assets-data-34.js"></script>
+<script src="assets-data-35.js"></script>
+<script src="assets-data-36.js"></script>
+<script src="assets-data-37.js"></script>
+<script src="assets-data-38.js"></script>
+<script src="assets-data-39.js"></script>
+<script src="assets-data-40.js"></script>
+<script src="assets-data-41.js"></script>
+<script src="assets-data-42.js"></script>
+<script src="assets-data-43.js"></script>
+<script src="assets-data-44.js"></script>
+<script src="assets-data-45.js"></script>
+<script src="assets-data-46.js"></script>
+<script src="assets-data-47.js"></script>
+<script src="assets-data-48.js"></script>
 <script>
 /* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
    Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
@@ -13709,9 +13728,9 @@ if(!S.formCard)S.formCard={};
 var formCostPick={}; /* char -> cardId chosen while the chip is selected (applied on placement) */
 var COSTCUTS={};
 ["paradise-R0","paradise-R1","paradise-R2","paradise-SR0","paradise-SR1","paradise-UR0",
- "kotori-R1","kotori-R2","kotori-SR0","kotori-SR1","kotori-UR0",
- "aoi-R1","aoi-R2","aoi-SR0","aoi-SR1","aoi-UR0",
- "yura-R1","yura-R2","yura-SR0","yura-SR1","yura-UR0"].forEach(function(id){COSTCUTS[id]=1;});
+ "kotori-R0","kotori-R1","kotori-R2","kotori-SR0","kotori-SR1","kotori-UR0",
+ "aoi-R0","aoi-R1","aoi-R2","aoi-SR0","aoi-SR1","aoi-UR0",
+ "yura-R0","yura-R1","yura-R2","yura-SR0","yura-SR1","yura-UR0"].forEach(function(id){COSTCUTS[id]=1;});
 /* v115 — costume cutouts completed for the whole cast : the five
    talents (every card, the limited one included) and the five
    supporting members. Each cutout is produced from that
@@ -19028,6 +19047,93 @@ if(typeof renderFormation==="function"){
   };
   try{renderFormation();}catch(e){}
 }
+</script>
+<style>
+/* ============================================================
+   v120 — FEWER, CLEARER CONTROLS (user report : ボタンがウザ
+   すぎる。分かりづらいし、ウザいし — with a screenshot of the
+   formation covered in giant gold 衣装 buttons : five on the
+   board, five more on the sticky strip, one on every pool chip).
+   The v116/v119 answer to "I can't find it" was to shout louder
+   on every element. This pass removes the shouting :
+   - NO per-slot / per-chip / per-mini costume buttons at all.
+   - ONE flow, stated once in the selection bar : tap a member
+     to select them — the costume bar for that member opens
+     directly underneath, headed with their name. Nothing else
+     on the screen asks for attention.
+   - The sticky strip goes back to its compact height.
+   - The home hint pill stops pulsing and shrinks to a quiet
+     caption (the tap target was always the figure itself).
+   COSTUME THUMBNAILS (root cause of "the pictures don't
+   change") : the picker cropped every thumbnail to the FACE
+   (48px tall, object-position 50% 8%), so six different
+   outfits rendered as six identical faces. Thumbnails are now
+   tall enough to show the outfit itself — face AND costume —
+   in the formation bar and the home costume sheet alike.
+   ============================================================ */
+.form-costbtn{display:none!important}
+#formStrip.on{height:92px;margin-bottom:-92px}
+.form-slot.form-mini img{height:30px}
+.form-slot.form-mini.fs-center img{height:30px;min-height:0}
+.form-hint{display:block;margin-top:5px;font-size:10.5px;font-weight:700;color:var(--ink2);letter-spacing:.02em;line-height:1.5}
+.form-cost{width:88px}
+.form-cost img{height:106px;object-position:50% 18%}
+.home-cost{width:88px}
+.home-cost img{height:106px;object-position:50% 18%}
+.home-tap-hint{animation:none;font-size:11px;font-weight:800;padding:5px 12px;
+  background:rgba(13,6,24,.72);color:#ffe9a8;border:1px solid rgba(255,217,122,.55);
+  box-shadow:0 3px 8px rgba(0,0,0,.4)}
+</style>
+<script>
+/* ================================================================
+   v120 — ONE FLOW FOR COSTUMES, NO BUTTON SPAM.
+   ================================================================ */
+/* the builder now builds nothing : slots, chips and minis render
+   without a costume button (the v119 self-heal wrapper still
+   runs inside renderFormation and appends its buttons — the
+   outermost wrapper below strips them again, every render) */
+formCostBtnHTML=function(){return "";};
+if(typeof renderFormation==="function"){
+  var _rfm120=renderFormation;
+  renderFormation=function(){
+    var r=_rfm120.apply(this,arguments);
+    try{
+      var bs=document.querySelectorAll(".form-costbtn");
+      for(var i=0;i<bs.length;i++)bs[i].remove();
+      var head=document.querySelector("#formBox .form-head");
+      if(head&&!head.querySelector(".form-hint")){
+        var h=document.createElement("span");
+        h.className="form-hint";
+        h.textContent="メンバーをタップで選択 ― 下のバーで衣装も着せ替えできます";
+        head.appendChild(h);
+      }
+    }catch(e){}
+    return r;
+  };
+}
+/* the selection bar states the whole flow in one place : select,
+   place, and where the costumes live */
+formSelText=function(){
+  if(!formSel)return "タップで選んで、置きたい枠をタップ — 長押しドラッグでも入れ替えできます（選ぶと下に衣装バーが出ます）";
+  if(formSel.type==="chip")return "「"+formCharObj(formSel.char).name+"」を選択中 — 置きたい枠をタップ（もう一度タップで取消）・ 衣装は下のバーで着せ替え";
+  return "「"+formPosLabel(formSel.slot)+(formSel.char?"："+formCharObj(formSel.char).name:"")+"」を選択中 — 入れ替えたい枠か候補をタップ（もう一度タップで取消）・ 衣装は下のバーで着せ替え";
+};
+/* per-card art for the five talents and the five supporting
+   members (v120) : every card now has its own picture matching
+   its title — outfit / scene — instead of the one shared
+   portrait. Registered here so charArt, the costume bars, the
+   formation slots and the gacha results all pick them up. */
+(function(){
+  var T=["R0","R1","R2","R3","R4","R5","R6","R7","SR0","SR1","SR2","SR3","SR4","SR5","UR0","UR1","UR2","LTD"];
+  ["momona","akari","kaede","nana","misa"].forEach(function(cid){
+    T.forEach(function(r){CARDART[cid+"-"+r]="assets/card_"+cid+"_"+r.toLowerCase()+".webp";});
+  });
+  var S3=["R0","R1","SR0"];
+  ["kenji","saki","yuna","camera","staff"].forEach(function(cid){
+    S3.forEach(function(r){CARDART[cid+"-"+r]="assets/card_"+cid+"_"+r.toLowerCase()+".webp";});
+  });
+  try{renderAll();}catch(e){}
+})();
 </script>
 </body>
 </html>
