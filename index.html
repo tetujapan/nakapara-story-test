@@ -49,6 +49,19 @@
 <script src="assets-data-46.js"></script>
 <script src="assets-data-47.js"></script>
 <script src="assets-data-48.js"></script>
+<script src="assets-data-49.js"></script>
+<script src="assets-data-50.js"></script>
+<script src="assets-data-51.js"></script>
+<script src="assets-data-52.js"></script>
+<script src="assets-data-53.js"></script>
+<script src="assets-data-54.js"></script>
+<script src="assets-data-55.js"></script>
+<script src="assets-data-56.js"></script>
+<script src="assets-data-57.js"></script>
+<script src="assets-data-58.js"></script>
+<script src="assets-data-59.js"></script>
+<script src="assets-data-60.js"></script>
+<script src="assets-data-61.js"></script>
 <script>
 /* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
    Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
@@ -11176,7 +11189,7 @@ function mgPad(stageId,on){
 })();
 function padHold(el,on,off){
   if(!el)return;
-  var dn=function(e){if(e.cancelable)e.preventDefault();el.classList.add("on");on();};
+  var dn=function(e){if(e.cancelable)e.preventDefault();el.classList.add("on");try{el.setPointerCapture(e.pointerId);}catch(err){}on();};
   var up=function(){el.classList.remove("on");if(off)off();};
   el.addEventListener("pointerdown",dn);
   el.addEventListener("pointerup",up);
@@ -11202,19 +11215,35 @@ function padDir(stageId,setters){
     if(btns[k])btns[k].classList.toggle("on",onState);
     setters[k](onState);
   }
+  var axis=null;
   function update(e){
     var r=pad.getBoundingClientRect();
     var dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2);
-    /* dead zone with hysteresis : a direction engages once the
-       thumb is 15px past centre and releases at 9px, so a thumb
-       resting near the middle reads as neutral (no accidental
-       drift) and a held direction never flickers at the edge */
-    keys.forEach(function(k){
-      var v=(k==="l")?-dx:(k==="r")?dx:(k==="u")?-dy:dy;
-      apply(k,active[k]?v>9:v>15);
-    });
+    var ax=Math.abs(dx), ay=Math.abs(dy);
+    /* ONE direction at a time : the axis the thumb points along
+       most, read fresh from its position on EVERY move. The old
+       per-axis thresholds could leave the previous direction
+       engaged (past the release band on its own axis) while the
+       new one had not engaged yet, so a slide-turn only "took"
+       after the thumb had crossed most of the pad — on a real
+       phone that reads as "I have to lift off and stop to turn".
+       A single dominant direction means the pad always reports
+       exactly what the thumb is doing right now, and buffered-
+       input games (Pac-Man's want, Dig Dug's direction stack)
+       pick it up at the next turnable tile. The 4px stickiness
+       on the current axis keeps a 45-degree thumb from
+       flip-flopping between the two axes. */
+    var cur=null;
+    if(Math.max(ax,ay)>11){
+      var horiz=ax>=ay;
+      if(axis==="h"&&ax+4>=ay)horiz=true;
+      else if(axis==="v"&&ay+4>=ax)horiz=false;
+      axis=horiz?"h":"v";
+      cur=horiz?(dx>0?"r":"l"):(dy>0?"d":"u");
+    }else axis=null;
+    keys.forEach(function(k){apply(k,k===cur);});
   }
-  function clearAll(){keys.forEach(function(k){apply(k,false);});}
+  function clearAll(){axis=null;keys.forEach(function(k){apply(k,false);});}
   pad.addEventListener("pointerdown",function(e){
     if(pid!==null)return;
     pid=e.pointerId;
@@ -12533,6 +12562,10 @@ var MP={
     var sn=p.querySelector('[data-mp="startnow"]');if(sn)sn.hidden=true;
     this.setStatus(game,"");
   },
+  hideLobby:function(game){
+    var p=this.panel(game);if(!p)return;
+    var lb=p.querySelector("[data-mp-lobby]");if(lb)lb.hidden=true;
+  },
   renderLobby:function(){
     var cur=this.cur;if(!cur)return;
     var p=this.panel(cur.game);if(!p)return;
@@ -12565,6 +12598,14 @@ var MP={
   },
   /* ---------- room lifecycle ---------- */
   enter:function(game,mode,code){
+    /* joining with the code of the room you are hosting right now
+       would delete your own room and then report it "not found" —
+       that is the exact dead end players hit, so stop it here */
+    if(mode==="join"&&this.cur&&this.cur.game===game&&this.cur.role==="host"&&!this.cur.started&&this.cur.code&&code&&this.cur.code===String(code)){
+      this.setStatus(game,"その合言葉は、あなたが作ったルームの合言葉です ― 友達に伝えて入ってもらってください");
+      toast("その合言葉は、あなたが作ったルームの合言葉です");
+      return;
+    }
     this.leave();
     this.bombSeq=0;this.jumpSeq=0;
     var max=this.cfg[game].max;
@@ -12581,26 +12622,53 @@ var MP={
         self.cur=null;self.resetPanel(game);self.soloStart(game);return;
       }
       if(mode==="quick")self.quickJoin(game);
-      else if(mode==="create")self.createRoom(game,"code");
+      else if(mode==="create")self.createRoom(game,"code",code);
       else if(mode==="join")self.joinByCode(game,code);
     });
   },
-  createRoom:function(game,mode){
+  createRoom:function(game,mode,wantCode){
     var cur=this.cur;if(!cur)return;
     var col=this.col();if(!col){this.failToSolo(game);return;}
-    var slots=[];for(var i=0;i<cur.max;i++)slots.push(i===0?this.mySlot():null);
-    var code=(mode==="code")?String(1000+Math.floor(Math.random()*9000)):null;
-    var seen={};seen[this.uid()]=Date.now();
-    var data={game:game,mode:mode,code:code,host:this.uid(),status:"waiting",max:cur.max,
-      rp:(typeof S!=="undefined"&&typeof S.rankPt==="number")?S.rankPt:0,
-      createdAt:Date.now(),hostSeen:Date.now(),slots:slots,inputs:{},state:null,stateSeq:0,seen:seen};
     var self=this;
-    this.withTimeout(col.add(data),6000,null).then(function(ref){
-      if(!ref){self.failToSolo(game);return;}
-      if(!self.cur||self.cur.game!==game)return;
-      cur.roomId=ref.id;cur.ref=ref;cur.role="host";cur.mySlot=0;cur.code=code;cur.slots=slots;
-      self.subscribe();self.startLobbyTimers();self.renderLobby();
-    }).catch(function(){self.failToSolo(game);});
+    var begin=function(code){
+      if(!self.cur||self.cur!==cur)return;
+      var slots=[];for(var i=0;i<cur.max;i++)slots.push(i===0?self.mySlot():null);
+      var seen={};seen[self.uid()]=Date.now();
+      var data={game:game,mode:mode,code:code,host:self.uid(),status:"waiting",max:cur.max,
+        rp:(typeof S!=="undefined"&&typeof S.rankPt==="number")?S.rankPt:0,
+        createdAt:Date.now(),hostSeen:Date.now(),slots:slots,inputs:{},state:null,stateSeq:0,seen:seen};
+      self.withTimeout(col.add(data),6000,null).then(function(ref){
+        if(!ref){self.failToSolo(game);return;}
+        if(!self.cur||self.cur.game!==game)return;
+        /* cur.mode must become the room's mode ("code"/"quick") :
+           renderLobby only shows the big 合言葉 when it is "code",
+           and the lobby wait timer keys off it too — leaving it at
+           the enter() action name ("create") hid the code from the
+           host, so nobody could ever be told it */
+        cur.mode=mode;
+        cur.roomId=ref.id;cur.ref=ref;cur.role="host";cur.mySlot=0;cur.code=code;cur.slots=slots;
+        self.subscribe();self.startLobbyTimers();self.renderLobby();
+      }).catch(function(){self.failToSolo(game);});
+    };
+    if(mode==="code"&&wantCode){
+      /* a code typed into the panel is the code the player wants
+         their room to have (they tell it to a friend verbatim) —
+         refuse only when another waiting room already uses it */
+      this.setStatus(game,"ルームを作成中…");
+      this.withTimeout(col.where("game","==",game).where("mode","==","code").where("code","==",wantCode).where("status","==","waiting").limit(3).get(),5000,null)
+      .then(function(snap){
+        if(!self.cur||self.cur!==cur)return;
+        var dup=false;
+        if(snap)snap.forEach(function(doc){var v=doc.data();if(v&&Date.now()-(v.createdAt||0)<600000)dup=true;});
+        if(dup){
+          self.setStatus(game,"その合言葉は使用中です ― 別の合言葉にするか、そのルームに入室してください");
+          self.hideLobby(game);self.cur=null;return;
+        }
+        begin(wantCode);
+      }).catch(function(){begin(wantCode);});
+      return;
+    }
+    begin((mode==="code")?String(1000+Math.floor(Math.random()*9000)):null);
   },
   quickJoin:function(game){
     var col=this.col();if(!col){this.createRoom(game,"quick");return;}
@@ -12632,7 +12700,7 @@ var MP={
     var self=this;
     this.withTimeout(col.where("game","==",game).where("mode","==","code").where("code","==",code).where("status","==","waiting").limit(5).get(),6000,null)
     .then(function(snap){
-      if(!snap){if(self.cur&&self.cur.game===game){self.setStatus(game,"接続がタイムアウトしました ― もう一度試してください");self.cur=null;}return;}
+      if(!snap){if(self.cur&&self.cur.game===game){self.setStatus(game,"接続がタイムアウトしました ― もう一度試してください");self.hideLobby(game);self.cur=null;}return;}
       if(!self.cur||self.cur.game!==game)return;
       var cand=[];
       snap.forEach(function(doc){
@@ -12642,12 +12710,12 @@ var MP={
       cand.sort(function(a,b){return (b.v.createdAt||0)-(a.v.createdAt||0);});
       if(!cand.length){
         self.setStatus(game,"その合言葉のルームが見つかりませんでした（作った人の画面で合言葉を確認してね）");
-        self.cur=null;return;
+        self.hideLobby(game);self.cur=null;return;
       }
       self.tryJoin(cand[0].id,function(ok){
-        if(!ok&&self.cur&&self.cur.game===game){self.setStatus(game,"ルームが満員か、すでに始まっていました");self.cur=null;}
+        if(!ok&&self.cur&&self.cur.game===game){self.setStatus(game,"ルームが満員か、すでに始まっていました");self.hideLobby(game);self.cur=null;}
       });
-    }).catch(function(){if(self.cur&&self.cur.game===game){self.setStatus(game,"接続エラー ― もう一度試してください");self.cur=null;}});
+    }).catch(function(){if(self.cur&&self.cur.game===game){self.setStatus(game,"接続エラー ― もう一度試してください");self.hideLobby(game);self.cur=null;}});
   },
   tryJoin:function(roomId,cb){
     var cur=this.cur;if(!cur){cb(false);return;}
@@ -13224,11 +13292,11 @@ function mpInject(){
   var css=document.createElement("style");
   css.textContent=
   ".mp-panel [hidden]{display:none!important}"
-  +".mp-panel{margin-top:12px;border:1px solid rgba(217,169,79,.55);border-radius:14px;padding:10px 11px 11px;background:linear-gradient(180deg,rgba(38,20,72,.92),rgba(22,10,44,.94));text-align:left}"
+  +".mp-panel{margin-top:12px;width:100%;box-sizing:border-box;border:1px solid rgba(217,169,79,.55);border-radius:14px;padding:10px 11px 11px;background:linear-gradient(180deg,rgba(38,20,72,.92),rgba(22,10,44,.94));text-align:left}"
   +".mp-ttl{font-family:'M PLUS Rounded 1c',sans-serif;font-weight:900;font-size:13.5px;color:#ffe98a;letter-spacing:.03em}"
   +".mp-sub{font-size:10.5px;line-height:1.6;color:#c9b6ea;margin-top:3px}"
-  +".mp-row{display:flex;gap:7px;margin-top:8px}"
-  +".mp-row .btn{flex:1;min-height:42px;font-size:12.5px;padding:8px 6px}"
+  +".mp-row{display:flex;gap:7px;margin-top:8px;min-width:0}"
+  +".mp-row .btn{flex:1;min-width:0;min-height:42px;font-size:12.5px;padding:8px 6px}"
   +".mp-codein{flex:1;min-width:0;border:1.5px solid #4c357c;border-radius:12px;background:#150a28;color:#fff;font-size:16px;font-weight:900;letter-spacing:.35em;text-align:center;padding:8px 4px;font-family:inherit}"
   +".mp-codein::placeholder{letter-spacing:.05em;font-size:11.5px;font-weight:700;color:#8d7ab8}"
   +".mp-status{font-size:10.5px;line-height:1.65;color:#e9dcff;margin-top:8px}"
@@ -13251,7 +13319,7 @@ function mpInject(){
       +'<div class="mp-sub">'+MP_SUBS[game]+'</div>'
       +'<div class="mp-row"><button type="button" class="btn gold" data-mp="quick">⚡ クイックマッチ</button></div>'
       +'<div class="mp-row"><button type="button" class="btn ghost" data-mp="create">🔑 合言葉ルームを作る</button></div>'
-      +'<div class="mp-row"><input class="mp-codein" data-mp-code type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="4桁の合言葉">'
+      +'<div class="mp-row"><input class="mp-codein" data-mp-code type="text" inputmode="numeric" autocomplete="off" maxlength="4" size="4" placeholder="4桁の合言葉">'
       +'<button type="button" class="btn ghost" data-mp="join">合言葉で入室</button></div>'
       +'<div class="mp-status" data-mp-status></div>'
       +'<div class="mp-lobby" data-mp-lobby hidden>'
@@ -13267,7 +13335,11 @@ function mpInject(){
       if(!b||b===div)return;
       var act=b.getAttribute("data-mp");
       if(act==="quick")MP.enter(game,"quick");
-      else if(act==="create")MP.enter(game,"create");
+      else if(act==="create"){
+        var cinp=div.querySelector("[data-mp-code]");
+        var ccode=(cinp&&cinp.value||"").replace(/[^0-9]/g,"");
+        MP.enter(game,"create",ccode.length===4?ccode:null);
+      }
       else if(act==="join"){
         var inp=div.querySelector("[data-mp-code]");
         var code=(inp&&inp.value||"").replace(/[^0-9]/g,"");
@@ -13744,6 +13816,15 @@ var COSTCUTS={};
 ["kenji","saki","yuna","camera","staff"].forEach(function(cid){
   ["R0","R1","SR0"].forEach(function(r){COSTCUTS[cid+"-"+r]=1;});
 });
+/* v121 — the costume cutouts are now true full-body figures,
+   produced per costume (full-length generation -> the standard
+   rembg pipeline -> tight crop, width 600, exactly the full_*
+   convention). Each file's real pixel size lives here so the
+   home swap can set the img's width/height attributes to the
+   figure's own aspect — the old fixed 560x1540 attributes
+   described the retired bust-up canvases. Costumes without an
+   entry keep the legacy 560x1540 file and attributes. */
+var COSTDIM={"akari-LTD":[600,1369],"akari-R0":[600,1393],"akari-R1":[600,1768],"akari-R2":[600,2053],"akari-R3":[600,1264],"akari-R4":[600,2035],"akari-R5":[600,1463],"akari-R6":[600,1778],"akari-R7":[600,2020],"akari-SR0":[600,1440],"akari-SR1":[600,1520],"akari-SR2":[600,2011],"akari-SR3":[600,1438],"akari-SR4":[600,1973],"akari-SR5":[600,1519],"akari-UR0":[600,1495],"akari-UR1":[600,1386],"akari-UR2":[600,1962],"aoi-R0":[600,2099],"kaede-LTD":[600,2220],"kaede-R0":[600,1464],"kaede-R1":[600,2374],"kaede-R2":[600,1993],"kaede-R3":[600,1563],"kaede-R4":[600,1896],"kaede-R5":[600,1767],"kaede-R6":[600,1963],"kaede-R7":[600,2059],"kaede-SR0":[600,1962],"kaede-SR1":[600,2152],"kaede-SR2":[600,1974],"kaede-SR3":[600,1714],"kaede-SR4":[600,2300],"kaede-SR5":[600,2144],"kaede-UR0":[600,1648],"kaede-UR1":[600,1514],"kaede-UR2":[600,2034],"misa-R0":[600,1331],"misa-R1":[600,1673],"misa-R2":[600,2037],"misa-R3":[600,1426],"misa-R4":[600,2043],"misa-R5":[600,1262],"momona-LTD":[600,1197],"momona-R0":[600,1396],"momona-R1":[600,1906],"momona-R2":[600,2029],"momona-R3":[600,1293],"momona-R4":[600,2019],"momona-R5":[600,1300],"momona-R6":[600,1866],"momona-R7":[600,2068],"momona-SR0":[600,1252],"momona-SR1":[600,1389],"momona-SR2":[600,1911],"momona-SR3":[600,1112],"momona-SR4":[600,2063],"momona-SR5":[600,1643],"momona-UR0":[600,1414],"momona-UR1":[600,1245],"momona-UR2":[600,1997],"nana-LTD":[600,1324],"nana-R0":[600,1513],"nana-R1":[600,1617],"nana-R2":[600,2164],"nana-R3":[600,1368],"nana-R4":[600,1994],"nana-R5":[600,1309],"nana-R6":[600,1840],"nana-R7":[600,2139],"nana-SR0":[600,1952],"nana-SR1":[600,1410],"nana-SR2":[600,2018],"nana-SR3":[600,2238],"nana-SR4":[600,1920],"nana-SR5":[600,1956],"nana-UR0":[600,1226],"nana-UR1":[600,1567],"nana-UR2":[600,1998],"aoi-R1":[600,2059],"aoi-R2":[600,1985],"aoi-SR1":[600,2149],"aoi-UR0":[600,2223],"camera-R0":[600,1860],"camera-R1":[600,1900],"camera-SR0":[600,1885],"kenji-R0":[600,1831],"kenji-R1":[600,1860],"kenji-SR0":[600,1463],"kotori-R0":[600,1327],"kotori-R1":[600,1959],"kotori-R2":[600,1919],"kotori-SR1":[600,1355],"kotori-UR0":[600,1680],"misa-LTD":[600,1468],"misa-R6":[600,1793],"misa-R7":[600,2166],"misa-SR0":[600,2026],"misa-SR1":[600,1227],"misa-SR2":[600,2025],"misa-SR3":[600,2042],"misa-SR4":[600,2199],"misa-SR5":[600,1602],"misa-UR0":[600,1287],"misa-UR1":[600,1234],"misa-UR2":[600,2002],"paradise-R0":[600,1966],"paradise-R1":[600,2030],"paradise-R2":[600,1993],"paradise-SR0":[600,1962],"paradise-SR1":[600,1968],"paradise-UR0":[600,2007],"saki-R0":[600,1941],"saki-R1":[600,1955],"saki-SR0":[600,2016],"staff-R0":[600,1897],"staff-R1":[600,1936],"staff-SR0":[600,1919],"yuna-R0":[600,1177],"yuna-R1":[600,1994],"yuna-SR0":[600,1233],"yura-R0":[600,1648],"yura-R1":[600,2001],"yura-R2":[600,1978],"yura-SR0":[600,2106],"yura-SR1":[600,1718]};
 function formCostCut(cardId){
   if(!cardId||!COSTCUTS[cardId])return null;
   return "assets/cost_"+cardId.toLowerCase().replace("-","_")+".webp";
@@ -13852,8 +13933,9 @@ if(typeof setOshi==="function"){
   };
 }
 /* home collage : a member dressed in a costume with a prepared
-   cutout (assets/cost_*.webp, 560x1540 like the full bodies)
-   stands in that costume instead of the standard full body */
+   cutout (assets/cost_*.webp — full-body figures in the full_*
+   convention, real sizes in COSTDIM above) stands in that
+   costume instead of the standard full body */
 if(typeof renderFeatured==="function"){
   var _rf114=renderFeatured;
   renderFeatured=function(){
@@ -13866,7 +13948,10 @@ if(typeof renderFeatured==="function"){
         var cut=formCostCut(S.formCard[order[i]]);
         if(!cut)continue;
         var img=btns[i].querySelector("img"); if(!img)continue;
-        img.src=cut; img.setAttribute("width","560"); img.setAttribute("height","1540");
+        var cd=(typeof COSTDIM!=="undefined"&&COSTDIM[S.formCard[order[i]]])||null;
+        img.src=cut;
+        if(cd){ img.setAttribute("width",cd[0]); img.setAttribute("height",cd[1]); }
+        else{ img.setAttribute("width","560"); img.setAttribute("height","1540"); }
         img.classList.add("ld");
       }
     }catch(e){}
@@ -16144,6 +16229,14 @@ function ipStartGuest(d){
 }
 function ipOnData(d){
   var cur=MP.cur;if(!cur||!d)return;
+  /* the base MP.onData stores the snapshot on cur.data and every
+     other game relies on it — this override must do the same.
+     Without it the host's lobby never saw joined guests (member
+     count stuck at 1, no full-room start) and ipStartHost rebuilt
+     the slots from the stale host-only list, overwriting the real
+     guest with a CPU : the guest then found no slot with its own
+     uid in the "playing" snapshot and was ejected from the room */
+  cur.data=d;
   if(!cur.started){
     MP.renderLobby();
     if(cur.role==="host"){
@@ -16277,7 +16370,7 @@ window.__on("ipBack",function(){window.__ipStop();mgShow("hub");});
       div.innerHTML='<div class="mp-ttl">🌐 オンライン対戦（最大4人）</div>'
         +'<div class="mp-row"><button type="button" class="btn gold" data-mp="quick">⚡ クイックマッチ</button></div>'
         +'<div class="mp-row"><button type="button" class="btn ghost" data-mp="create">🔑 合言葉ルームを作る</button></div>'
-        +'<div class="mp-row"><input class="mp-codein" data-mp-code type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="4桁の合言葉">'
+        +'<div class="mp-row"><input class="mp-codein" data-mp-code type="text" inputmode="numeric" autocomplete="off" maxlength="4" size="4" placeholder="4桁の合言葉">'
         +'<button type="button" class="btn ghost" data-mp="join">合言葉で入室</button></div>'
         +'<div class="mp-status" data-mp-status></div>'
         +'<div class="mp-lobby" data-mp-lobby hidden>'
@@ -16293,7 +16386,11 @@ window.__on("ipBack",function(){window.__ipStop();mgShow("hub");});
         if(!b||b===div)return;
         var act=b.getAttribute("data-mp");
         if(act==="quick")MP.enter("indian","quick");
-        else if(act==="create")MP.enter("indian","create");
+        else if(act==="create"){
+          var cinp2=div.querySelector("[data-mp-code]");
+          var ccode2=(cinp2&&cinp2.value||"").replace(/[^0-9]/g,"");
+          MP.enter("indian","create",ccode2.length===4?ccode2:null);
+        }
         else if(act==="join"){
           var inp=div.querySelector("[data-mp-code]");
           var code=(inp&&inp.value||"").replace(/[^0-9]/g,"");
@@ -17461,8 +17558,8 @@ window.mgStopAll=function(){
 function $(id){return document.getElementById(id);}
 var COLS=13,ROWS=16,CELL=36,OX=6,OY=110,W=480,H=760;
 var DG={on:false,raf:0,_lt:0,_acc:0,state:"ready",score:0,lives:3,stage:1,frame:0,
-  keys:{u:false,d:false,l:false,r:false},lastDir:"d",face:1,p:null,enemies:[],rocks:[],fx:[],
-  dug:[],pump:null,pumpHeld:false,paid:false,clearT:0,freezeT:0,veggie:null,rocksFallen:0};
+  keys:{u:false,d:false,l:false,r:false},dirStack:[],lastDir:"d",face:1,p:null,enemies:[],rocks:[],fx:[],
+  dug:[],pump:null,hose:null,pumpHeld:false,paid:false,clearT:0,freezeT:0,veggie:null,rocksFallen:0};
 function dgClamp(v,a,b){return v<a?a:v>b?b:v;}
 function dgCellX(c){return OX+c*CELL+CELL/2;}
 function dgCellY(r){return OY+r*CELL+CELL/2;}
@@ -17489,14 +17586,14 @@ function dgBuild(){
   DG.dug=[];var r,c;
   for(r=0;r<ROWS;r++){DG.dug.push([]);for(c=0;c<COLS;c++)DG.dug[r].push(r===0);}
   for(r=1;r<=3;r++)DG.dug[r][6]=true;                 /* starting shaft */
-  DG.rocks=[];DG.enemies=[];DG.pump=null;DG.veggie=null;DG.rocksFallen=0;DG.freezeT=0;
+  DG.rocks=[];DG.enemies=[];DG.pump=null;DG.hose=null;DG.veggie=null;DG.rocksFallen=0;DG.freezeT=0;
   var n=Math.min(3+DG.stage,8);
   var start=(DG.stage*3)%POCKETS.length;
   for(var i=0;i<n;i++){
     var pk=POCKETS[(start+i)%POCKETS.length];
     DG.dug[pk[1]][pk[0]]=true;if(pk[0]+1<COLS)DG.dug[pk[1]][pk[0]+1]=true;
     var type=(i%2===1||(DG.stage>=3&&i%3===2))?"dragon":"mole";
-    DG.enemies.push({type:type,cx:dgCellX(pk[0]),cy:dgCellY(pk[1]),dir:{x:1,y:0},
+    DG.enemies.push({type:type,cx:dgCellX(pk[0]),cy:dgCellY(pk[1]),sx:dgCellX(pk[0]),sy:dgCellY(pk[1]),dir:{x:1,y:0},
       state:"roam",inflate:0,fireT:0,cool:60+((i*40)%80),stun:0,seed:i*1.37+DG.stage});
   }
   var rockSpots=[[3,2],[8,3],[5,6],[10,8],[2,10],[7,12],[11,13],[4,14]];
@@ -17507,30 +17604,53 @@ function dgBuild(){
   }
 }
 function dgRespawn(){
-  DG.p={cx:dgCellX(6),cy:dgCellY(0),invuln:100};
-  DG.lastDir="d";DG.face=1;DG.pump=null;
+  DG.p={cx:dgCellX(6),cy:dgCellY(0),invuln:150};
+  DG.lastDir="d";DG.face=1;DG.pump=null;DG.hose=null;
+  DG.keys.u=DG.keys.d=DG.keys.l=DG.keys.r=false;DG.dirStack=[];
+  /* every enemy goes back to its pocket. Without this a mole
+     that had chased her to the surface stayed parked ON the
+     spawn cell and killed her again the frame her spawn
+     protection ran out — three lives gone in seconds without
+     the player ever being seen, let alone moved */
+  for(var i=0;i<DG.enemies.length;i++){
+    var e=DG.enemies[i];
+    if(e.sx!==undefined){e.cx=e.sx;e.cy=e.sy;}
+    e.state="roam";e.inflate=0;e.fireT=0;e.cool=100;e.stun=0;e.tx=null;e.ty=null;
+  }
 }
 function dgCellDug(cx,cy){var c=dgCol(cx),r=dgRow(cy);if(c<0||c>=COLS||r<0||r>=ROWS)return false;return DG.dug[r][c];}
 function dgRockAt(c,r){for(var i=0;i<DG.rocks.length;i++)if(DG.rocks[i].c===c&&DG.rocks[i].r===r&&DG.rocks[i].state!=="fall")return DG.rocks[i];return null;}
 /* ---------- pump ---------- */
+/* The harpoon ALWAYS answers a press : it shoots out along the
+   facing lane (through dug tunnel only, up to 4 cells) and
+   either sticks into an enemy or snaps back. The old version
+   silently did nothing at all unless an enemy happened to be
+   lined up inside 3 cells on the exact same row/column — on a
+   real phone that reads as a dead button, which is exactly
+   what was reported. */
 function dgPumpTry(){
-  if(DG.state!=="play"||DG.pump||!DG.p)return;
-  var p=DG.p,dir=DG.lastDir;
-  var dx=dir==="l"?-1:dir==="r"?1:0, dy=dir==="u"?-1:dir==="d"?1:0;
-  var pc=dgCol(p.cx),pr=dgRow(p.cy),best=null,bd=1e9;
+  if(DG.state!=="play"||DG.pump||DG.hose||!DG.p||DG.freezeT>0)return;
+  DG.hose={dir:DG.lastDir,len:0,back:false};
+}
+function dgHoseStep(){
+  var h=DG.hose,p=DG.p;if(!h||!p)return;
+  var dx=h.dir==="l"?-1:h.dir==="r"?1:0, dy=h.dir==="u"?-1:h.dir==="d"?1:0;
+  if(h.back){h.len-=0.42;if(h.len<=0)DG.hose=null;return;}
+  h.len+=0.3;
+  var tx=p.cx+dx*h.len*CELL,ty=p.cy+dy*h.len*CELL;
   for(var i=0;i<DG.enemies.length;i++){
     var e=DG.enemies[i];
     if(e.state!=="roam")continue;
-    var ec=dgCol(e.cx),er=dgRow(e.cy);
-    if(dx!==0&&(er!==pr||(ec-pc)*dx<=0))continue;
-    if(dy!==0&&(ec!==pc||(er-pr)*dy<=0))continue;
-    var dist=Math.abs(ec-pc)+Math.abs(er-pr);
-    if(dist>3)continue;
-    var ok=true;
-    for(var s=1;s<dist;s++){if(!DG.dug[pr+dy*s][pc+dx*s]){ok=false;break;}}
-    if(ok&&dist<bd){bd=dist;best=e;}
+    if(Math.abs(e.cx-tx)<21&&Math.abs(e.cy-ty)<21){
+      e.state="pumped";DG.pump={e:e,t:0,arm:false};DG.hose=null;return;
+    }
   }
-  if(best){best.state="pumped";DG.pump={e:best,t:0};}
+  var steps=Math.floor(h.len+0.5);
+  if(steps>=1){
+    var cc=dgCol(p.cx)+dx*steps,cr=dgRow(p.cy)+dy*steps;
+    if(cc<0||cc>=COLS||cr<0||cr>=ROWS||!DG.dug[cr][cc]){h.back=true;return;}
+  }
+  if(h.len>=4)h.back=true;
 }
 function dgPumpDetach(){
   if(!DG.pump)return;
@@ -17541,7 +17661,7 @@ function dgPumpDetach(){
 function dgDie(){
   DG.lives--;dgHud();
   dgPopup(DG.p.cx,DG.p.cy-18,"ミス！","#ff8a8a");
-  DG.pump=null;
+  DG.pump=null;DG.hose=null;
   if(DG.lives<=0){dgGameOver();return;}
   dgRespawn();DG.freezeT=55;
 }
@@ -17582,9 +17702,17 @@ function dgStep(){
   if(p.invuln>0)p.invuln--;
   if(DG.freezeT>0)DG.freezeT--;
   /* --- pump progress --- */
+  if(DG.hose)dgHoseStep();
   if(DG.pump){
     var pe=DG.pump.e;
-    if(DG.keys.u||DG.keys.d||DG.keys.l||DG.keys.r){dgPumpDetach();}
+    /* detaching on ANY held direction killed the pump whenever
+       the other thumb was still resting on the cross key (the
+       normal two-thumb grip). Only a FRESH direction press —
+       after every direction has been released once since the
+       harpoon stuck — counts as "walk away and detach" */
+    var anyKey=DG.keys.u||DG.keys.d||DG.keys.l||DG.keys.r;
+    if(!anyKey)DG.pump.arm=true;
+    if(DG.pump.arm&&anyKey){dgPumpDetach();}
     else{
       if(DG.pumpHeld)DG.pump.t+=1;else DG.pump.t-=2;
       if(DG.pump.t<=0&&!DG.pumpHeld){dgPumpDetach();}
@@ -17601,12 +17729,21 @@ function dgStep(){
     }
   }
   /* --- player movement (frozen while pumping) --- */
-  if(!DG.pump){
-    var want=null;
-    if(DG.keys[DG.lastDir])want=DG.lastDir;
-    else if(DG.keys.u)want="u";else if(DG.keys.d)want="d";else if(DG.keys.l)want="l";else if(DG.keys.r)want="r";
+  if(!DG.pump&&!DG.hose){
+    /* direction = the most recently pressed key that is still
+       held (a stack, not a fixed u/d/l/r priority) : releasing
+       the newest direction falls back to the one still held
+       underneath it, never to an unrelated axis */
+    var want=null,dstk=DG.dirStack||[];
+    for(var wsi=dstk.length-1;wsi>=0;wsi--){if(DG.keys[dstk[wsi]]){want=dstk[wsi];break;}}
+    if(!want){if(DG.keys.u)want="u";else if(DG.keys.d)want="d";else if(DG.keys.l)want="l";else if(DG.keys.r)want="r";}
     if(want){
       var wdx=want==="l"?-1:want==="r"?1:0,wdy=want==="u"?-1:want==="d"?1:0;
+      /* lane-centre assist : ease onto the centre line of the
+         lane being entered, so turning mid-dig slips into the
+         new lane instead of scraping along its corner */
+      if(wdx!==0){var tcy=dgCellY(dgRow(p.cy));p.cy+=dgClamp(tcy-p.cy,-2.2,2.2);}
+      if(wdy!==0){var tcx=dgCellX(dgCol(p.cx));p.cx+=dgClamp(tcx-p.cx,-2.2,2.2);}
       var inTunnel=dgCellDug(p.cx,p.cy);
       var spd=inTunnel?2.05:1.55;
       var nx=p.cx+wdx*spd,ny=p.cy+wdy*spd;
@@ -17659,7 +17796,11 @@ function dgStep(){
         }
       }
       if(p.invuln<=0&&Math.abs(p.cx-(rock.x+CELL/2))<25&&p.cy>rock.y&&p.cy<rock.y+CELL+15){
-        dgDie();if(DG.state!=="play")return;
+        /* dgDie replaces DG.p (respawn) : this step's local p is
+           stale from here on, so the step MUST end — checking
+           only the state let later checks in the same step kill
+           the fresh player a second time */
+        dgDie();return;
       }
       if(brow>=ROWS||(brow>=0&&brow<ROWS&&!DG.dug[brow][rock.c]&&brow!==rock.r)){
         DG.rocks.splice(i,1);
@@ -17694,7 +17835,7 @@ function dgStep(){
         if(p.invuln<=0){
           for(var fi=0;fi<e.flame.length;fi++){
             var fc=e.flame[fi];
-            if(Math.abs(p.cx-dgCellX(fc[0]))<24&&Math.abs(p.cy-dgCellY(fc[1]))<24){dgDie();if(DG.state!=="play")return;break;}
+            if(Math.abs(p.cx-dgCellX(fc[0]))<24&&Math.abs(p.cy-dgCellY(fc[1]))<24){dgDie();return;}
           }
         }
         if(e.fireT<=0){e.state="roam";e.cool=140;}
@@ -17744,7 +17885,7 @@ function dgStep(){
     }
     /* contact */
     if(p.invuln<=0&&Math.abs(e.cx-p.cx)<24&&Math.abs(e.cy-p.cy)<24){
-      dgDie();if(DG.state!=="play")return;
+      dgDie();return;
     }
   }
 }
@@ -17891,11 +18032,24 @@ function dgDraw(){
     g.fillStyle="#5a6070";dgRR(g,p.cx+DG.face*8-4,p.cy-2,9,13,2);g.fill();
     g.fillStyle="#ffd23f";g.fillRect(p.cx+DG.face*8-4,p.cy-5,9,3.4);
   }
-  /* player */
-  if(p&&!(p.invuln>0&&DG.state==="play"&&Math.floor(DG.frame/5)%2===0)){
+  /* hose in flight (before it sticks) */
+  if(DG.hose&&p){
+    var hd=DG.hose,hdx=hd.dir==="l"?-1:hd.dir==="r"?1:0,hdy=hd.dir==="u"?-1:hd.dir==="d"?1:0;
+    var htx=p.cx+hdx*hd.len*CELL,hty=p.cy+hdy*hd.len*CELL;
+    g.strokeStyle="#dfe6ee";g.lineWidth=3.4;g.lineCap="round";
+    g.beginPath();g.moveTo(p.cx+hdx*10,p.cy+hdy*10);g.lineTo(htx,hty);g.stroke();
+    g.fillStyle="#ff4040";g.beginPath();g.arc(htx,hty,3.6,0,7);g.fill();
+  }
+  /* player : spawn protection blinks her TRANSLUCENT, never
+     fully invisible — a player who cannot be found on the field
+     reads as a bug, because it was one */
+  if(p){
+    var blinkOff=p.invuln>0&&DG.state==="play"&&Math.floor(DG.frame/5)%2===0;
+    g.save();if(blinkOff)g.globalAlpha=0.3;
     var drawn=false,im=SDIMG[RTCHAR];
     if(im)drawn=drawChara(g,im,p.cx-20,p.cy-24,40,47,{faceLeft:DG.face<0});
     if(!drawn)drawSD(g,RTCHAR,p.cx-16,p.cy-14,1.85,{frame:(DG.frame>>3)%2,faceLeft:DG.face<0});
+    g.restore();
   }
   /* popups */
   for(var i4=0;i4<DG.fx.length;i4++){
@@ -17921,7 +18075,7 @@ function dgStart(){
   mgPad("dgStage",true);
   dgHud();dgLoopStart();
 }
-window.__dgStop=function(){DG.on=false;DG._lt=0;DG._acc=0;DG.keys.u=DG.keys.d=DG.keys.l=DG.keys.r=false;DG.pumpHeld=false;if(DG.raf)cancelAnimationFrame(DG.raf);};
+window.__dgStop=function(){DG.on=false;DG._lt=0;DG._acc=0;DG.keys.u=DG.keys.d=DG.keys.l=DG.keys.r=false;DG.dirStack=[];DG.hose=null;DG.pumpHeld=false;if(DG.raf)cancelAnimationFrame(DG.raf);};
 window.__dgReset=function(){
   DG.state="ready";DG.score=0;DG.lives=3;DG.stage=1;DG.fx=[];DG.paid=false;
   dgBuild();dgRespawn();
@@ -17943,13 +18097,18 @@ window.__dgState=function(){
     enemies:DG.enemies.map(function(e){return {type:e.type,c:dgCol(e.cx),r:dgRow(e.cy),state:e.state,inflate:e.inflate};}),
     player:p?{cx:Math.round(p.cx),cy:Math.round(p.cy),c:dgCol(p.cx),r:dgRow(p.cy),invuln:p.invuln}:null,
     pump:DG.pump?{t:DG.pump.t,stage:DG.pump.e.inflate}:null,
+    hose:DG.hose?{dir:DG.hose.dir,len:Math.round(DG.hose.len*10)/10,back:!!DG.hose.back}:null,
+    keys:{u:DG.keys.u,d:DG.keys.d,l:DG.keys.l,r:DG.keys.r},
     rocks:DG.rocks.map(function(rk){return {c:rk.c,r:rk.r,state:rk.state};}),
     rocksFallen:DG.rocksFallen,veggie:!!DG.veggie};
 };
 /* ---------- input ---------- */
 function dgSetDir(k,on){
+  if(DG.keys[k]===on)return;
   DG.keys[k]=on;
-  if(on)DG.lastDir=k;
+  var st=DG.dirStack||(DG.dirStack=[]);
+  var ix=st.indexOf(k);if(ix>=0)st.splice(ix,1);
+  if(on)st.push(k);
 }
 padDir("dgStage",{u:function(on){dgSetDir("u",on);},d:function(on){dgSetDir("d",on);},l:function(on){dgSetDir("l",on);},r:function(on){dgSetDir("r",on);}});
 padHold(vpBtn("dgStage","a"),function(){DG.pumpHeld=true;dgPumpTry();},function(){DG.pumpHeld=false;});
@@ -18434,7 +18593,13 @@ holdBtn("pmRight",function(){pmSetWant(1,0);},null);
 (function(){
   var st=$("pmStage");if(!st)return;
   var sx=0,sy=0,tracking=false;
-  st.addEventListener("pointerdown",function(e){sx=e.clientX;sy=e.clientY;tracking=true;});
+  st.addEventListener("pointerdown",function(e){
+    /* a press that starts on the virtual pad belongs to the pad :
+       this swipe reader must not race it and overwrite the
+       buffered direction with a one-shot swipe guess */
+    if(e.target&&e.target.closest&&e.target.closest(".vpad")){tracking=false;return;}
+    sx=e.clientX;sy=e.clientY;tracking=true;
+  });
   st.addEventListener("pointermove",function(e){
     if(!tracking)return;
     var dx=e.clientX-sx,dy=e.clientY-sy;
@@ -19135,5 +19300,41 @@ formSelText=function(){
   try{renderAll();}catch(e){}
 })();
 </script>
+<style>
+/* ============================================================
+   v121 — RENSA BOARD BACK TO A FIXED LOGICAL SIZE (user's
+   real-device report : これだけ全画面はダメ／逆にやりづらい).
+   The shared fullscreen framework stretched the rensa canvas
+   to the whole viewport, so the fall ran the full height of
+   the screen and the pad floated over the field's foot. The
+   drawing itself was always logical (480x920, 6 cols x 12
+   rows, 76px square cells) — only the DISPLAY size ballooned.
+   Rensa-only overrides (no other game is touched) :
+   - the canvas displays at its natural ratio, height capped
+     at a fixed logical size (452px, less on short screens),
+     centred, wearing a cabinet frame (gold rim + outer bezel
+     + floor shadow) instead of bleeding to the edges ;
+   - NEXT rides beside the board's top-right, tracking the
+     board's centred position at any screen width ;
+   - the touch pad flows right under the board instead of
+     pinning to the screen bottom over the field ;
+   - the stage backdrop becomes a cabinet finish (spotlight
+     wash over deep purple) so the space the board no longer
+     fills reads as furniture, not as a blank.
+   ============================================================ */
+#rnStage canvas{flex:none;align-self:center;display:block;width:auto;
+  height:min(452px,calc(100dvh - 218px));
+  margin:8px auto 0;
+  border:2px solid rgba(255,217,122,.7);border-radius:14px;
+  box-shadow:0 20px 44px rgba(0,0,0,.65),0 0 0 6px rgba(35,18,74,.92),0 0 36px rgba(122,72,255,.22);
+  background:#120826}
+body.gfs #rnStage{background:
+  radial-gradient(130% 55% at 50% -4%,rgba(122,72,255,.30),rgba(21,11,40,0) 62%),
+  radial-gradient(90% 34% at 50% 108%,rgba(255,170,40,.10),rgba(13,6,24,0) 70%),
+  linear-gradient(180deg,#1d0d3a,#150b28 42%,#0d0618)}
+body.gfs #rnStage .vpad{position:relative;left:auto;right:auto;bottom:auto;
+  flex:none;width:100%;margin-top:14px;padding:0 18px}
+#rnStage .rn-side{top:56px;right:max(6px,calc(50% - 206px))}
+</style>
 </body>
 </html>
