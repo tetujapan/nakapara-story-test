@@ -21,6 +21,15 @@
 <script src="assets-data-18.js"></script>
 <script src="assets-data-19.js"></script>
 <script src="assets-data-20.js"></script>
+<script src="assets-data-21.js"></script>
+<script src="assets-data-22.js"></script>
+<script src="assets-data-23.js"></script>
+<script src="assets-data-24.js"></script>
+<script src="assets-data-25.js"></script>
+<script src="assets-data-26.js"></script>
+<script src="assets-data-27.js"></script>
+<script src="assets-data-28.js"></script>
+<script src="assets-data-29.js"></script>
 <script>
 /* __ASSET_PRELUDE__ v2: resolve 'assets/<name>' references to embedded data URIs.
    Covers: img src setter, setAttribute('src'), innerHTML strings (src=/href=/url()),
@@ -2932,6 +2941,19 @@ img{-webkit-user-drag:none}
   <button type="button" class="rv-skip" id="rvSkip">スキップ ≫</button>
   <div class="rv-flash" id="rvFlash"></div>
 </div>
+<!-- ============ GACHA RESULTS (dedicated screen, v117) ============ -->
+<div class="gres" id="gachaResults" aria-hidden="true">
+  <div class="gres-in">
+    <h2 class="gres-title">🎉 ガチャ結果</h2>
+    <p class="gres-sub" id="gresSub"></p>
+    <div class="gres-sum" id="gresSum"></div>
+    <div class="gres-grid" id="gresGrid"></div>
+    <div class="gres-btns">
+      <button type="button" class="btn ghost" id="gresRates">📊 提供割合を見る</button>
+      <button type="button" class="btn gold" id="gresClose">閉じる</button>
+    </div>
+  </div>
+</div>
 <button type="button" class="gacha-skip" id="gachaSkip" hidden>スキップ ≫</button>
 
 <!-- ============ COLLECTION ============ -->
@@ -4162,7 +4184,7 @@ function cardHTML(card,owned,isNew){
 }
 /* ===== state (memory only) ===== */
 var S={coin:999999,pt:0,owned:{},endings:{},extraDone:false,extra2Done:false,scene:null,flags:{care:0,trust:0,info:0},extraScene:null,selected:null,started:false,filterChar:"all",filterRar:"all",bonusClaimed:false,missionsClaimed:{},shopOwned:{},gachaBusy:false,
-  oshi:"momona",form:{center:"momona",back0:"akari",back1:"kaede",front0:"nana",front1:"misa"},readScenes:{},log:[],skipMode:false,pulls:0,cardViews:0,wallpapers:{},
+  oshi:"momona",form:{center:"momona",back0:"akari",back1:"kaede",front0:"nana",front1:"misa"},formCard:{},readScenes:{},log:[],skipMode:false,pulls:0,cardViews:0,wallpapers:{},
   lv:{},dupStock:{},deck:[],shots:[],btBusy:false};
 S.owned={}; S.owned["momona-R0"]=1; S.owned["momona-R1"]=1; S.owned["akari-R0"]=1;
 var $=function(id){return document.getElementById(id);};
@@ -11555,7 +11577,7 @@ function soRender(){
   s+='</div><div class="so-cell"></div>';
   for(var f=0;f<4;f++){
     var fp=SO.found[f];
-    s+='<div class="so-cell">';
+    s+='<div class="so-cell" data-loc="found" data-pile="'+f+'">';
     if(fp.length)s+=soCardHTML(fp[fp.length-1],{loc:"found",pile:f,sel:SO.sel&&SO.sel.type==="found"&&SO.sel.pile===f,shk:SO._shk&&SO._shk.type==="found"&&SO._shk.pile===f});
     else s+='<div class="so-slot" data-loc="found" data-pile="'+f+'" style="color:'+SO_SUITS[f].col+';font-size:20px;opacity:.8">'+SO_SUITS[f].mk+'</div>';
     s+='</div>';
@@ -11565,7 +11587,7 @@ function soRender(){
   for(var c=0;c<7;c++){
     var col=SO.tab[c],h=M.ch,y=0,j;
     for(j=0;j<col.length-1;j++)h+=col[j].up?M.up:M.down;
-    t+='<div class="so-col" style="height:'+h+'px">';
+    t+='<div class="so-col" data-loc="tab" data-col="'+c+'" style="height:'+h+'px">';
     if(!col.length)t+='<div class="so-slot" data-loc="tab" data-col="'+c+'"></div>';
     for(j=0;j<col.length;j++){
       var selT=SO.sel&&SO.sel.type==="tab"&&SO.sel.col===c&&j>=SO.sel.idx;
@@ -11795,6 +11817,196 @@ window.__on("soAuto",function(){
    so both screens are ready the moment they are opened */
 soNew();
 if(window.__skReset)window.__skReset();
+</script>
+<style>
+/* ============================================================
+   v118 — SOLITAIRE DRAG & DROP (user report : ドラッグできる
+   ようにしないと操作性が悪い). Tap auto-move stays; this layer
+   adds pointer drag for a single face-up card or a whole
+   face-up tableau stack, with legal targets lit gold while
+   dragging and an animated return when the drop is not legal.
+   ============================================================ */
+.so-card{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.so-drag{position:fixed;left:0;top:0;z-index:400;pointer-events:none;filter:drop-shadow(0 14px 18px rgba(0,0,0,.55))}
+.so-card.so-drag-src{opacity:.28}
+.so-col.so-drop-ok,.so-cell.so-drop-ok{outline:2px dashed rgba(255,210,63,.6);outline-offset:-2px;border-radius:10px}
+.so-col.so-drop-on,.so-cell.so-drop-on{outline:3px solid #ffd23f;outline-offset:-2px;border-radius:10px;background:rgba(255,210,63,.14)}
+</style>
+<script>
+/* ================================================================
+   v118 — SOLITAIRE DRAG & DROP. Pointer based, mirroring the
+   formation drag : a press that stays within 9px is a tap and
+   the existing tap auto-move handles it ; past that the press
+   becomes a drag. The dragged cards are clones in a fixed
+   ghost that follows the finger ; the real cards only dim.
+   Legality is computed with the same rules soTryTab /
+   soTryFound enforce, and the drop itself is executed through
+   those very functions (SO.sel is set to the drag source), so
+   drag and tap can never disagree about the rules. A drop on
+   anything else flies the ghost home and changes nothing.
+   The click that follows a drag is swallowed in the capture
+   phase so the tap handler never double-fires.
+   ================================================================ */
+(function(){
+  var board=$("soBoard"); if(!board)return;
+  var press=null, drag=null;
+  function srcFromEl(el){
+    var loc=el.getAttribute("data-loc");
+    if(loc==="waste")return SO.waste.length?{type:"waste"}:null;
+    if(loc==="found"){var p=parseInt(el.getAttribute("data-pile"),10);return (SO.found[p]&&SO.found[p].length)?{type:"found",pile:p}:null;}
+    if(loc==="tab"){
+      var c=parseInt(el.getAttribute("data-col"),10), i=parseInt(el.getAttribute("data-idx"),10);
+      var card=(SO.tab[c]||[])[i];
+      if(!card||!card.up)return null;
+      return {type:"tab",col:c,idx:i};
+    }
+    return null;
+  }
+  function cardsOf(src){
+    if(src.type==="waste")return [SO.waste[SO.waste.length-1]];
+    if(src.type==="found")return [SO.found[src.pile][SO.found[src.pile].length-1]];
+    return SO.tab[src.col].slice(src.idx);
+  }
+  function canTab(cards,src,col){
+    if(src.type==="tab"&&src.col===col)return false;
+    var t=SO.tab[col], top=t[t.length-1], b=cards[0];
+    if(!top)return b.r===13;
+    return !!top.up&&top.r===b.r+1&&SO_SUITS[top.s].grp!==SO_SUITS[b.s].grp;
+  }
+  function canFound(cards,pile){
+    if(cards.length!==1)return false;
+    var c=cards[0];
+    return c.s===pile&&c.r===SO.found[pile].length+1;
+  }
+  function colEl(c){var t=$("soTab");return t?t.children[c]:null;}
+  function foundEl(p){var t=$("soTop");return t?t.children[p+3]:null;}
+  function markTargets(d,on){
+    d.targets.tab.forEach(function(c){var el=colEl(c);if(el)el.classList.toggle("so-drop-ok",on);});
+    d.targets.found.forEach(function(p){var el=foundEl(p);if(el)el.classList.toggle("so-drop-ok",on);});
+  }
+  function clearOn(){
+    var olds=board.querySelectorAll(".so-drop-on");
+    for(var i=0;i<olds.length;i++)olds[i].classList.remove("so-drop-on");
+  }
+  function overAt(x,y,d){
+    var el=document.elementFromPoint(x,y);
+    while(el&&el!==board&&!(el.getAttribute&&el.getAttribute("data-loc")))el=el.parentNode;
+    if(!el||el===board||!el.getAttribute)return null;
+    var loc=el.getAttribute("data-loc");
+    if(loc==="tab"){
+      var c=parseInt(el.getAttribute("data-col"),10);
+      return d.targets.tab.indexOf(c)>=0?{kind:"tab",col:c}:null;
+    }
+    if(loc==="found"){
+      var p=parseInt(el.getAttribute("data-pile"),10);
+      return d.targets.found.indexOf(p)>=0?{kind:"found",pile:p}:null;
+    }
+    return null;
+  }
+  function paintOver(ov){
+    clearOn();
+    if(!ov)return;
+    var el=ov.kind==="tab"?colEl(ov.col):foundEl(ov.pile);
+    if(el)el.classList.add("so-drop-on");
+  }
+  function startDrag(e){
+    var src=press.src, cards=cardsOf(src);
+    if(!cards.length){press=null;return;}
+    var M=SO._m||soMetrics();
+    var targets={tab:[],found:[]};
+    for(var c=0;c<7;c++)if(canTab(cards,src,c))targets.tab.push(c);
+    for(var p=0;p<4;p++)if(canFound(cards,p))targets.found.push(p);
+    var g=document.createElement("div");
+    g.className="so-drag";
+    g.innerHTML=cards.map(function(cd,j){return soCardHTML(cd,{top:j*M.up,idx:j});}).join("");
+    g.style.width=M.cw+"px";
+    g.style.height=(M.ch+(cards.length-1)*M.up)+"px";
+    document.body.appendChild(g);
+    drag={src:src,cards:cards,targets:targets,ghost:g,dx:press.dx,dy:press.dy,
+      homeX:press.x0-press.dx,homeY:press.y0-press.dy,over:null};
+    /* dim the real cards under the ghost */
+    var els=board.querySelectorAll(".so-card");
+    for(var i=0;i<els.length;i++){
+      var el=els[i],loc=el.getAttribute("data-loc"),hit=false;
+      if(src.type==="waste")hit=(loc==="waste");
+      else if(src.type==="found")hit=(loc==="found"&&parseInt(el.getAttribute("data-pile"),10)===src.pile);
+      else hit=(loc==="tab"&&parseInt(el.getAttribute("data-col"),10)===src.col&&parseInt(el.getAttribute("data-idx"),10)>=src.idx);
+      if(hit)el.classList.add("so-drag-src");
+    }
+    markTargets(drag,true);
+    moveGhost(e);
+    if(navigator.vibrate)try{navigator.vibrate(8);}catch(err){}
+  }
+  function moveGhost(e){
+    if(!drag)return;
+    drag.ghost.style.transform="translate("+(e.clientX-drag.dx)+"px,"+(e.clientY-drag.dy)+"px)";
+    drag.over=overAt(e.clientX,e.clientY,drag);
+    paintOver(drag.over);
+  }
+  function stripVisual(d,removeGhost){
+    if(!d)return;
+    markTargets(d,false);
+    clearOn();
+    var dims=board.querySelectorAll(".so-drag-src");
+    for(var i=0;i<dims.length;i++)dims[i].classList.remove("so-drag-src");
+    if(removeGhost&&d.ghost&&d.ghost.parentNode)d.ghost.parentNode.removeChild(d.ghost);
+  }
+  function finishDrag(e){
+    var d=drag; drag=null;
+    var ov=overAt(e.clientX,e.clientY,d);
+    SO._dragT=Date.now();
+    var ok=false;
+    if(ov){
+      SO.sel=d.src;
+      if(ov.kind==="tab")ok=soTryTab(ov.col); else ok=soTryFound(ov.pile);
+      SO.sel=null;
+    }
+    if(ok){
+      stripVisual(d,true);
+      soStartClock(); soAfter();
+      return;
+    }
+    /* no legal home (or the move did not take) : fly the ghost
+       back to the source, then repaint — same return either way */
+    stripVisual(d,false);
+    var g=d.ghost;
+    g.style.transition="transform .18s ease";
+    g.style.transform="translate("+d.homeX+"px,"+d.homeY+"px)";
+    setTimeout(function(){if(g.parentNode)g.parentNode.removeChild(g); soRender();},190);
+  }
+  board.addEventListener("pointerdown",function(e){
+    if(SO.won||press||drag)return;
+    var el=e.target;
+    while(el&&el!==board&&!(el.classList&&el.classList.contains("so-card")))el=el.parentNode;
+    if(!el||el===board)return;
+    var src=srcFromEl(el);
+    if(!src)return;
+    var r=el.getBoundingClientRect();
+    press={src:src,x0:e.clientX,y0:e.clientY,dx:e.clientX-r.left,dy:e.clientY-r.top};
+  });
+  window.addEventListener("pointermove",function(e){
+    if(!press&&!drag)return;
+    if(press&&!drag){
+      var mdx=e.clientX-press.x0, mdy=e.clientY-press.y0;
+      if(mdx*mdx+mdy*mdy<81)return;
+      startDrag(e);
+    }
+    if(drag){moveGhost(e); if(e.cancelable)e.preventDefault();}
+  },{passive:false});
+  window.addEventListener("pointerup",function(e){
+    if(drag)finishDrag(e);
+    press=null;
+  });
+  window.addEventListener("pointercancel",function(){
+    if(drag){stripVisual(drag,true); drag=null; SO._dragT=Date.now();}
+    press=null;
+  });
+  /* swallow the click a drag leaves behind (capture phase runs
+     before the board's own bubble-phase tap handler) */
+  board.addEventListener("click",function(e){
+    if(SO._dragT&&Date.now()-SO._dragT<400){e.stopPropagation(); SO._dragT=0;}
+  },true);
+})();
 </script>
 <style>
 /* ================================================================
@@ -13156,7 +13368,7 @@ else mpInject();
    height is zero (height + matching negative margin), so it
    appearing never shifts the list under the finger. */
 #formStrip{display:none}
-#formStrip.on{display:block;position:sticky;top:0;z-index:60;height:64px;margin-bottom:-64px;
+#formStrip.on{display:block;position:sticky;top:0;z-index:60;height:92px;margin-bottom:-92px;
   background:linear-gradient(180deg,rgba(26,11,48,.97),rgba(17,7,32,.97));
   border:1px solid rgba(255,217,122,.6);border-radius:12px;padding:5px 6px;
   box-shadow:0 10px 20px rgba(0,0,0,.55)}
@@ -13219,7 +13431,7 @@ function renderFormation(){
       return '<div class="form-slot fs-empty '+s[2]+((formSel&&formSel.type==="slot"&&formSel.slot===s[0])?" sel":"")+'" data-slot="'+s[0]+'" data-char="" aria-label="'+s[1]+'の空き枠"><span class="fs-tag">'+s[1]+'</span><span class="fs-face">＋</span><span class="fs-name">空き枠</span></div>';
     }
     var c=formCharObj(cid);
-    return '<div class="form-slot '+s[2]+((formSel&&formSel.type==="slot"&&formSel.slot===s[0])?" sel":"")+'" data-slot="'+s[0]+'" data-char="'+c.id+'" role="button" aria-label="'+s[1]+'の枠：'+c.name+'（ドラッグで入れ替え）"><span class="fs-tag">'+s[1]+'</span><img src="assets/char_'+c.id+'.webp" alt="'+c.name+'" draggable="false" onerror="this.onerror=null;this.src=\'assets/full_'+c.id+'.webp\'"><span class="fs-name">'+c.name+'</span></div>';
+    return '<div class="form-slot '+s[2]+((formSel&&formSel.type==="slot"&&formSel.slot===s[0])?" sel":"")+'" data-slot="'+s[0]+'" data-char="'+c.id+'" role="button" aria-label="'+s[1]+'の枠：'+c.name+'（ドラッグで入れ替え）"><span class="fs-tag">'+s[1]+'</span><img src="'+formSlotArt(s[0],c.id)+'" alt="'+c.name+'" draggable="false" onerror="this.onerror=null;this.src=\'assets/char_'+c.id+'.webp\'"><span class="fs-name">'+c.name+'</span>'+formCostTag(s[0])+formCostBtnHTML(s[0],c.id,0)+'</div>';
   }).join("");
   /* pool = every formation member (in slot order) + EVERY other
      character in the game (all 14 : talents, Paradise, the
@@ -13237,11 +13449,12 @@ function renderFormation(){
   var pool=poolList.map(function(c){
     var pk=null; FORM_KEYS.forEach(function(k){if(S.form[k]===c.id)pk=k;});
     var placed=!!pk;
-    return '<div class="form-chip'+(placed?" placed":"")+((formSel&&formSel.type==="chip"&&formSel.char===c.id)?" sel":"")+'" data-char="'+c.id+'" role="button" aria-label="'+c.name+(placed?'（'+posOf[pk]+'に配置中）':'（ドラッグで枠へ差し替え）')+'"><img src="assets/char_'+c.id+'.webp" alt="'+c.name+'" draggable="false" onerror="this.onerror=null;this.src=\'assets/full_'+c.id+'.webp\'"><span>'+c.name+'</span>'+(placed?'<em>配置中</em><span class="fc-pos">'+posOf[pk]+'</span>':"")+'</div>';
+    return '<div class="form-chip'+(placed?" placed":"")+((formSel&&formSel.type==="chip"&&formSel.char===c.id)?" sel":"")+'" data-char="'+c.id+'" role="button" aria-label="'+c.name+(placed?'（'+posOf[pk]+'に配置中）':'（ドラッグで枠へ差し替え）')+'"><img src="'+(placed?formSlotArt(pk,c.id):"assets/char_"+c.id+".webp")+'" alt="'+c.name+'" draggable="false" onerror="this.onerror=null;this.src=\'assets/full_'+c.id+'.webp\'"><span>'+c.name+'</span>'+(placed?'<em>配置中</em><span class="fc-pos">'+posOf[pk]+'</span>':"")+formCostBtnHTML(pk,c.id,0)+'</div>';
   }).join("");
   host.innerHTML='<div class="form-box"><div class="form-head"><b>⭐ レギュラーメンバー編成</b><span>ホームの並び ・ 中央が推し</span></div>'
     +'<div class="form-map">'+slots+'</div>'
     +'<div class="form-selbar'+(formSel?" on":"")+'" id="formSelBar">'+formSelText()+'</div>'
+    +'<div class="form-costbar'+(formCostTarget()?" on":"")+'" id="formCostBar">'+formCostBarHTML()+'</div>'
     +'<div class="form-pool-h">候補 ― メンバー（タップ選択／長押しドラッグで差し替え）</div>'
     +'<div class="form-pool">'+(pool||'<p class="note">所持カードがまだありません</p>')+'</div></div>';
   renderFormStrip();
@@ -13264,7 +13477,7 @@ function renderFormStrip(){
     var sel=(formSel&&formSel.type==="slot"&&formSel.slot===k)?" sel":"";
     if(!cid)return '<div class="form-slot form-mini fs-empty '+cls[k]+sel+'" data-slot="'+k+'" data-char="" aria-label="'+labels[k]+'の空き枠"><span class="fs-tag">'+labels[k]+'</span><span class="fs-name">空き枠</span></div>';
     var c=formCharObj(cid);
-    return '<div class="form-slot form-mini '+cls[k]+sel+'" data-slot="'+k+'" data-char="'+c.id+'" role="button" aria-label="'+labels[k]+'の枠：'+c.name+'（タップかドラッグで入れ替え）"><span class="fs-tag">'+labels[k]+'</span><img src="assets/char_'+c.id+'.webp" alt="'+c.name+'" draggable="false" onerror="this.onerror=null;this.src=\'assets/full_'+c.id+'.webp\'"><span class="fs-name">'+c.name+'</span></div>';
+    return '<div class="form-slot form-mini '+cls[k]+sel+'" data-slot="'+k+'" data-char="'+c.id+'" role="button" aria-label="'+labels[k]+'の枠：'+c.name+'（タップかドラッグで入れ替え）"><span class="fs-tag">'+labels[k]+'</span><img src="'+formSlotArt(k,c.id)+'" alt="'+c.name+'" draggable="false" onerror="this.onerror=null;this.src=\'assets/char_'+c.id+'.webp\'"><span class="fs-name">'+c.name+'</span>'+formCostBtnHTML(k,c.id,1)+'</div>';
   }).join("")+'</div>';
   var view=$("v-coll");
   if(view&&!view._stripBound){view._stripBound=1;view.addEventListener("scroll",formStripSync,{passive:true});}
@@ -13309,6 +13522,8 @@ function formSelRefresh(){
   }
   var bar=$("formSelBar");
   if(bar){bar.textContent=formSelText();if(formSel)bar.classList.add("on");else bar.classList.remove("on");}
+  var cb=$("formCostBar");
+  if(cb){cb.innerHTML=formCostBarHTML();if(formCostTarget())cb.classList.add("on");else cb.classList.remove("on");}
   formStripSync();
 }
 function formTap(slot,char){
@@ -13395,7 +13610,7 @@ document.addEventListener("pointerdown",function(e){
     if(formSel){formSel=null;formSelRefresh();}
     var g=document.createElement("div");
     g.className="form-ghost";
-    g.innerHTML='<img src="assets/char_'+press.char+'.webp" alt="" onerror="this.onerror=null;this.src=\'assets/full_'+press.char+'.webp\'"><span>'+formCharObj(press.char).name+'</span>';
+    g.innerHTML='<img src="'+formArtFor(press.slot,press.char)+'" alt="" onerror="this.onerror=null;this.src=\'assets/char_'+press.char+'.webp\'"><span>'+formCharObj(press.char).name+'</span>';
     g.style.left=press.x0+"px"; g.style.top=press.y0+"px";
     document.body.appendChild(g);
     press.src.classList.add("drag-armed");
@@ -13444,6 +13659,371 @@ document.addEventListener("pointerup",function(){
   }
 });
 document.addEventListener("pointercancel",function(){formDragCleanup();});
+</script>
+<style>
+/* ============================================================
+   v114 — COSTUME (衣装) PER FORMATION SLOT. Every character's
+   cards are that character's costume variants. Picking a member
+   (chip or occupied slot) opens the costume bar under the
+   selection bar : tap a costume to dress the member in it. The
+   choice lives in S.formCard[slot] (saved with the formation),
+   drives the slot / strip / chip art, and — for costumes whose
+   card art was cut out into assets/cost_*.webp — the home
+   collage figure itself.
+   ============================================================ */
+.form-costbar{display:none;margin-top:8px;background:rgba(20,9,38,.94);border:1px solid rgba(255,217,122,.5);border-radius:12px;padding:8px 9px}
+.form-costbar.on{display:block}
+.form-cost-h{font-size:11.5px;font-weight:900;color:#ffe9a8;margin-bottom:7px;line-height:1.4}
+.form-cost-h small{display:block;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.65)}
+.form-costs{display:flex;flex-wrap:wrap;gap:6px}
+.form-cost{width:72px;padding:4px 4px 5px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent}
+.form-cost:active{transform:scale(.96)}
+.form-cost.sel{border-color:#ffd97a;background:rgba(255,217,122,.18);box-shadow:0 0 0 1px #ffd97a,0 4px 10px rgba(0,0,0,.35)}
+.form-cost img{width:100%;height:48px;object-fit:cover;object-position:50% 8%;border-radius:6px;display:block;background:#241243;pointer-events:none}
+.form-cost .fc-rar{display:inline-block;font-size:8.5px;font-weight:900;line-height:1;padding:2px 6px;border-radius:99px;margin-top:4px;background:#5b6ee1;color:#fff}
+.form-cost .fc-rar.rSR{background:#c9930a}
+.form-cost .fc-rar.rUR{background:#d4246e}
+.form-cost .fc-rar.rD{background:#6a6a7a}
+.form-cost .fc-ttl{display:block;font-size:9px;font-weight:700;color:#fff;line-height:1.3;margin-top:3px}
+.fs-cost{display:block;font-size:9px;font-weight:800;color:#ffd97a;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+<script>
+/* ================================================================
+   v114 — COSTUME SELECTION FOR THE FORMATION.
+   S.formCard[slot] = cardId of the chosen costume (absent = the
+   member's standard look). Test-build rule matches the member
+   pool : ownership does NOT gate costumes — every card of the
+   character is selectable, owned or not.
+   ================================================================ */
+if(!S.formCard)S.formCard={};
+var formCostPick={}; /* char -> cardId chosen while the chip is selected (applied on placement) */
+var COSTCUTS={};
+["paradise-R0","paradise-R1","paradise-R2","paradise-SR0","paradise-SR1","paradise-UR0",
+ "kotori-R1","kotori-R2","kotori-SR0","kotori-SR1","kotori-UR0",
+ "aoi-R1","aoi-R2","aoi-SR0","aoi-SR1","aoi-UR0",
+ "yura-R1","yura-R2","yura-SR0","yura-SR1","yura-UR0"].forEach(function(id){COSTCUTS[id]=1;});
+/* v115 — costume cutouts completed for the whole cast : the five
+   talents (every card, the limited one included) and the five
+   supporting members. Each cutout is produced from that
+   character's card art by the standard rembg pipeline
+   (u2net_human_seg, 560x1540 canvas, same placement as the
+   idol / paradise cutouts), so a costume picked in the
+   formation now changes the home figure for everyone. */
+["momona","akari","kaede","nana","misa"].forEach(function(cid){
+  ["R0","R1","R2","R3","R4","R5","R6","R7","SR0","SR1","SR2","SR3","SR4","SR5","UR0","UR1","UR2","LTD"].forEach(function(r){COSTCUTS[cid+"-"+r]=1;});
+});
+["kenji","saki","yuna","camera","staff"].forEach(function(cid){
+  ["R0","R1","SR0"].forEach(function(r){COSTCUTS[cid+"-"+r]=1;});
+});
+function formCostCut(cardId){
+  if(!cardId||!COSTCUTS[cardId])return null;
+  return "assets/cost_"+cardId.toLowerCase().replace("-","_")+".webp";
+}
+function formCardObj(cardId){for(var i=0;i<CARDS.length;i++)if(CARDS[i].id===cardId)return CARDS[i];return null;}
+function cardsOfChar(cid){var out=[];for(var i=0;i<CARDS.length;i++)if(CARDS[i].char===cid)out.push(CARDS[i]);return out;}
+function formCostOf(slot){return (S.formCard&&S.formCard[slot])||"";}
+function formSlotArt(slot,cid){
+  var cc=formCostOf(slot);
+  if(cc&&CARDART[cc])return CARDART[cc];
+  return "assets/char_"+cid+".webp";
+}
+function formArtFor(slot,char){
+  if(slot)return formSlotArt(slot,char);
+  var pk=formCostPick[char];
+  if(pk&&CARDART[pk])return CARDART[pk];
+  return "assets/char_"+char+".webp";
+}
+function formCostTag(slot){
+  var cc=formCostOf(slot); if(!cc)return "";
+  var co=formCardObj(cc); if(!co)return "";
+  return '<span class="fs-cost">衣装：'+co.title+'</span>';
+}
+function formCostTarget(){
+  if(!formSel)return null;
+  if(formSel.type==="chip")return {char:formSel.char,slot:null};
+  if(formSel.type==="slot"&&formSel.char)return {char:formSel.char,slot:formSel.slot};
+  return null;
+}
+function formCostCurrent(t){
+  if(t.slot)return formCostOf(t.slot);
+  if(formCostPick[t.char]!==undefined)return formCostPick[t.char];
+  var pk=null; FORM_KEYS.forEach(function(k){if(S.form[k]===t.char)pk=k;});
+  return pk?formCostOf(pk):"";
+}
+function formCostBarHTML(){
+  var t=formCostTarget(); if(!t)return "";
+  var c=formCharObj(t.char), cur=formCostCurrent(t);
+  var opts=cardsOfChar(t.char).map(function(k){
+    var art=CARDART[k.id]||("assets/char_"+t.char+".webp");
+    return '<button type="button" class="form-cost'+(cur===k.id?" sel":"")+'" data-cost="'+k.id+'" aria-label="'+c.name+'の衣装：'+k.title+'（'+(k.limited?"限定":k.rar)+'）"><img src="'+art+'" alt="" draggable="false" onerror="this.onerror=null;this.src=\'assets/char_'+t.char+'.webp\'"><span class="fc-rar r'+k.rar+'">'+(k.limited?"限定":k.rar)+'</span><span class="fc-ttl">'+k.title+'</span></button>';
+  }).join("");
+  return '<div class="form-cost-h">'+c.name+' の衣装<small>タップで着替え ― 編成の枠とホームの立ち姿に反映されます</small></div><div class="form-costs">'
+    +'<button type="button" class="form-cost'+(cur===""?" sel":"")+'" data-cost="" aria-label="'+c.name+'の衣装：いつもの姿"><img src="assets/char_'+t.char+'.webp" alt="" draggable="false"><span class="fc-rar rD">標準</span><span class="fc-ttl">いつもの姿</span></button>'
+    +opts+'</div>';
+}
+/* tapping a costume : dress the selected slot at once, or — for
+   a selected pool chip — remember the pick and dress the slot
+   the member already sits in (placement applies it too). */
+document.addEventListener("click",function(e){
+  var el=(e.target&&e.target.closest)?e.target.closest(".form-cost"):null;
+  if(!el)return;
+  var t=formCostTarget(); if(!t)return;
+  if(!S.formCard)S.formCard={};
+  var cardId=el.getAttribute("data-cost")||"";
+  formCostPick[t.char]=cardId;
+  var applied=null;
+  if(t.slot)applied=t.slot;
+  else FORM_KEYS.forEach(function(k){if(S.form[k]===t.char)applied=k;});
+  if(applied){ if(cardId)S.formCard[applied]=cardId; else delete S.formCard[applied]; }
+  renderAll();
+  var co=formCardObj(cardId), nm=co?co.title:"いつもの姿";
+  toast(applied?("衣装を「"+nm+"」に変更しました"):("衣装は「"+nm+"」で配置されます"));
+});
+/* costumes follow their member through swaps and placements :
+   wrap the drop so S.formCard moves exactly like S.form does */
+var _fda114=formDropApply;
+formDropApply=function(d,target){
+  if(!S.formCard)S.formCard={};
+  var curBefore=null;
+  if(!d.slot)FORM_KEYS.forEach(function(k){if(S.form[k]===d.char)curBefore=k;});
+  function swapCost(a,b){
+    if(a===b)return;
+    var t=S.formCard[a];
+    if(S.formCard[b])S.formCard[a]=S.formCard[b]; else delete S.formCard[a];
+    if(t)S.formCard[b]=t; else delete S.formCard[b];
+  }
+  /* costume bookkeeping runs BEFORE the original drop, whose
+     renderAll then paints the already-swapped state : swapping
+     the costume map first makes each costume follow its member
+     through the character swap the original performs */
+  if(d.slot)swapCost(d.slot,target);
+  else if(curBefore&&curBefore!==target)swapCost(curBefore,target);
+  else if(!curBefore){
+    /* a fresh placement starts from the member's standard look,
+       unless a costume was picked for them in the bar */
+    if(formCostPick[d.char])S.formCard[target]=formCostPick[d.char];
+    else delete S.formCard[target];
+  }
+  _fda114(d,target);
+};
+/* setOshi swaps the centre member with a side slot : the
+   costumes travel with their members there too */
+if(typeof setOshi==="function"){
+  var _so114=setOshi;
+  setOshi=function(id){
+    var k=null; ["back0","back1","front0","front1"].forEach(function(x){if(S.form[x]===id)k=x;});
+    if(k&&S.formCard){
+      /* swap the costume map first (the original swaps the
+         members and re-renders) so costumes follow members */
+      var t=S.formCard[k];
+      if(S.formCard.center)S.formCard[k]=S.formCard.center; else delete S.formCard[k];
+      if(t)S.formCard.center=t; else delete S.formCard.center;
+    }
+    _so114(id);
+  };
+}
+/* home collage : a member dressed in a costume with a prepared
+   cutout (assets/cost_*.webp, 560x1540 like the full bodies)
+   stands in that costume instead of the standard full body */
+if(typeof renderFeatured==="function"){
+  var _rf114=renderFeatured;
+  renderFeatured=function(){
+    _rf114();
+    try{
+      var host=$("collage"); if(!host||!S.formCard)return;
+      var order=["back0","back1","front0","front1","center"];
+      var btns=host.querySelectorAll(".cutbtn");
+      for(var i=0;i<btns.length&&i<order.length;i++){
+        var cut=formCostCut(S.formCard[order[i]]);
+        if(!cut)continue;
+        var img=btns[i].querySelector("img"); if(!img)continue;
+        img.src=cut; img.setAttribute("width","560"); img.setAttribute("height","1540");
+        img.classList.add("ld");
+      }
+    }catch(e){}
+  };
+  try{renderFeatured();}catch(e){}
+}
+</script>
+<style>
+/* ============================================================
+   v117 — GACHA RESULTS GET A DEDICATED SCREEN (user report :
+   結果が分かりづらい). Results used to be squeezed inline
+   under the machine — banner copy, rate pills and the rates
+   fold all stayed on screen, the grid was crushed and names
+   were cut off, and costume variants of the same person were
+   indistinguishable. Now finishReveal opens a full-screen
+   result screen : a big rarity / NEW / duplicate summary up
+   top, every card in its own scrollable grid with the person
+   name and the costume (card) name in full — no ellipsis —
+   a large rarity badge, and the rates fold reachable only
+   from here (button) or after closing.
+   ============================================================ */
+.gres{position:fixed;inset:0;z-index:320;display:none;background:linear-gradient(180deg,#241145,#150a2c 55%,#0d0618)}
+.gres.on{display:block}
+.gres-in{display:flex;flex-direction:column;height:100%;width:100%;max-width:430px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+.gres-title{font-size:24px;font-weight:900;color:#fff;letter-spacing:.04em;margin:2px 0 0}
+.gres-sub{font-size:12px;font-weight:700;color:rgba(255,255,255,.65);margin:3px 0 0}
+.gres-sum{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0 4px}
+.gsum{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:900;color:#fff;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.25);border-radius:99px;padding:5px 13px}
+.gsum b{font-size:20px;line-height:1}
+.gsum.ur{border-color:#ff5c9e;color:#ffb9d4;background:rgba(212,36,110,.22)}
+.gsum.sr{border-color:#ffd23f;color:#ffe9a8;background:rgba(201,147,10,.22)}
+.gsum.r{border-color:#7d94e8;color:#c3d2ff;background:rgba(91,110,225,.22)}
+.gsum.new{border-color:#ff5c7a;color:#ffc2cd;background:rgba(255,43,84,.22)}
+.gsum.ltd{border-color:#ff8ad4;color:#ffd3ef;background:rgba(255,92,180,.2)}
+.gsum.dup{border-color:#ffd97a;color:#ffe9a8;background:rgba(255,217,122,.14)}
+.gres-grid{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:242px;gap:10px;padding:10px 2px 12px;align-content:start}
+.grc{position:relative;height:242px;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:#241243;border:1.5px solid rgba(255,255,255,.18);animation:grcIn .4s both}
+.grc.f-SR{border-color:rgba(255,210,63,.75)}
+.grc.f-UR{border-color:#ff5c9e;box-shadow:0 0 18px rgba(255,92,158,.45)}
+.grc.best{box-shadow:0 0 0 2px rgba(255,210,63,.9),0 0 26px rgba(255,180,40,.6)}
+.grc img{flex:none;width:100%;height:148px;object-fit:cover;object-position:50% 10%;display:block;background:#1a0b30}
+.grc-rar{position:absolute;top:7px;left:7px;z-index:2;font-size:19px;font-weight:900;line-height:1;padding:5px 11px;border-radius:9px;color:#fff;background:#5b6ee1;box-shadow:0 3px 8px rgba(0,0,0,.45)}
+.grc-rar.rSR{background:linear-gradient(180deg,#ffdf6b,#c9930a);color:#3a2703}
+.grc-rar.rUR{background:linear-gradient(90deg,#ff5c9e,#b49aff,#7ce7ff);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.grc-new{position:absolute;top:7px;right:7px;z-index:2;font-size:11px;font-weight:900;color:#fff;background:#ff2b54;border-radius:99px;padding:4px 9px;box-shadow:0 3px 8px rgba(0,0,0,.45)}
+.grc-best{position:absolute;top:38px;right:7px;z-index:2;font-size:10.5px;font-weight:900;color:#1d0f38;background:linear-gradient(180deg,#fff6d8,#ffd23f);border-radius:99px;padding:3px 8px;box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.grc-tx{flex:1 1 auto;min-height:0;padding:8px 10px 10px}
+.grc-nm{font-size:15.5px;font-weight:900;color:#fff;line-height:1.35;white-space:normal;overflow:visible}
+.grc-ttl{font-size:13px;font-weight:800;color:#ffd97a;line-height:1.45;margin-top:2px;white-space:normal;overflow:visible}
+.grc-sub{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.6);margin-top:4px;line-height:1.5;white-space:normal}
+.grc-dup{color:#ffe9a8;font-weight:900}
+.gres-btns{flex:none;display:flex;gap:9px;padding-top:10px}
+.gres-btns .btn{flex:1 1 0;min-height:52px;font-size:15px}
+@keyframes grcIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.grc{animation:none}}
+</style>
+<script>
+/* ================================================================
+   v117 — DEDICATED GACHA RESULT SCREEN. finishReveal still
+   does the bookkeeping (cleanup, message line, renderAll) ;
+   this wrapper then clears the old inline grid — the squeezed
+   one from the report — and opens the full-screen results.
+   Per-card duplicate flags are rebuilt from RV.news : the
+   first occurrence of a newly owned id is NEW, everything
+   else in the pull is a duplicate that became material stock.
+   ================================================================ */
+function gresCardHTML(cd2,isNew,best){
+  var c=charOf(cd2.char), d=cardData(cd2);
+  var art=(typeof CARDART!=="undefined"&&CARDART[cd2.id])?CARDART[cd2.id]:("assets/char_"+cd2.char+".webp");
+  return '<div class="grc f-'+cd2.rar+(best?" best":"")+'">'
+    +'<span class="grc-rar r'+cd2.rar+'">'+(cd2.limited?"限定":cd2.rar)+'</span>'
+    +(isNew?'<span class="grc-new">NEW</span>':"")
+    +(best?'<span class="grc-best">★ 本命</span>':"")
+    +'<img src="'+art+'" alt="'+c.name+'「'+cd2.title+'」" loading="lazy" onerror="this.onerror=null;this.src=\'assets/char_'+cd2.char+'.webp\'">'
+    +'<div class="grc-tx"><div class="grc-nm">'+c.name+'</div>'
+    +'<div class="grc-ttl">'+cd2.title+'</div>'
+    +'<div class="grc-sub">'+d.no+' ・ '+(cd2.limited?"限定":cd2.rar)+(isNew?"":" ・ <b class=\"grc-dup\">被り → 素材ストックへ</b>")+'</div></div></div>';
+}
+function openGachaResults(){
+  var res=(typeof RV!=="undefined"&&RV.res)||[], news=(typeof RV!=="undefined"&&RV.news)||[];
+  if(!res.length)return;
+  var cnt={R:0,SR:0,UR:0}; res.forEach(function(x){cnt[x.rar]++;});
+  var ltd=res.filter(function(x){return x.limited;}).length;
+  $("gresSub").textContent=($("gachaTitle")?$("gachaTitle").textContent.replace(/^📸 /,""):"ガチャ")+" ・ "+res.length+"枚の結果";
+  $("gresSum").innerHTML='<span class="gsum ur">UR <b>×'+cnt.UR+'</b></span><span class="gsum sr">SR <b>×'+cnt.SR+'</b></span><span class="gsum r">R <b>×'+cnt.R+'</b></span>'
+    +'<span class="gsum new">NEW <b>×'+news.length+'</b></span>'
+    +(ltd?'<span class="gsum ltd">限定 <b>×'+ltd+'</b></span>':"")
+    +(RV.gains>0?'<span class="gsum dup">被り <b>×'+RV.gains+'</b> → 素材ストックへ</span>':"");
+  var rk={R:0,SR:1,UR:2}, bIdx=-1;
+  if(res.length>1){var mx=-1; res.forEach(function(x,i){if(rk[x.rar]>=mx){mx=rk[x.rar]; bIdx=i;}});}
+  var seen={};
+  $("gresGrid").innerHTML=res.map(function(cd2,i){
+    var isNew=news.indexOf(cd2.id)>=0&&!seen[cd2.id]; seen[cd2.id]=1;
+    return gresCardHTML(cd2,isNew,i===bIdx);
+  }).join("");
+  /* stagger the entrance via animation-delay on the cards */
+  var cards=$("gresGrid").querySelectorAll(".grc");
+  for(var i=0;i<cards.length;i++)cards[i].style.animationDelay=(i*0.07)+"s";
+  var ov=$("gachaResults"); ov.classList.add("on"); ov.setAttribute("aria-hidden","false");
+  var grid=$("gresGrid"); if(grid)grid.scrollTop=0;
+}
+function closeGachaResults(){
+  var ov=$("gachaResults"); if(!ov)return;
+  ov.classList.remove("on"); ov.setAttribute("aria-hidden","true");
+}
+document.addEventListener("click",function(e){
+  if(!e.target)return;
+  if(e.target.id==="gresClose")closeGachaResults();
+  if(e.target.id==="gresRates"){
+    closeGachaResults();
+    var f=$("ratesFold");
+    if(f){f.open=true; setTimeout(function(){try{f.scrollIntoView({behavior:"smooth",block:"start"});}catch(err){}},50);}
+  }
+});
+if(typeof finishReveal==="function"){
+  var _fr117=finishReveal;
+  finishReveal=function(){
+    _fr117();
+    var gr=$("gachaResult"); if(gr)gr.innerHTML="";
+    openGachaResults();
+  };
+}
+</script>
+<style>
+/* ============================================================
+   v116 — COSTUME AFFORDANCE (user report : やり方が分からない).
+   Selecting a member to open the costume bar was invisible :
+   nothing on a slot or a chip said it could be tapped, let
+   alone that costumes lived there. Every occupied slot, every
+   pool chip and every sticky-strip mini now carries an
+   always-visible gold 衣装 button, and the bar itself states
+   whose costume it is, asks for a pick, and names the costume
+   currently on.
+   ============================================================ */
+.form-costbtn{display:block;width:100%;margin-top:4px;padding:4px 2px;font-family:inherit;font-size:10.5px;font-weight:900;letter-spacing:.06em;color:#1d0f38;background:linear-gradient(180deg,#fff6d8,#ffd23f);border:1.5px solid #ffdf7e;border-radius:99px;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 2px 6px rgba(0,0,0,.35);line-height:1.25}
+.form-costbtn:active{transform:scale(.94)}
+.form-costbtn.mini{font-size:8.5px;padding:2px 1px;margin-top:2px;letter-spacing:.02em}
+.form-cost{position:relative}
+.fc-now{position:absolute;top:-7px;right:-5px;font-size:8px;font-weight:900;color:#1d0f38;background:linear-gradient(180deg,#fff6d8,#ffd23f);border:1px solid #ffdf7e;border-radius:99px;padding:2px 6px;box-shadow:0 2px 5px rgba(0,0,0,.45);pointer-events:none}
+.form-cost-h b{color:#ffd97a}
+</style>
+<script>
+/* ================================================================
+   v116 — COSTUME BUTTONS + A BAR THAT SAYS WHAT TO DO.
+   ================================================================ */
+function formCostBtnHTML(slot,char,mini){
+  return '<button type="button" class="form-costbtn'+(mini?" mini":"")+'" data-cslot="'+(slot||"")+'" data-cchar="'+char+'" aria-label="'+formCharObj(char).name+'の衣装を着替える">👗 衣装</button>';
+}
+/* a press that starts on the costume button belongs to the
+   button : never arm the slot / chip drag-or-tap press for it */
+document.addEventListener("pointerdown",function(e){
+  var b=(e.target&&e.target.closest)?e.target.closest(".form-costbtn"):null;
+  if(b)e.stopPropagation();
+},true);
+/* tap the 衣装 button : select that member (never a toggle —
+   the bar is the goal), refresh the bar, and bring it on screen */
+document.addEventListener("click",function(e){
+  var b=(e.target&&e.target.closest)?e.target.closest(".form-costbtn"):null;
+  if(!b)return;
+  var slot=b.getAttribute("data-cslot")||"", ch=b.getAttribute("data-cchar")||"";
+  if(!ch)return;
+  formSel=slot?{type:"slot",slot:slot,char:ch}:{type:"chip",char:ch};
+  formSelRefresh();
+  var cb=$("formCostBar");
+  if(cb)setTimeout(function(){try{cb.scrollIntoView({behavior:"smooth",block:"nearest"});}catch(err){}},40);
+});
+/* the bar's heading, rewritten : whose costume, what to do,
+   and which costume is on now — plus a 選択中 badge on the
+   costume that is currently worn */
+formCostBarHTML=function(){
+  var t=formCostTarget(); if(!t)return "";
+  var c=formCharObj(t.char), cur=formCostCurrent(t);
+  var co=cur?formCardObj(cur):null;
+  var curName=co?("「"+co.title+"」（"+(co.limited?"限定":co.rar)+"）"):"いつもの姿";
+  function badge(on){return on?'<span class="fc-now">選択中</span>':"";}
+  var opts=cardsOfChar(t.char).map(function(k){
+    var art=CARDART[k.id]||("assets/char_"+t.char+".webp");
+    return '<button type="button" class="form-cost'+(cur===k.id?" sel":"")+'" data-cost="'+k.id+'" aria-label="'+c.name+'の衣装：'+k.title+'（'+(k.limited?"限定":k.rar)+'）">'+badge(cur===k.id)+'<img src="'+art+'" alt="" draggable="false" onerror="this.onerror=null;this.src=\'assets/char_'+t.char+'.webp\'"><span class="fc-rar r'+k.rar+'">'+(k.limited?"限定":k.rar)+'</span><span class="fc-ttl">'+k.title+'</span></button>';
+  }).join("");
+  return '<div class="form-cost-h">'+c.name+' の衣装を選んでください<small>選択中：<b>'+curName+'</b> ・ タップで着替え ― 編成の枠とホームの立ち姿に反映されます</small></div><div class="form-costs">'
+    +'<button type="button" class="form-cost'+(cur===""?" sel":"")+'" data-cost="" aria-label="'+c.name+'の衣装：いつもの姿">'+badge(cur==="")+'<img src="assets/char_'+t.char+'.webp" alt="" draggable="false"><span class="fc-rar rD">標準</span><span class="fc-ttl">いつもの姿</span></button>'
+    +opts+'</div>';
+};
+/* the formation may already be on screen : repaint so the
+   buttons and the new bar wording are there from the start */
+try{renderFormation();}catch(e){}
 </script>
 <style>
 /* ============================================================
@@ -17973,7 +18553,7 @@ function fmtN(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",");}
 
 /* ---------- save / load ---------- */
 var SAVE_KEY="paranovel_save_v1";
-var SAVE_FIELDS=["coin","coinPaid","pt","rankPt","playerName","owned","lv","dupStock","deck","endings","extraDone","extra2Done","scene","extraScene","flags","selected","started","bonusClaimed","missionsClaimed","shopOwned","readScenes","log","skipMode","pulls","cardViews","wallpapers","shots","clues","clueTried","mapDone","mapVisited","obWins","obLosses","obStreak","obDraws","form","oshi","purchases"];
+var SAVE_FIELDS=["coin","coinPaid","pt","rankPt","playerName","owned","lv","dupStock","deck","endings","extraDone","extra2Done","scene","extraScene","flags","selected","started","bonusClaimed","missionsClaimed","shopOwned","readScenes","log","skipMode","pulls","cardViews","wallpapers","shots","clues","clueTried","mapDone","mapVisited","obWins","obLosses","obStreak","obDraws","form","formCard","oshi","purchases"];
 var SAVE_VN=null, RESUME_PENDING=false;
 function saveGame(){
   try{
