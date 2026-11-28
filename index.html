@@ -12479,8 +12479,8 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 .cutbtn{transition:left .38s ease,right .38s ease,top .38s ease,bottom .38s ease,width .38s ease,height .38s ease}
 /* ---------- shared : stage-anchored labels ---------- */
 .cut-name.lbl{left:auto;right:auto;top:auto;bottom:auto;transform:none;z-index:7}
-.stage-home .lbl-p0{top:38px;left:16px}
-.stage-home .lbl-p1{top:38px;right:16px}
+.stage-home .lbl-p0{top:38px;left:10px}
+.stage-home .lbl-p1{top:38px;right:10px}
 .stage-home .lbl-p2{bottom:10px;left:16px}
 .stage-home .lbl-p3{bottom:10px;right:16px}
 .stage-home .lbl-main{bottom:10px;left:50%;transform:translateX(-50%);font-size:12px;padding:4px 13px;
@@ -12523,24 +12523,42 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
    of the box height (offsets precomputed from the two
    geometries). */
 .stage-home.pat-a .cutbtn img{position:absolute;max-width:none;height:auto}
-.stage-home.pat-a .cut-main{left:30%;right:auto;top:10%;bottom:auto;width:44%;height:86%;transform:none;z-index:4}
-.stage-home.pat-a .cut-main img{left:-41%;top:0;width:174%}
-.stage-home.pat-a .cut-p0{left:1%;right:auto;top:8%;bottom:auto;width:20%;height:26%;z-index:2}
-.stage-home.pat-a .cut-p0 img{left:2.5%;top:3.8%;width:297.5%}
-.stage-home.pat-a .cut-p1{left:73%;right:auto;top:8%;bottom:auto;width:22%;height:26%;z-index:2}
-.stage-home.pat-a .cut-p1 img{left:-104.5%;top:3.8%;width:218.2%}
-.stage-home.pat-a .cut-p2{left:1%;right:auto;top:44%;bottom:auto;width:30%;height:34%;z-index:6}
-.stage-home.pat-a .cut-p2 img{left:1.7%;top:-2.9%;width:201.7%}
-.stage-home.pat-a .cut-p3{left:66%;right:auto;top:46%;bottom:auto;width:30%;height:34%;z-index:6}
-.stage-home.pat-a .cut-p3 img{left:-50%;top:-2.9%;width:156.7%}
+.stage-home.pat-a .cut-main{left:30%;right:auto;top:2.5%;bottom:auto;width:44%;height:86%;transform:none;z-index:4}
+.stage-home.pat-a .cut-main img{left:-48%;top:0;width:188%}
+.stage-home.pat-a .cut-p0{left:1%;right:auto;top:0.5%;bottom:auto;width:20%;height:26%;z-index:2}
+.stage-home.pat-a .cut-p0 img{left:6.5%;top:3.8%;width:327%}
+.stage-home.pat-a .cut-p1{left:69%;right:auto;top:0.5%;bottom:auto;width:22%;height:26%;z-index:2}
+.stage-home.pat-a .cut-p1 img{left:-102.5%;top:3.8%;width:235.5%}
+.stage-home.pat-a .cut-p2{left:1%;right:auto;top:37.5%;bottom:auto;width:30%;height:34%;z-index:6}
+.stage-home.pat-a .cut-p2 img{left:0%;top:-2.9%;width:222%}
+.stage-home.pat-a .cut-p3{left:66%;right:auto;top:39.3%;bottom:auto;width:30%;height:34%;z-index:6}
+.stage-home.pat-a .cut-p3 img{left:-66.5%;top:-2.9%;width:172%}
 .stage-home.pat-a .cutbtn::after{display:none}
 /* ---------- pattern B : 全身 (screenshot measured) ---------- */
-.stage-home.pat-b .cut-main{left:50%;right:auto;top:auto;bottom:2%;width:auto;height:94%;transform:translateX(-50%);z-index:4}
-.stage-home.pat-b .cut-p0{left:3%;right:auto;top:6.5%;bottom:auto;width:auto;height:36%;z-index:2}
-.stage-home.pat-b .cut-p1{left:auto;right:3%;top:5.5%;bottom:auto;width:auto;height:35%;z-index:2}
-.stage-home.pat-b .cut-p2{left:2.5%;right:auto;top:auto;bottom:2%;width:auto;height:58%;z-index:6}
-.stage-home.pat-b .cut-p3{left:auto;right:2.5%;top:auto;bottom:2%;width:auto;height:58%;z-index:6}
+.stage-home.pat-b .cut-main{left:50%;right:auto;top:auto;bottom:1.5%;width:auto;height:96%;transform:translateX(-50%);z-index:4}
+.stage-home.pat-b .cut-p0{left:3%;right:auto;top:2.5%;bottom:auto;width:auto;height:38%;z-index:2}
+.stage-home.pat-b .cut-p1{left:auto;right:3%;top:2%;bottom:auto;width:auto;height:37%;z-index:2}
+.stage-home.pat-b .cut-p2{left:2.5%;right:auto;top:auto;bottom:1.5%;width:auto;height:60%;z-index:6}
+.stage-home.pat-b .cut-p3{left:auto;right:2.5%;top:auto;bottom:1.5%;width:auto;height:60%;z-index:6}
 .stage-home.pat-b .cutbtn img{width:auto;height:100%}
+/* ---------- v52 : kill the backdrop-only band at the stage top ----------
+   On the real device a band of bare backdrop (curtains + spotlights
+   only) survived above the back row in BOTH patterns — the back
+   heads sat ~10% of the hero height below the top edge in pat-a
+   (~6-7% in pat-b). Both patterns now pack up and scale up :
+   pat-a slot tops 8/8/10/44/46% -> 0.5/0.5/2.5/37.5/39.3% with img
+   widths x~1.08-1.10, so the back heads land ~2-3% under the top
+   edge, the centre and front rows rise with them, and every figure
+   still bleeds past the bottom edge (no new blank below). The side
+   crops were also pulled inboard while scaling : the left member's
+   outstretched hand and the right member's dress hem now end
+   inside the stage edges instead of on them. pat-b : back tops
+   6.5/5.5% -> 2.5/2%, heights 36/35% -> 38/37%, centre 94% -> 96%
+   and the front row 58% -> 60% with bottoms at 1.5%, so feet stay
+   on stage. The corner name pills stay at top:16px, fully inside
+   the stage ; at the new head heights they can graze hair at the
+   extreme corners but never reach a face (faces start ~15% of the
+   hero height below the head tops in pat-a). */
 /* ---------- v50 : pack the collage up, pull the sides in ----------
    The toggle moved into the ticker row, freeing a row of height :
    both patterns now start higher and spend the freed height on
