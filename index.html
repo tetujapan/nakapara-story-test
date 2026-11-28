@@ -12102,23 +12102,27 @@ footer{display:none}
 #v-home .news{padding:2px 12px}
 #v-home .news div{padding:4px 0;font-size:11px;line-height:1.45}
 
-/* ---------- STORY top : slim cover, clamped synopsis, one-row shelf ---------- */
+/* ---------- STORY top : resume card, cover, synopsis, tools, folds, shelf
+   stack in order and the view scrolls — the old squeeze-to-one-screen
+   flex (flex:0 1 auto on the first section + overflow hidden) crushed
+   the resume card until its buttons were hidden under the synopsis,
+   and the 104px cover strip cropped the art to a band of forehead/eyes. */
+#v-story.on{overflow-y:auto;overflow-x:hidden}
 #v-story>section{flex:none;margin-top:7px!important}
-#v-story>section:first-child{flex:0 1 auto}
-#v-story .nowcover .face{height:104px}
-#v-story .nowcover .nc-t{padding:6px 12px 7px}
-#v-story .nowcover .nc-t h2{font-size:15.5px;line-height:1.3}
-#v-story .nowcover .nc-t .vol{font-size:8.5px}
-#v-story .synopsis{padding:7px 12px;margin-top:6px}
-#v-story .synopsis h3{font-size:12.5px}
-#v-story .synopsis p{font-size:11px;line-height:1.55;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-#v-story .synopsis .prog{margin-top:4px;font-size:10px}
-#v-story .story-tools{margin-top:6px}
-#v-story .story-tools .btn{min-height:38px;padding:6px 8px;font-size:11.5px}
+#v-story .nowcover .face{height:212px}
+#v-story .nowcover .nc-t{padding:8px 12px 9px}
+#v-story .nowcover .nc-t h2{font-size:16.5px;line-height:1.35}
+#v-story .nowcover .nc-t .vol{font-size:9px}
+#v-story .synopsis{padding:10px 12px;margin-top:8px}
+#v-story .synopsis h3{font-size:13px}
+#v-story .synopsis p{font-size:11.5px;line-height:1.65;margin-top:4px}
+#v-story .synopsis .prog{margin-top:6px;font-size:10.5px}
+#v-story .story-tools{margin-top:8px}
+#v-story .story-tools .btn{min-height:42px;padding:6px 8px;font-size:12px}
 body:not(.vn-playing) #storyRoot{display:none!important}
-#v-story .fold{padding-bottom:7px}
-#v-story .fold>div{max-height:26dvh;overflow-y:auto}
-#v-story .gallery{max-height:24dvh}
+#v-story .fold{padding-bottom:9px}
+#v-story .fold>div{max-height:none;overflow:visible}
+#v-story .gallery{max-height:none}
 #bookShelfSec .sec-head{margin-bottom:5px}
 #bookShelfSec .sec-head h2{font-size:14px}
 
@@ -19023,7 +19027,7 @@ function renderResumeBox(){
   }catch(e){}
   if(!label){ box.hidden=true; box.innerHTML=""; return; }
   box.hidden=false;
-  box.innerHTML='<div class="resume-card"><b>📖 つづきがあります</b><p>'+label+' まで読んでいます（進行は自動で保存されます）</p><div class="btnrow"><button type="button" class="btn gold" id="resumeGo" style="flex:1">▶ つづきから読む</button><button type="button" class="btn ghost" id="resumeReset">最初から</button></div></div>';
+  box.innerHTML='<div class="resume-card"><b>📖 つづきがあります</b><p>'+label+' まで読んでいます（進行は自動で保存されます）</p><div class="btnrow"><button type="button" class="btn gold" id="resumeGo" style="flex:1;white-space:nowrap;padding-left:8px;padding-right:8px">▶ つづきから読む</button><button type="button" class="btn ghost" id="resumeReset" style="flex:1">最初から</button></div></div>';
   $("resumeGo").addEventListener("click",function(){ if(window.openBook)openBook("momona"); });
   $("resumeReset").addEventListener("click",function(){
     SAVE_VN=null; S.scene=1; saveGame(); renderResumeBox();
