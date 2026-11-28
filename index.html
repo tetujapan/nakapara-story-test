@@ -12479,10 +12479,10 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 .cutbtn{transition:left .38s ease,right .38s ease,top .38s ease,bottom .38s ease,width .38s ease,height .38s ease}
 /* ---------- shared : stage-anchored labels ---------- */
 .cut-name.lbl{left:auto;right:auto;top:auto;bottom:auto;transform:none;z-index:7}
-.stage-home .lbl-p0{top:38px;left:10px}
-.stage-home .lbl-p1{top:38px;right:10px}
-.stage-home .lbl-p2{bottom:10px;left:10px}
-.stage-home .lbl-p3{bottom:10px;right:10px}
+.stage-home .lbl-p0{top:38px;left:16px}
+.stage-home .lbl-p1{top:38px;right:16px}
+.stage-home .lbl-p2{bottom:10px;left:16px}
+.stage-home .lbl-p3{bottom:10px;right:16px}
 .stage-home .lbl-main{bottom:10px;left:50%;transform:translateX(-50%);font-size:12px;padding:4px 13px;
   background:linear-gradient(180deg,#3a2568,#1d0f38);border-color:#ffd97a;color:#ffe9a8}
 /* ---------- the pattern toggle : a two-segment switch at the
@@ -12523,24 +12523,41 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
    of the box height (offsets precomputed from the two
    geometries). */
 .stage-home.pat-a .cutbtn img{position:absolute;max-width:none;height:auto}
-.stage-home.pat-a .cut-main{left:30%;right:auto;top:14%;bottom:auto;width:44%;height:86%;transform:none;z-index:4}
-.stage-home.pat-a .cut-main img{left:-38.6%;top:0;width:168.2%}
-.stage-home.pat-a .cut-p0{left:0;right:auto;top:13%;bottom:auto;width:20%;height:26%;z-index:2}
-.stage-home.pat-a .cut-p0 img{left:-45%;top:3.8%;width:295%}
-.stage-home.pat-a .cut-p1{left:74%;right:auto;top:13%;bottom:auto;width:22%;height:26%;z-index:2}
-.stage-home.pat-a .cut-p1 img{left:-54.5%;top:3.8%;width:222.7%}
-.stage-home.pat-a .cut-p2{left:0;right:auto;top:49%;bottom:auto;width:30%;height:34%;z-index:6}
-.stage-home.pat-a .cut-p2 img{left:-36.7%;top:-2.9%;width:203.3%}
-.stage-home.pat-a .cut-p3{left:68%;right:auto;top:51%;bottom:auto;width:30%;height:34%;z-index:6}
-.stage-home.pat-a .cut-p3 img{left:-46.7%;top:-2.9%;width:160%}
+.stage-home.pat-a .cut-main{left:30%;right:auto;top:10%;bottom:auto;width:44%;height:86%;transform:none;z-index:4}
+.stage-home.pat-a .cut-main img{left:-41%;top:0;width:174%}
+.stage-home.pat-a .cut-p0{left:1%;right:auto;top:8%;bottom:auto;width:20%;height:26%;z-index:2}
+.stage-home.pat-a .cut-p0 img{left:2.5%;top:3.8%;width:297.5%}
+.stage-home.pat-a .cut-p1{left:73%;right:auto;top:8%;bottom:auto;width:22%;height:26%;z-index:2}
+.stage-home.pat-a .cut-p1 img{left:-104.5%;top:3.8%;width:218.2%}
+.stage-home.pat-a .cut-p2{left:1%;right:auto;top:44%;bottom:auto;width:30%;height:34%;z-index:6}
+.stage-home.pat-a .cut-p2 img{left:1.7%;top:-2.9%;width:201.7%}
+.stage-home.pat-a .cut-p3{left:66%;right:auto;top:46%;bottom:auto;width:30%;height:34%;z-index:6}
+.stage-home.pat-a .cut-p3 img{left:-50%;top:-2.9%;width:156.7%}
 .stage-home.pat-a .cutbtn::after{display:none}
 /* ---------- pattern B : 全身 (screenshot measured) ---------- */
-.stage-home.pat-b .cut-main{left:50%;right:auto;top:auto;bottom:7%;width:auto;height:86%;transform:translateX(-50%);z-index:4}
-.stage-home.pat-b .cut-p0{left:4%;right:auto;top:13%;bottom:auto;width:auto;height:26%;z-index:2}
-.stage-home.pat-b .cut-p1{left:auto;right:4%;top:11%;bottom:auto;width:auto;height:25%;z-index:2}
-.stage-home.pat-b .cut-p2{left:3%;right:auto;top:auto;bottom:5%;width:auto;height:49%;z-index:6}
-.stage-home.pat-b .cut-p3{left:auto;right:3%;top:auto;bottom:4%;width:auto;height:49%;z-index:6}
+.stage-home.pat-b .cut-main{left:50%;right:auto;top:auto;bottom:2%;width:auto;height:94%;transform:translateX(-50%);z-index:4}
+.stage-home.pat-b .cut-p0{left:3%;right:auto;top:6.5%;bottom:auto;width:auto;height:36%;z-index:2}
+.stage-home.pat-b .cut-p1{left:auto;right:3%;top:5.5%;bottom:auto;width:auto;height:35%;z-index:2}
+.stage-home.pat-b .cut-p2{left:2.5%;right:auto;top:auto;bottom:2%;width:auto;height:58%;z-index:6}
+.stage-home.pat-b .cut-p3{left:auto;right:2.5%;top:auto;bottom:2%;width:auto;height:58%;z-index:6}
 .stage-home.pat-b .cutbtn img{width:auto;height:100%}
+/* ---------- v50 : pack the collage up, pull the sides in ----------
+   The toggle moved into the ticker row, freeing a row of height :
+   both patterns now start higher and spend the freed height on
+   bigger figures (pat-a tops 14/13/49/51% -> 10/8/44/46% with
+   slightly wider crops ; pat-b heights 86/26/25/49% -> 94/36/35/
+   58% with tighter top/bottom margins), so no backdrop band is
+   left above or below the cast. The side figures no longer bleed
+   off the left/right stage edges — their crops now span roughly
+   1.5-98% of the stage width — and the corner name labels sit
+   16px in from the edges. Also : #v-home must never be a scroll
+   container. Its full-bleed stage overflows the view box by the
+   wrap padding, so tapping the toggle (or a figure) focus-
+   scrolled the whole home view ~9px sideways and clipped the
+   left-hand labels on the real device ; overflow:clip ends
+   that, and the focusin reset in the toggle script covers
+   engines without clip support. */
+#v-home{overflow:clip}
 @media (prefers-reduced-motion: reduce){.cutbtn{transition:none}}
 </style>
 <script>
@@ -13436,6 +13453,10 @@ else mpInject();
   var btn=document.getElementById("heroModeBtn");
   var stage=document.querySelector(".stage-home");
   if(!btn||!stage)return;
+  /* v50 : the home view is a no-scroll shell — undo any focus
+     scroll a tap inside it may trigger on older engines */
+  var home=document.getElementById("v-home");
+  if(home)home.addEventListener("focusin",function(){home.scrollLeft=0;home.scrollTop=0;});
   btn.addEventListener("click",function(){
     var toFull=stage.classList.contains("pat-a");
     stage.classList.toggle("pat-a",!toFull);
@@ -14233,8 +14254,12 @@ try{renderFormation();}catch(e){}
 .hero-area{position:relative;flex:1 1 auto;min-height:0;overflow:hidden}
 .hero-mode-btn{width:132px;flex:none;margin:3px 5px 3px 2px;min-height:34px;padding:2px;align-self:stretch}
 .hero-mode-btn span{flex:1 1 0;min-width:0;padding:2px 4px;font-size:12.5px;white-space:nowrap}
-.stage-home .lbl-p0,.stage-home .lbl-p1{top:6px}
-.stage-home .lbl-p0,.stage-home .lbl-p1{top:6px}
+/* v51 : back-pair name pills sat flush on the hero-area top edge
+   (top:6px) and read as half-clipped at the stage seam on the
+   390x670 device — drop them to 16px so the whole pill, border
+   included, sits inside the stage. Figures and the bottom
+   labels are untouched. */
+.stage-home .lbl-p0,.stage-home .lbl-p1{top:16px}
 /* ---------- 2) VN non-speaker : a step back, never a ghost ---------- */
 .vn-char.ghost{opacity:.88;filter:brightness(.85) saturate(.95)}
 .vn-char.slot-c.ghost{transform:translateX(-50%) scale(.97)}
