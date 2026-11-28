@@ -12479,8 +12479,16 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
 .cutbtn{transition:left .38s ease,right .38s ease,top .38s ease,bottom .38s ease,width .38s ease,height .38s ease}
 /* ---------- shared : stage-anchored labels ---------- */
 .cut-name.lbl{left:auto;right:auto;top:auto;bottom:auto;transform:none;z-index:7}
-.stage-home .lbl-p0{top:38px;left:10px}
-.stage-home .lbl-p1{top:38px;right:10px}
+/* v54 : LABELS ONLY — the v53 horizontal revert also flushed the
+   corner name pills to left/right 0, and at the stage's outer edge
+   their first/last glyphs clipped (倉ひかり / 氷室しず / 宮寺れい /
+   紅林さく). The pills go back to the 16px inset so all four full
+   names sit inside the visible stage. Figure placement, sizes and
+   vertical seats are NOT touched ; the pills' own vertical seats
+   (top overridden to 16px by v49, bottom 10px) are unchanged, and
+   at 16px in the pills still clear every face. */
+.stage-home .lbl-p0{top:38px;left:16px}
+.stage-home .lbl-p1{top:38px;right:16px}
 .stage-home .lbl-p2{bottom:10px;left:16px}
 .stage-home .lbl-p3{bottom:10px;right:16px}
 .stage-home .lbl-main{bottom:10px;left:50%;transform:translateX(-50%);font-size:12px;padding:4px 13px;
@@ -12523,16 +12531,23 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
    of the box height (offsets precomputed from the two
    geometries). */
 .stage-home.pat-a .cutbtn img{position:absolute;max-width:none;height:auto}
-.stage-home.pat-a .cut-main{left:30%;right:auto;top:2.5%;bottom:auto;width:44%;height:86%;transform:none;z-index:4}
+/* v55 : CENTRE FIGURE ONLY — her slot top rises 2.5% -> 0.5% so
+   the oshi's crown sits closer to the stage top edge. Her size
+   (width 44% / img 188%), horizontal seat and the img offsets are
+   unchanged, the other four members are untouched, and the oshi
+   pill (lbl-main, bottom centre) keeps its seat inside the stage.
+   pat-b's centre is bottom-anchored (bottom 1.5% / height 96%,
+   feet on the floor) with no top seat to raise, so it stays. */
+.stage-home.pat-a .cut-main{left:30%;right:auto;top:0.5%;bottom:auto;width:44%;height:86%;transform:none;z-index:4}
 .stage-home.pat-a .cut-main img{left:-48%;top:0;width:188%}
 .stage-home.pat-a .cut-p0{left:1%;right:auto;top:0.5%;bottom:auto;width:20%;height:26%;z-index:2}
-.stage-home.pat-a .cut-p0 img{left:6.5%;top:3.8%;width:327%}
+.stage-home.pat-a .cut-p0 img{left:-68.5%;top:3.8%;width:327%}
 .stage-home.pat-a .cut-p1{left:69%;right:auto;top:0.5%;bottom:auto;width:22%;height:26%;z-index:2}
-.stage-home.pat-a .cut-p1 img{left:-102.5%;top:3.8%;width:235.5%}
+.stage-home.pat-a .cut-p1 img{left:-34.3%;top:3.8%;width:235.5%}
 .stage-home.pat-a .cut-p2{left:1%;right:auto;top:37.5%;bottom:auto;width:30%;height:34%;z-index:6}
-.stage-home.pat-a .cut-p2 img{left:0%;top:-2.9%;width:222%}
+.stage-home.pat-a .cut-p2 img{left:-53.3%;top:-2.9%;width:222%}
 .stage-home.pat-a .cut-p3{left:66%;right:auto;top:39.3%;bottom:auto;width:30%;height:34%;z-index:6}
-.stage-home.pat-a .cut-p3 img{left:-66.5%;top:-2.9%;width:172%}
+.stage-home.pat-a .cut-p3 img{left:-46.5%;top:-2.9%;width:172%}
 .stage-home.pat-a .cutbtn::after{display:none}
 /* ---------- pattern B : 全身 (screenshot measured) ---------- */
 .stage-home.pat-b .cut-main{left:50%;right:auto;top:auto;bottom:1.5%;width:auto;height:96%;transform:translateX(-50%);z-index:4}
@@ -12576,6 +12591,23 @@ body.vn-playing #vnEnd .btn{min-height:40px;padding:7px 14px;font-size:12.5px}
    that, and the focusin reset in the toggle script covers
    engines without clip support. */
 #v-home{overflow:clip}
+/* ---------- v53 : horizontal layout reverted (user's call) ----------
+   The v50/v52 pack-up was right VERTICALLY and stays : slot tops,
+   figure sizes (img widths / pat-b heights) and the killed backdrop
+   band are untouched. But pulling the side figures inboard made
+   the cast crowd the centre, so the HORIZONTAL placement goes back
+   to the ticker-row build (pre-v50) : in pat-a only the img left
+   offsets move (boxes = tap areas and img widths stay), shifting
+   the four side figures back out by the face-centre deltas measured
+   against that build's screenshot — back-left -15%, back-right
+   +15%, front-left -16%, front-right +6% of the stage width — so
+   the side members spread to the edges again and bleed off them
+   slightly, as in the original composition. The corner name pills
+   likewise return to flush corners (left/right 0, undoing the
+   10px/16px insets) ; their vertical seats (top 16px / bottom
+   10px) are unchanged, fully inside the stage and clear of every
+   face at the restored spread. pat-b horizontal seats were never
+   moved by v50/v52 (tops/heights only), so they stay as they are. */
 @media (prefers-reduced-motion: reduce){.cutbtn{transition:none}}
 </style>
 <script>
