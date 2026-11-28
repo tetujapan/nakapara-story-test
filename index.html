@@ -6488,6 +6488,10 @@ function obFinish(){
 .vn-btext{margin:0;font-size:14.5px;line-height:1.75;font-weight:600;white-space:pre-line}
 .step-in{animation:vnStepIn .28s ease both}
 @keyframes vnStepIn{from{opacity:0}to{opacity:1}}
+/* typewriter caret while a step's text is still typing out */
+.vn-btext.typing::after{content:"▍";margin-left:1px;color:#e91e7a;animation:vnCaret .75s steps(1) infinite}
+.vn-narr.typing::after{content:"▍";margin-left:1px;font-style:normal;color:#ffd23f;animation:vnCaret .75s steps(1) infinite}
+@keyframes vnCaret{50%{opacity:0}}
 .vn-top{position:absolute;top:0;left:0;right:0;z-index:12;display:flex;justify-content:space-between;align-items:flex-start;padding:10px 12px;pointer-events:none}
 .vn-count{background:rgba(10,4,22,.72);border:1px solid rgba(217,169,79,.5);color:#ffe9a8;font-size:12px;font-weight:900;border-radius:999px;padding:5px 12px;letter-spacing:.06em}
 .vn-quit{pointer-events:auto;background:rgba(10,4,22,.72);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:12px;font-weight:900;border-radius:999px;padding:6px 14px;min-height:32px;cursor:pointer}
@@ -6764,9 +6768,64 @@ function vnCharHTML(cid,slot,idx){
   else img='<img src="assets/cut_'+cid+'.webp" alt="'+vnEsc(charOf(cid).name)+'" decoding="async" onerror="this.onerror=null;this.src=\'assets/full_'+cid+'.webp\'"'+dl+'>';
   return '<div class="vn-char slot-'+slot+(vnIsSD(cid)?" sd":"")+'" data-cid="'+cid+'" style="z-index:'+(2+idx)+'">'+img+'</div>';
 }
+/* ---------- typewriter text reveal (story playback) ----------
+   Dialogue and narration type out one character at a time
+   (~35ms per char, same speed for every step). A tap while typing
+   completes the current step's text only — the next tap advances,
+   so one tap never both completes and advances. With read-skip ON
+   (or reduced motion) the full text appears instantly. Choices and
+   the ending button are revealed from vnAfterText() once the text
+   is complete. The backlog is written from the script source by
+   the renderScene hook, so it always holds the full text no
+   matter where typing was interrupted. */
+var VN_TYPE_MS=35;
+var vnTw={t:0,el:null,full:"",cb:null,active:false};
+function vnTwStop(){
+  if(vnTw.t){clearInterval(vnTw.t);vnTw.t=0;}
+  if(vnTw.el)vnTw.el.classList.remove("typing");
+  vnTw.active=false; vnTw.cb=null;
+}
+function vnTwComplete(){
+  if(vnTw.t){clearInterval(vnTw.t);vnTw.t=0;}
+  if(vnTw.el){vnTw.el.textContent=vnTw.full;vnTw.el.classList.remove("typing");}
+  vnTw.active=false;
+  var cb=vnTw.cb; vnTw.cb=null;
+  if(cb)cb();
+}
+function vnTypeText(el,full,cb){
+  vnTwStop();
+  if(!el){if(cb)cb();return;}
+  vnTw.el=el; vnTw.full=full; vnTw.cb=cb||null;
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(S.skipMode||reduce||!full){
+    el.textContent=full;
+    var c=vnTw.cb; vnTw.cb=null;
+    if(c)c();
+    return;
+  }
+  var chars=Array.from(full), idx=0;
+  el.textContent="";
+  el.classList.add("typing");
+  vnTw.active=true;
+  vnTw.t=setInterval(function(){
+    idx++;
+    el.textContent=chars.slice(0,idx).join("");
+    if(idx>=chars.length)vnTwComplete();
+  },VN_TYPE_MS);
+}
+/* runs when the current step's text is fully on screen (typed out,
+   tap-completed, or shown instantly): only then may the last step
+   reveal its choices / ending button */
+function vnAfterText(){
+  if(!VN)return;
+  if(VN.i<VN.steps.length-1)return;
+  if(VN.sc.e){var d2=$("vnDone"); if(d2)d2.hidden=false;}
+  else if(VN.done){var box=$("chBox"); if(box&&box.hidden)vnShowChoices();}
+}
 function renderScene(){
   var sc=FULL[S.scene]; if(!sc)return;
   var root=$("storyRoot"); if(!root)return;
+  vnTwStop();
   document.body.classList.add("vn-playing");
   if(VN&&VN.bandT){clearTimeout(VN.bandT);VN.bandT=0;}
   if(!vnPreloaded){
@@ -6824,12 +6883,12 @@ function vnShow(){
       el.classList.toggle("ghost",!mine);
     });
   }
-  var animEl;
+  var animEl, typeEl=null, typeTx="";
   if(st.k==="n"){
     stage.classList.add("dim");
     bub.style.display="none";
     narr.style.display="block";
-    narr.textContent=st.tx;
+    typeEl=narr; typeTx=st.tx;
     setChars(null);
     animEl=narr;
   }else{
@@ -6842,7 +6901,8 @@ function vnShow(){
     /* st.tx is the verbatim original line; the bubble shows it with
        only the raw speaker prefix hidden (the name label above shows
        that name) — the 「」 themselves stay exactly as written */
-    $("vnBText").textContent=(st.pre&&st.tx.indexOf(st.pre)===0)?st.tx.slice(st.pre.length):st.tx;
+    typeEl=$("vnBText");
+    typeTx=(st.pre&&st.tx.indexOf(st.pre)===0)?st.tx.slice(st.pre.length):st.tx;
     var slot="c", tall=true, frontCid=null;
     if(st.cid&&VN.cast.indexOf(st.cid)>=0){
       var ci=VN.cast.indexOf(st.cid);
@@ -6856,16 +6916,17 @@ function vnShow(){
   var last=VN.i>=VN.steps.length-1;
   $("vnNext").style.display=last?"none":"block";
   var dn=$("vnDone");
-  if(last&&VN.sc.e&&dn)dn.hidden=false;
-  if(last&&!VN.done){
-    VN.done=true;
-    if(!VN.sc.e)vnShowChoices();
-  }
+  if(last&&VN.sc.e&&dn)dn.hidden=true; /* revealed by vnAfterText once the text is complete */
+  if(last&&!VN.done)VN.done=true;
   animEl.classList.remove("step-in"); void animEl.offsetWidth; animEl.classList.add("step-in");
+  vnTypeText(typeEl,typeTx,vnAfterText);
 }
 function vnTap(){
   if(!VN)return;
   if(VN.band){vnDismissBand();return;}
+  /* while the typewriter is running, a tap only completes the
+     current step's text — it must not also advance the step */
+  if(vnTw.active){vnTwComplete();return;}
   if(VN.i<VN.steps.length-1){VN.i++;vnShow();}
 }
 function vnDismissBand(){
@@ -6911,6 +6972,7 @@ function vnFinish(){
   if(host.scrollIntoView)host.scrollIntoView({block:"nearest"});
 }
 function vnExit(){
+  vnTwStop();
   if(VN&&VN.bandT){clearTimeout(VN.bandT);VN.bandT=0;}
   document.body.classList.remove("vn-playing");
   VN=null;
