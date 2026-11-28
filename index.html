@@ -2839,7 +2839,7 @@ img{-webkit-user-drag:none}
 <!-- ============ STORY ============ -->
 <div class="view" id="v-story">
   <section id="resumeBox" hidden></section>
-  <section style="margin-top:14px">
+  <section id="storyMainSec" style="margin-top:14px">
     <div id="storyTop"></div>
     <div class="story-tools" id="storyTools"><button type="button" class="btn ghost" id="backlogBtn">📜 バックログ</button><button type="button" class="btn ghost" id="skipBtn">⏩ 既読スキップ：OFF</button></div><div id="storyRoot" style="margin-top:12px"></div>
   </section>
@@ -6514,7 +6514,7 @@ function obFinish(){
    the stage, the tools shrink to one compact row, and stage +
    side-by-side choices + tools fit inside the viewport */
 body.vn-playing #storyTop{display:none}
-body.vn-playing #v-story>section~section{display:none}
+body.vn-playing #v-story>section:not(#storyMainSec){display:none}
 body.vn-playing #v-story>section{margin-top:8px!important}
 body.vn-playing .story-tools{margin-top:0}
 body.vn-playing .story-tools .btn{min-height:42px;padding:6px 10px}
@@ -12123,7 +12123,7 @@ body:not(.vn-playing) #storyRoot{display:none!important}
 #bookShelfSec .sec-head h2{font-size:14px}
 
 /* ---------- STORY player : ending card fits, no inner scroll ---------- */
-body.vn-playing #v-story>section:first-child{flex:1;min-height:0;display:flex;flex-direction:column}
+body.vn-playing #v-story>#storyMainSec{flex:1;min-height:0;display:flex;flex-direction:column}
 body.vn-playing #storyRoot{height:auto;flex:1;min-height:0;padding-bottom:8px}
 body.vn-playing #vnEnd:not(:empty){max-height:none;overflow:visible}
 body.vn-playing #vnEnd .endcard{margin-top:8px!important;padding:10px 12px 12px}
@@ -19034,6 +19034,12 @@ window.renderResumeBox=renderResumeBox;
 if(typeof window.showView==="function"){
   var _sv113=window.showView;
   window.showView=function(name){
+    /* never leave the story player stuck on: leaving the story tab
+       mid-scene exits the VN cleanly (progress stays saved) */
+    if(name!=="story"&&document.body.classList.contains("vn-playing")){
+      try{ if(typeof vnExit==="function")vnExit(); else document.body.classList.remove("vn-playing"); }
+      catch(e){ document.body.classList.remove("vn-playing"); }
+    }
     var r=_sv113.apply(this,arguments);
     if(name==="story")renderResumeBox();
     if(name==="shop")renderShop();
